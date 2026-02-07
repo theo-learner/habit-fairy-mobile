@@ -30,7 +30,8 @@ type Phase = 'ready' | 'running' | 'done' | 'reward';
 export default function MissionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const mission = getMissionById(id || '');
+  const allMissions = useAppStore((s) => s.missions || []);
+  const mission = getMissionById(id || '', allMissions);
 
   const completeMission = useAppStore((s) => s.completeMission);
   const childName = useAppStore((s) => s.childName);

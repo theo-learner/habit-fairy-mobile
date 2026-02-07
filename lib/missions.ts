@@ -202,8 +202,9 @@ export async function getAllMissions(): Promise<Mission[]> {
 }
 
 /** ID로 미션 찾기 */
-export function getMissionById(id: string): Mission | undefined {
-  return PRESET_MISSIONS.find((m) => m.id === id);
+export function getMissionById(id: string, customMissions: Mission[] = []): Mission | undefined {
+  // 프리셋에서 먼저 검색, 없으면 커스텀 미션에서 검색
+  return PRESET_MISSIONS.find((m) => m.id === id) || customMissions.find((m) => m.id === id);
 }
 
 /** 카테고리별 미션 그룹핑 */
