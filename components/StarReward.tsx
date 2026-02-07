@@ -1,10 +1,11 @@
 // ============================================
 // 별 보상 애니메이션 — 축하 오버레이
 // Reanimated 기반 파티클 + 별 카운트업
+// starCount 0/undefined 방어 + 화면 이탈 cleanup
 // ============================================
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,7 +16,7 @@ import Animated, {
   FadeIn,
   FadeOut,
   SlideInDown,
-  runOnJS,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import { playStarHaptic, playFanfareHaptic } from '@/lib/sounds';
 
@@ -62,6 +63,13 @@ function Particle({ delay, emoji, x }: { delay: number; emoji: string; x: number
       delay,
       withTiming(360, { duration: 2000 }),
     );
+
+    // cleanup: 언마운트 시 애니메이션 취소
+    return () => {
+      cancelAnimation(translateY);
+      cancelAnimation(opacity);
+      cancelAnimation(rotate);
+    };
   }, []);
 
   const style = useAnimatedStyle(() => ({
@@ -80,26 +88,90 @@ function Particle({ delay, emoji, x }: { delay: number; emoji: string; x: number
   );
 }
 
+/** 개별 별 아이템 — hooks 규칙 준수를 위해 컴포넌트로 분리 */
+function StarItem({
+  index,
+  displayed,
+  scale,
+}: {
+  index: number;
+  displayed: boolean;
+  scale: any;
+}) {
+  const scaleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+  return (
+    <Animated.Text style={[styles.starEmoji, scaleStyle]}>
+      {displayed ? '⭐' : '☆'}
+    </Animated.Text>
+  );
+}
+
 export default function StarReward({
   stars,
   isVisible,
   onComplete,
   message,
 }: StarRewardProps) {
+  // stars 유효성 검증: 0 이하이거나 비정상 값이면 최소 1
+  const safeStars = typeof stars === 'number' && stars > 0 ? Math.min(stars, 5) : 1;
+
   const [displayedStars, setDisplayedStars] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [cheerMsg] = useState(() =>
     CHEER_MESSAGES[Math.floor(Math.random() * CHEER_MESSAGES.length)],
   );
 
-  // 별 등장 scale 애니메이션
-  const starScales = Array.from({ length: 5 }, () => useSharedValue(0));
+  // 마운트 상태 추적 — cleanup 용
+  const mountedRef = useRef(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoCloseRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const messageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 별 등장 scale 애니메이션 (최대 5개)
+  const starScale0 = useSharedValue(0);
+  const starScale1 = useSharedValue(0);
+  const starScale2 = useSharedValue(0);
+  const starScale3 = useSharedValue(0);
+  const starScale4 = useSharedValue(0);
+  const starScales = [starScale0, starScale1, starScale2, starScale3, starScale4];
+
+  // cleanup 헬퍼
+  const clearTimers = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (autoCloseRef.current) {
+      clearTimeout(autoCloseRef.current);
+      autoCloseRef.current = null;
+    }
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current);
+      messageTimeoutRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      clearTimers();
+      // 애니메이션 정리
+      starScales.forEach((s) => cancelAnimation(s));
+    };
+  }, []);
 
   useEffect(() => {
     if (!isVisible) {
-      setDisplayedStars(0);
-      setShowMessage(false);
+      // 보이지 않으면 초기화
+      if (mountedRef.current) {
+        setDisplayedStars(0);
+        setShowMessage(false);
+      }
       starScales.forEach((s) => { s.value = 0; });
+      clearTimers();
       return;
     }
 
@@ -108,7 +180,12 @@ export default function StarReward({
 
     // 별 하나씩 카운트업
     let count = 0;
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
+      if (!mountedRef.current) {
+        clearTimers();
+        return;
+      }
+
       count += 1;
       setDisplayedStars(count);
       playStarHaptic();
@@ -118,18 +195,27 @@ export default function StarReward({
         starScales[count - 1].value = withSpring(1, { damping: 8, stiffness: 200 });
       }
 
-      if (count >= stars) {
-        clearInterval(interval);
-        setTimeout(() => setShowMessage(true), 300);
+      if (count >= safeStars) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        messageTimeoutRef.current = setTimeout(() => {
+          if (mountedRef.current) setShowMessage(true);
+        }, 300);
         // 자동 닫기
-        setTimeout(() => {
-          onComplete?.();
+        autoCloseRef.current = setTimeout(() => {
+          if (mountedRef.current) {
+            onComplete?.();
+          }
         }, 3500);
       }
     }, 500);
 
-    return () => clearInterval(interval);
-  }, [isVisible, stars]);
+    return () => {
+      clearTimers();
+    };
+  }, [isVisible, safeStars]);
 
   if (!isVisible) return null;
 
@@ -172,16 +258,14 @@ export default function StarReward({
 
         {/* 별 표시 */}
         <View style={styles.starsRow}>
-          {Array.from({ length: stars }, (_, i) => {
-            const scaleStyle = useAnimatedStyle(() => ({
-              transform: [{ scale: i < starScales.length ? starScales[i].value : 1 }],
-            }));
-            return (
-              <Animated.Text key={i} style={[styles.starEmoji, scaleStyle]}>
-                {i < displayedStars ? '⭐' : '☆'}
-              </Animated.Text>
-            );
-          })}
+          {Array.from({ length: safeStars }, (_, i) => (
+            <StarItem
+              key={i}
+              index={i}
+              displayed={i < displayedStars}
+              scale={i < starScales.length ? starScales[i] : starScales[0]}
+            />
+          ))}
         </View>
 
         {/* 카운터 */}

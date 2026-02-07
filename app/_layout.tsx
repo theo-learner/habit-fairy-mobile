@@ -1,12 +1,13 @@
 // ============================================
 // 루트 레이아웃 — 탭 네비게이션
-// 홈(미션), 꾸미기(보상), 부모 대시보드
+// ErrorBoundary로 각 탭 화면 감싸기
 // ============================================
 
 import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
 
 /** 탭 아이콘 컴포넌트 */
@@ -24,11 +25,13 @@ export default function RootLayout() {
 
   // 앱 시작 시 데이터 로드
   useEffect(() => {
-    loadData();
+    loadData().catch((e) => {
+      console.error('[HabitFairy] 초기 데이터 로드 실패:', e);
+    });
   }, []);
 
   return (
-    <>
+    <ErrorBoundary fallbackMessage="앱을 시작하는 중 문제가 발생했어요">
       <StatusBar style="dark" />
       <Tabs
         screenOptions={{
@@ -69,7 +72,7 @@ export default function RootLayout() {
           }}
         />
       </Tabs>
-    </>
+    </ErrorBoundary>
   );
 }
 

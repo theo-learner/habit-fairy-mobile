@@ -1,6 +1,6 @@
 // ============================================
 // 원형 타이머 — React Native SVG + Reanimated
-// 부드러운 프로그레스 링, 햅틱 피드백
+// 0초 미션 방어, 백그라운드 보정, 중복 콜백 방지
 // ============================================
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -15,6 +15,7 @@ import Animated, {
   useAnimatedStyle,
   withRepeat,
   withSequence,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import { playTickHaptic, playButtonHaptic } from '@/lib/sounds';
 
@@ -36,10 +37,17 @@ export default function CircleTimer({
   onTick,
   autoStart = false,
 }: CircleTimerProps) {
-  const [remaining, setRemaining] = useState(totalSeconds);
-  const [isRunning, setIsRunning] = useState(autoStart);
+  // 0초 이하 타이머 방어: 최소 1초로 보정
+  const safeTotalSeconds = totalSeconds > 0 ? totalSeconds : 1;
+
+  const [remaining, setRemaining] = useState(safeTotalSeconds);
+  const [isRunning, setIsRunning] = useState(false);
   const startTimeRef = useRef<number>(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // 중복 콜백 방지 플래그
+  const completedRef = useRef(false);
+  // 컴포넌트 마운트 상태 추적
+  const mountedRef = useRef(true);
 
   // Animated SVG progress
   const progress = useSharedValue(0);
@@ -61,55 +69,85 @@ export default function CircleTimer({
         ),
         -1,
       );
+    } else {
+      // 펄스 중지
+      cancelAnimation(pulseScale);
+      pulseScale.value = 1;
     }
-  }, [remaining <= 10 && isRunning]);
+  }, [remaining <= 10 && remaining > 0 && isRunning]);
 
   const pulseStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulseScale.value }],
   }));
 
+  /** 타이머 완료 처리 — 중복 호출 방지 */
+  const handleTimerComplete = useCallback(() => {
+    if (completedRef.current) return; // 이미 완료 처리됨
+    completedRef.current = true;
+    stopTimer();
+    if (mountedRef.current) {
+      onComplete();
+    }
+  }, [onComplete]);
+
   // 앱 백그라운드 복귀 처리
   useEffect(() => {
     const subscription = RNAppState.addEventListener('change', (state) => {
-      if (state === 'active' && isRunning && startTimeRef.current > 0) {
+      if (state === 'active' && isRunning && startTimeRef.current > 0 && !completedRef.current) {
         const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        const newRemaining = Math.max(0, totalSeconds - elapsed);
-        setRemaining(newRemaining);
-        const newProgress = (totalSeconds - newRemaining) / totalSeconds;
+        const newRemaining = Math.max(0, safeTotalSeconds - elapsed);
+
+        if (mountedRef.current) {
+          setRemaining(newRemaining);
+        }
+
+        const newProgress = Math.min(1, (safeTotalSeconds - newRemaining) / safeTotalSeconds);
         progress.value = withTiming(newProgress, { duration: 300 });
 
         if (newRemaining <= 0) {
-          stopTimer();
-          onComplete();
+          handleTimerComplete();
         }
       }
     });
     return () => subscription.remove();
-  }, [isRunning, totalSeconds]);
+  }, [isRunning, safeTotalSeconds, handleTimerComplete]);
 
   const stopTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    setIsRunning(false);
+    if (mountedRef.current) {
+      setIsRunning(false);
+    }
   }, []);
 
   const start = useCallback(() => {
+    // 이미 완료된 경우 방어
+    if (completedRef.current) return;
+
     startTimeRef.current = Date.now();
-    setRemaining(totalSeconds);
+    setRemaining(safeTotalSeconds);
     setIsRunning(true);
     progress.value = 0;
 
     // 프로그레스 전체를 부드럽게 이동
     progress.value = withTiming(1, {
-      duration: totalSeconds * 1000,
+      duration: safeTotalSeconds * 1000,
       easing: Easing.linear,
     });
 
     intervalRef.current = setInterval(() => {
+      if (!mountedRef.current || completedRef.current) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        return;
+      }
+
       const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
-      const newRemaining = Math.max(0, totalSeconds - elapsed);
+      const newRemaining = Math.max(0, safeTotalSeconds - elapsed);
       setRemaining(newRemaining);
       onTick?.(newRemaining);
 
@@ -119,24 +157,31 @@ export default function CircleTimer({
       }
 
       if (newRemaining <= 0) {
-        clearInterval(intervalRef.current!);
-        intervalRef.current = null;
-        setIsRunning(false);
-        onComplete();
+        handleTimerComplete();
       }
     }, 1000);
-  }, [totalSeconds, onComplete, onTick]);
+  }, [safeTotalSeconds, handleTimerComplete, onTick]);
 
-  // cleanup
+  // cleanup — 컴포넌트 언마운트 시
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      mountedRef.current = false;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      // 애니메이션 정리
+      cancelAnimation(progress);
+      cancelAnimation(pulseScale);
     };
   }, []);
 
   // autoStart
   useEffect(() => {
-    if (autoStart) start();
+    if (autoStart && !completedRef.current) {
+      start();
+    }
   }, [autoStart]);
 
   const minutes = Math.floor(remaining / 60);
@@ -194,8 +239,8 @@ export default function CircleTimer({
         </View>
       </Animated.View>
 
-      {/* 시작 버튼 */}
-      {!isRunning && remaining === totalSeconds && (
+      {/* 시작 버튼 — autoStart가 아니고 아직 시작 안 했을 때만 */}
+      {!isRunning && remaining === safeTotalSeconds && !completedRef.current && (
         <Animated.View entering={FadeIn.duration(300)}>
           <Pressable
             onPress={() => {

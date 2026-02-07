@@ -1,6 +1,7 @@
 // ============================================
 // 미션 데이터 관리 — 프리셋 10개 + 커스텀 미션
-// AsyncStorage 기반 로컬 저장
+// AsyncStorage 기반 로컬 저장 + Null Safety
+// 프리셋 오버라이드 지원 (이름/설명/이모지 등 수정)
 // ============================================
 
 import { Mission, MissionCategory } from '@/types';
@@ -160,14 +161,29 @@ export const CATEGORY_LABELS: Record<MissionCategory, string> = {
 /** 카테고리 순서 */
 export const CATEGORY_ORDER: MissionCategory[] = ['morning', 'daytime', 'evening'];
 
-/** 커스텀 미션 목록 로드 */
+/** 커스텀 미션 목록 로드 — 배열 유효성 검증 */
 export async function getCustomMissions(): Promise<Mission[]> {
-  return await storage.get<Mission[]>('customMissions', []);
+  const result = await storage.get<Mission[]>('customMissions', []);
+  // 배열이 아닌 경우 방어
+  return Array.isArray(result) ? result : [];
 }
 
 /** 커스텀 미션 저장 */
 export async function saveCustomMissions(missions: Mission[]): Promise<void> {
-  await storage.set('customMissions', missions);
+  const safeMissions = Array.isArray(missions) ? missions : [];
+  await storage.set('customMissions', safeMissions);
+}
+
+/** 프리셋 오버라이드 로드 — 프리셋 미션의 사용자 수정사항 */
+export async function getPresetOverrides(): Promise<Record<string, Partial<Mission>>> {
+  const result = await storage.get<Record<string, Partial<Mission>>>('presetOverrides', {});
+  return result && typeof result === 'object' ? result : {};
+}
+
+/** 프리셋 오버라이드 저장 */
+export async function savePresetOverrides(overrides: Record<string, Partial<Mission>>): Promise<void> {
+  const safeOverrides = overrides && typeof overrides === 'object' ? overrides : {};
+  await storage.set('presetOverrides', safeOverrides);
 }
 
 /** 커스텀 미션 추가 */
@@ -195,19 +211,58 @@ export async function deleteCustomMission(id: string): Promise<boolean> {
   return true;
 }
 
-/** 전체 미션 목록 (프리셋 + 커스텀, 활성만) */
+/** 전체 미션 목록 (프리셋 + 커스텀, 활성만) — 홈화면용 */
 export async function getAllMissions(): Promise<Mission[]> {
-  const customs = await getCustomMissions();
-  return [...PRESET_MISSIONS, ...customs].filter((m) => m.isActive);
+  try {
+    const [customs, overrides] = await Promise.all([
+      getCustomMissions(),
+      getPresetOverrides(),
+    ]);
+    // 프리셋에 오버라이드 적용
+    const presets = PRESET_MISSIONS.map((m) => {
+      const override = overrides[m.id];
+      return override ? { ...m, ...override, id: m.id, isPreset: true } : m;
+    });
+    const all = [...presets, ...customs];
+    // sortOrder로 정렬 후 활성만 반환
+    return all
+      .filter((m) => m?.isActive)
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  } catch (e) {
+    console.error('[HabitFairy] getAllMissions 실패:', e);
+    return PRESET_MISSIONS.filter((m) => m?.isActive);
+  }
 }
 
-/** ID로 미션 찾기 */
-export function getMissionById(id: string, customMissions: Mission[] = []): Mission | undefined {
+/** 전체 미션 목록 (프리셋 + 커스텀, 비활성 포함) — 관리화면용 */
+export async function getAllMissionsIncludingInactive(): Promise<Mission[]> {
+  try {
+    const [customs, overrides] = await Promise.all([
+      getCustomMissions(),
+      getPresetOverrides(),
+    ]);
+    // 프리셋에 오버라이드 적용
+    const presets = PRESET_MISSIONS.map((m) => {
+      const override = overrides[m.id];
+      return override ? { ...m, ...override, id: m.id, isPreset: true } : m;
+    });
+    const all = [...presets, ...customs];
+    return all.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  } catch (e) {
+    console.error('[HabitFairy] getAllMissionsIncludingInactive 실패:', e);
+    return [...PRESET_MISSIONS];
+  }
+}
+
+/** ID로 미션 찾기 — id가 falsy이면 undefined 반환 */
+export function getMissionById(id: string | undefined | null, customMissions: Mission[] = []): Mission | undefined {
+  if (!id) return undefined;
+  const safeCustoms = Array.isArray(customMissions) ? customMissions : [];
   // 프리셋에서 먼저 검색, 없으면 커스텀 미션에서 검색
-  return PRESET_MISSIONS.find((m) => m.id === id) || customMissions.find((m) => m.id === id);
+  return PRESET_MISSIONS.find((m) => m.id === id) ?? safeCustoms.find((m) => m.id === id);
 }
 
-/** 카테고리별 미션 그룹핑 */
+/** 카테고리별 미션 그룹핑 — 빈 배열 안전 처리 */
 export function groupMissionsByCategory(
   missions: Mission[],
 ): Record<MissionCategory, Mission[]> {
@@ -216,8 +271,11 @@ export function groupMissionsByCategory(
     daytime: [],
     evening: [],
   };
-  for (const m of missions) {
-    groups[m.category].push(m);
+  const safeMissions = Array.isArray(missions) ? missions : [];
+  for (const m of safeMissions) {
+    if (m?.category && groups[m.category]) {
+      groups[m.category].push(m);
+    }
   }
   return groups;
 }

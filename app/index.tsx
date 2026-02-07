@@ -1,6 +1,7 @@
 // ============================================
 // 홈 화면 — 요정 캐릭터 + 미션 카드 리스트
 // 카테고리별 (아침/낮/저녁) 미션 그룹핑
+// Null Safety 강화 + ErrorBoundary 적용
 // ============================================
 
 import React, { useMemo } from 'react';
@@ -9,11 +10,11 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Pressable,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import FairyCharacter from '@/components/FairyCharacter';
 import MissionCard from '@/components/MissionCard';
 import { useAppStore } from '@/lib/store';
@@ -22,9 +23,9 @@ import {
   CATEGORY_LABELS,
   CATEGORY_ORDER,
 } from '@/lib/missions';
-import type { FairyEmotion, MissionCategory } from '@/types';
+import type { FairyEmotion } from '@/types';
 
-export default function HomeScreen() {
+function HomeScreenContent() {
   const missions = useAppStore((s) => s.missions);
   const totalStars = useAppStore((s) => s.totalStars);
   const childName = useAppStore((s) => s.childName);
@@ -35,17 +36,23 @@ export default function HomeScreen() {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const grouped = useMemo(() => groupMissionsByCategory(missions), [missions]);
-  const todayCompletedCount = getTodayCompleted().length;
-  const allDone = todayCompletedCount >= missions.length && missions.length > 0;
+  // null safety: missions가 배열인지 확인
+  const safeMissions = Array.isArray(missions) ? missions : [];
+  const safeTotalStars = typeof totalStars === 'number' ? totalStars : 0;
+  const safeChildName = typeof childName === 'string' ? childName : '';
+
+  const grouped = useMemo(() => groupMissionsByCategory(safeMissions), [safeMissions]);
+  const todayCompleted = getTodayCompleted();
+  const todayCompletedCount = Array.isArray(todayCompleted) ? todayCompleted.length : 0;
+  const allDone = todayCompletedCount >= safeMissions.length && safeMissions.length > 0;
 
   // 요정 인사말
   const greeting = useMemo(() => {
-    const name = childName || '친구';
+    const name = safeChildName || '친구';
     if (allDone) return `${name}아, 오늘 미션 올클리어! 🎉 정말 대단해!`;
     if (todayCompletedCount > 0) return `${name}아, 잘하고 있어! 조금만 더 힘내자! 💪`;
     return `안녕 ${name}! 나는 습관요정 별이야! ✨\n오늘도 신나는 미션을 함께하자!`;
-  }, [childName, allDone, todayCompletedCount]);
+  }, [safeChildName, allDone, todayCompletedCount]);
 
   const fairyEmotion: FairyEmotion = allDone
     ? 'celebrating'
@@ -55,8 +62,13 @@ export default function HomeScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData();
-    setRefreshing(false);
+    try {
+      await loadData();
+    } catch (e) {
+      console.error('[HabitFairy] 새로고침 실패:', e);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (!isLoaded) {
@@ -94,13 +106,13 @@ export default function HomeScreen() {
 
         {/* 별 카운터 */}
         <Animated.View entering={FadeInDown.delay(200).duration(400)} style={styles.starCounter}>
-          <Text style={styles.starCounterText}>⭐ × {totalStars}</Text>
+          <Text style={styles.starCounterText}>⭐ × {safeTotalStars}</Text>
         </Animated.View>
 
         {/* 오늘 요약 */}
         <Animated.View entering={FadeInDown.delay(300).duration(400)} style={styles.summary}>
           <View style={styles.summaryItem}>
-            <Text style={styles.summaryValue}>{missions.length}</Text>
+            <Text style={styles.summaryValue}>{safeMissions.length}</Text>
             <Text style={styles.summaryLabel}>오늘의 미션</Text>
           </View>
           <View style={styles.summaryDivider} />
@@ -113,7 +125,7 @@ export default function HomeScreen() {
           <View style={styles.summaryDivider} />
           <View style={styles.summaryItem}>
             <Text style={[styles.summaryValue, { color: '#F59E0B' }]}>
-              {missions.length - todayCompletedCount}
+              {Math.max(0, safeMissions.length - todayCompletedCount)}
             </Text>
             <Text style={styles.summaryLabel}>남은 미션</Text>
           </View>
@@ -121,8 +133,8 @@ export default function HomeScreen() {
 
         {/* 카테고리별 미션 리스트 */}
         {CATEGORY_ORDER.map((cat) => {
-          const catMissions = grouped[cat];
-          if (!catMissions || catMissions.length === 0) return null;
+          const catMissions = grouped?.[cat];
+          if (!Array.isArray(catMissions) || catMissions.length === 0) return null;
           return (
             <View key={cat} style={styles.categorySection}>
               <Text style={styles.categoryLabel}>
@@ -130,9 +142,9 @@ export default function HomeScreen() {
               </Text>
               {catMissions.map((mission, idx) => (
                 <MissionCard
-                  key={mission.id}
+                  key={mission?.id ?? `mission-${idx}`}
                   mission={mission}
-                  isCompleted={isMissionCompletedToday(mission.id)}
+                  isCompleted={isMissionCompletedToday(mission?.id ?? '')}
                   index={idx}
                 />
               ))}
@@ -140,10 +152,27 @@ export default function HomeScreen() {
           );
         })}
 
+        {/* 미션이 하나도 없을 때 */}
+        {safeMissions.length === 0 && (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>🧚</Text>
+            <Text style={styles.emptyText}>아직 미션이 없어요{'\n'}대시보드에서 미션을 추가해보세요!</Text>
+          </View>
+        )}
+
         {/* 하단 여백 */}
         <View style={{ height: 40 }} />
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** ErrorBoundary로 감싼 홈 화면 */
+export default function HomeScreen() {
+  return (
+    <ErrorBoundary fallbackMessage="홈 화면을 불러오는 중 문제가 발생했어요">
+      <HomeScreenContent />
+    </ErrorBoundary>
   );
 }
 
@@ -229,5 +258,19 @@ const styles = StyleSheet.create({
     color: '#4B5563',
     marginBottom: 12,
     marginLeft: 4,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 48,
+  },
+  emptyEmoji: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
