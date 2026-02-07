@@ -1,6 +1,7 @@
 // ============================================
 // 루트 레이아웃 — 탭 네비게이션
 // ErrorBoundary로 각 탭 화면 감싸기
+// 관리 탭 추가
 // ============================================
 
 import React, { useEffect } from 'react';
@@ -53,6 +54,14 @@ export default function RootLayout() {
           options={{
             tabBarIcon: ({ focused }) => (
               <TabIcon emoji="👗" label="꾸미기" focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="manage"
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TabIcon emoji="⚙️" label="관리" focused={focused} />
             ),
           }}
         />

@@ -2,6 +2,7 @@
 // 홈 화면 — 요정 캐릭터 + 미션 카드 리스트
 // 카테고리별 (아침/낮/저녁) 미션 그룹핑
 // Null Safety 강화 + ErrorBoundary 적용
+// 상단에 "미션 관리" 바로가기 버튼 추가
 // ============================================
 
 import React, { useMemo } from 'react';
@@ -11,8 +12,10 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FairyCharacter from '@/components/FairyCharacter';
@@ -23,9 +26,11 @@ import {
   CATEGORY_LABELS,
   CATEGORY_ORDER,
 } from '@/lib/missions';
+import { playButtonHaptic } from '@/lib/sounds';
 import type { FairyEmotion } from '@/types';
 
 function HomeScreenContent() {
+  const router = useRouter();
   const missions = useAppStore((s) => s.missions);
   const totalStars = useAppStore((s) => s.totalStars);
   const childName = useAppStore((s) => s.childName);
@@ -94,6 +99,23 @@ function HomeScreenContent() {
           />
         }
       >
+        {/* 상단 헤더: 미션 관리 바로가기 */}
+        <Animated.View entering={FadeIn.duration(400)} style={styles.topBar}>
+          <View style={styles.topBarLeft} />
+          <Pressable
+            onPress={() => {
+              playButtonHaptic();
+              router.push('/manage');
+            }}
+            style={({ pressed }) => [
+              styles.manageButton,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Text style={styles.manageButtonText}>⚙️ 미션 관리</Text>
+          </Pressable>
+        </Animated.View>
+
         {/* 요정 캐릭터 + 인사 */}
         <Animated.View entering={FadeIn.duration(600)} style={styles.fairySection}>
           <FairyCharacter
@@ -156,7 +178,22 @@ function HomeScreenContent() {
         {safeMissions.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🧚</Text>
-            <Text style={styles.emptyText}>아직 미션이 없어요{'\n'}대시보드에서 미션을 추가해보세요!</Text>
+            <Text style={styles.emptyText}>
+              아직 미션이 없어요{'\n'}
+              미션 관리에서 미션을 추가해보세요!
+            </Text>
+            <Pressable
+              onPress={() => {
+                playButtonHaptic();
+                router.push('/manage');
+              }}
+              style={({ pressed }) => [
+                styles.emptyAddButton,
+                pressed && { opacity: 0.8 },
+              ]}
+            >
+              <Text style={styles.emptyAddButtonText}>➕ 미션 추가하기</Text>
+            </Pressable>
           </View>
         )}
 
@@ -198,6 +235,27 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
+  },
+  // 상단 바
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  topBarLeft: {
+    width: 80,
+  },
+  manageButton: {
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 16,
+  },
+  manageButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#6B7280',
   },
   fairySection: {
     alignItems: 'center',
@@ -272,5 +330,17 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
     textAlign: 'center',
     lineHeight: 22,
+    marginBottom: 16,
+  },
+  emptyAddButton: {
+    backgroundColor: '#6366F1',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 20,
+  },
+  emptyAddButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });
