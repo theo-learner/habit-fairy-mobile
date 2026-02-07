@@ -1,0 +1,144 @@
+<!-- 습관요정 앱 아이콘 - 1024x1024 SVG -->
+<!-- 귀여운 요정 캐릭터: 별 지팡이, 날개, 반짝이 -->
+<!-- amber/yellow 따뜻한 톤, 텍스트 없음 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- 배경 그라데이션: 따뜻한 amber/yellow 톤 -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD54F"/>
+      <stop offset="100%" stop-color="#FF8F00"/>
+    </linearGradient>
+    <!-- 요정 몸체 그라데이션 -->
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF8E1"/>
+      <stop offset="100%" stop-color="#FFE082"/>
+    </linearGradient>
+    <!-- 날개 그라데이션 -->
+    <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFE082" stop-opacity="0.5"/>
+    </linearGradient>
+    <!-- 별 지팡이 빛남 -->
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFD54F" stop-opacity="0"/>
+    </radialGradient>
+    <!-- 드레스 그라데이션 -->
+    <linearGradient id="dress" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFB300"/>
+      <stop offset="100%" stop-color="#FF8F00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 배경: 둥근 모서리 대응 (앱스토어 마스킹용) -->
+  <rect width="1024" height="1024" rx="224" ry="224" fill="url(#bg)"/>
+
+  <!-- 배경 장식: 큰 원형 빛 -->
+  <circle cx="512" cy="480" r="300" fill="#FFE082" opacity="0.3"/>
+
+  <!-- === 요정 캐릭터 === -->
+  <g transform="translate(512, 500)">
+
+    <!-- 왼쪽 날개 -->
+    <ellipse cx="-120" cy="-80" rx="100" ry="140" fill="url(#wing)" stroke="#FFD54F" stroke-width="3" transform="rotate(-15, -120, -80)"/>
+    <ellipse cx="-140" cy="20" rx="65" ry="95" fill="url(#wing)" stroke="#FFD54F" stroke-width="2" transform="rotate(-10, -140, 20)"/>
+
+    <!-- 오른쪽 날개 -->
+    <ellipse cx="120" cy="-80" rx="100" ry="140" fill="url(#wing)" stroke="#FFD54F" stroke-width="3" transform="rotate(15, 120, -80)"/>
+    <ellipse cx="140" cy="20" rx="65" ry="95" fill="url(#wing)" stroke="#FFD54F" stroke-width="2" transform="rotate(10, 140, 20)"/>
+
+    <!-- 드레스 (삼각형 치마) -->
+    <path d="M0,10 L-90,180 Q0,200 90,180 Z" fill="url(#dress)"/>
+    <!-- 드레스 장식 라인 -->
+    <path d="M-10,40 Q0,100 10,40" fill="none" stroke="#FFE082" stroke-width="3"/>
+
+    <!-- 몸통 -->
+    <ellipse cx="0" cy="-10" rx="60" ry="70" fill="url(#body)"/>
+
+    <!-- 머리 -->
+    <circle cx="0" cy="-120" r="75" fill="#FFF8E1"/>
+
+    <!-- 머리카락 -->
+    <path d="M-75,-120 Q-80,-200 -30,-195 Q0,-210 30,-195 Q80,-200 75,-120 Q80,-160 60,-175 Q30,-190 0,-185 Q-30,-190 -60,-175 Q-80,-160 -75,-120Z" fill="#FFB300"/>
+    <!-- 앞머리 -->
+    <path d="M-50,-155 Q-30,-180 0,-175 Q30,-180 50,-155 Q40,-170 0,-168 Q-40,-170 -50,-155Z" fill="#FFA000"/>
+
+    <!-- 볼터치 -->
+    <circle cx="-40" cy="-100" r="15" fill="#FFAB91" opacity="0.5"/>
+    <circle cx="40" cy="-100" r="15" fill="#FFAB91" opacity="0.5"/>
+
+    <!-- 눈 -->
+    <g>
+      <!-- 왼쪽 눈 -->
+      <ellipse cx="-25" cy="-120" rx="12" ry="14" fill="#4E342E"/>
+      <ellipse cx="-22" cy="-124" rx="5" ry="6" fill="#FFFFFF" opacity="0.8"/>
+      <!-- 오른쪽 눈 -->
+      <ellipse cx="25" cy="-120" rx="12" ry="14" fill="#4E342E"/>
+      <ellipse cx="28" cy="-124" rx="5" ry="6" fill="#FFFFFF" opacity="0.8"/>
+    </g>
+
+    <!-- 미소 -->
+    <path d="M-18,-98 Q0,-85 18,-98" fill="none" stroke="#4E342E" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- 왼쪽 팔 + 별 지팡이 -->
+    <g transform="rotate(-30, -50, 0)">
+      <!-- 팔 -->
+      <path d="M-40,0 Q-100,-40 -120,-120" fill="none" stroke="#FFF8E1" stroke-width="18" stroke-linecap="round"/>
+      <!-- 지팡이 막대 -->
+      <line x1="-115" y1="-110" x2="-160" y2="-270" stroke="#FFE082" stroke-width="8" stroke-linecap="round"/>
+      <!-- 별 지팡이 빛남 효과 -->
+      <circle cx="-165" cy="-285" r="50" fill="url(#starGlow)"/>
+      <!-- 별 ★ -->
+      <polygon points="-165,-320 -155,-296 -130,-296 -150,-280 -142,-256 -165,-270 -188,-256 -180,-280 -200,-296 -175,-296" fill="#FFF176"/>
+      <polygon points="-165,-315 -157,-298 -138,-298 -153,-285 -147,-266 -165,-276 -183,-266 -177,-285 -192,-298 -173,-298" fill="#FFFFFF" opacity="0.6"/>
+    </g>
+
+    <!-- 오른쪽 팔 -->
+    <path d="M40,0 Q80,-20 90,-60" fill="none" stroke="#FFF8E1" stroke-width="18" stroke-linecap="round"/>
+
+    <!-- 다리 -->
+    <line x1="-30" y1="170" x2="-35" y2="230" stroke="#FFF8E1" stroke-width="16" stroke-linecap="round"/>
+    <line x1="30" y1="170" x2="35" y2="230" stroke="#FFF8E1" stroke-width="16" stroke-linecap="round"/>
+    <!-- 신발 -->
+    <ellipse cx="-38" cy="238" rx="20" ry="10" fill="#FF8F00"/>
+    <ellipse cx="38" cy="238" rx="20" ry="10" fill="#FF8F00"/>
+
+  </g>
+
+  <!-- === 반짝이 효과 (sparkles) === -->
+  <!-- 4각 별 반짝이 함수 -->
+  <!-- 반짝이 1: 왼쪽 위 -->
+  <g transform="translate(180, 200)" fill="#FFFFFF" opacity="0.8">
+    <polygon points="0,-20 5,-5 20,0 5,5 0,20 -5,5 -20,0 -5,-5"/>
+  </g>
+  <!-- 반짝이 2: 오른쪽 위 -->
+  <g transform="translate(820, 250)" fill="#FFFFFF" opacity="0.7">
+    <polygon points="0,-15 4,-4 15,0 4,4 0,15 -4,4 -15,0 -4,-4"/>
+  </g>
+  <!-- 반짝이 3: 왼쪽 중간 -->
+  <g transform="translate(150, 500)" fill="#FFF176" opacity="0.6">
+    <polygon points="0,-12 3,-3 12,0 3,3 0,12 -3,3 -12,0 -3,-3"/>
+  </g>
+  <!-- 반짝이 4: 오른쪽 -->
+  <g transform="translate(870, 450)" fill="#FFFFFF" opacity="0.65">
+    <polygon points="0,-18 5,-5 18,0 5,5 0,18 -5,5 -18,0 -5,-5"/>
+  </g>
+  <!-- 반짝이 5: 아래쪽 -->
+  <g transform="translate(300, 800)" fill="#FFF176" opacity="0.5">
+    <polygon points="0,-10 3,-3 10,0 3,3 0,10 -3,3 -10,0 -3,-3"/>
+  </g>
+  <!-- 반짝이 6: 지팡이 주변 -->
+  <g transform="translate(280, 180)" fill="#FFFFFF" opacity="0.9">
+    <polygon points="0,-14 4,-4 14,0 4,4 0,14 -4,4 -14,0 -4,-4"/>
+  </g>
+  <!-- 반짝이 7: 오른쪽 아래 -->
+  <g transform="translate(750, 750)" fill="#FFF176" opacity="0.55">
+    <polygon points="0,-11 3,-3 11,0 3,3 0,11 -3,3 -11,0 -3,-3"/>
+  </g>
+  <!-- 작은 원형 반짝이들 -->
+  <circle cx="650" cy="180" r="6" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="400" cy="150" r="4" fill="#FFF176" opacity="0.7"/>
+  <circle cx="750" cy="350" r="5" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="250" cy="650" r="4" fill="#FFF176" opacity="0.6"/>
+  <circle cx="800" cy="600" r="5" fill="#FFFFFF" opacity="0.45"/>
+</svg>
