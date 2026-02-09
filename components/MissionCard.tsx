@@ -216,7 +216,7 @@ export default function MissionCard({
           shadowColor: '#000',
         }]}
         className={`
-          w-72 h-96 p-5 rounded-4xl border-2
+          w-64 h-72 p-4 rounded-3xl border-2
           items-center justify-between
           ${theme.bg} ${theme.border}
           ${isCompleted ? 'opacity-95' : ''}
@@ -254,16 +254,16 @@ export default function MissionCard({
           )}
         </View>
 
-        {/* Icon Area - Enhanced Clay 3D style */}
-        <View className="mt-10 mb-4">
+        {/* Icon Area - Compact Clay 3D style */}
+        <View className="mt-6 mb-2">
           {isCompleted ? (
-            <View className="w-36 h-36 rounded-full bg-magic-mint items-center justify-center shadow-clay-lg border-4 border-white">
-              <Text className="text-7xl">{mission.icon}</Text>
+            <View className="w-20 h-20 rounded-full bg-magic-mint items-center justify-center shadow-clay-md border-2 border-white">
+              <Text className="text-4xl">{mission.icon}</Text>
             </View>
           ) : (
             <BouncingIcon>
-              <View className="w-36 h-36 rounded-full bg-white items-center justify-center shadow-clay-lg border-4 border-white">
-                <Text className="text-7xl">{mission.icon}</Text>
+              <View className="w-20 h-20 rounded-full bg-white items-center justify-center shadow-clay-md border-2 border-white">
+                <Text className="text-4xl">{mission.icon}</Text>
               </View>
             </BouncingIcon>
           )}
@@ -271,33 +271,33 @@ export default function MissionCard({
 
         {/* Content */}
         <View className="items-center w-full z-10">
-          <Text className="text-xl font-bold text-gray-800 text-center mb-2 font-sans">
+          <Text className="text-base font-bold text-gray-800 text-center mb-1 font-sans">
             {mission.name}
           </Text>
-          <Text className="text-sm text-gray-500 text-center mb-4 font-sans px-2" numberOfLines={2}>
+          <Text className="text-xs text-gray-500 text-center mb-2 font-sans px-1" numberOfLines={2}>
             {mission.description}
           </Text>
           
-          {/* Info Pills - Clay style */}
-          <View className="flex-row gap-2">
+          {/* Info Pills - Compact */}
+          <View className="flex-row gap-1.5">
             {mission.timerSeconds > 0 && (
-              <View className="bg-white px-4 py-2 rounded-2xl shadow-clay-sm border border-gray-100">
-                <Text className="text-xs text-gray-600 font-bold">⏱ {formatTimer(mission.timerSeconds)}</Text>
+              <View className="bg-white px-2.5 py-1 rounded-xl shadow-clay-sm border border-gray-100">
+                <Text className="text-[10px] text-gray-600 font-bold">⏱ {formatTimer(mission.timerSeconds)}</Text>
               </View>
             )}
-            <View className="bg-magic-yellow/20 px-4 py-2 rounded-2xl shadow-clay-sm border border-yellow-200">
-              <Text className="text-xs text-yellow-700 font-bold">⭐ {mission.starReward}</Text>
+            <View className="bg-magic-yellow/20 px-2.5 py-1 rounded-xl shadow-clay-sm border border-yellow-200">
+              <Text className="text-[10px] text-yellow-700 font-bold">⭐ {mission.starReward}</Text>
             </View>
           </View>
         </View>
 
-        {/* Action Button - 3D Clay style */}
+        {/* Action Button - Compact */}
         <View className={`
-          w-full py-4 rounded-2xl mt-4 items-center
-          ${isCompleted ? 'bg-gray-100 shadow-clay-inner' : `${theme.badge} shadow-clay-md`}
-          border-2 border-white/50
+          w-full py-2.5 rounded-xl mt-2 items-center
+          ${isCompleted ? 'bg-gray-100 shadow-clay-inner' : `${theme.badge} shadow-clay-sm`}
+          border border-white/50
         `}>
-          <Text className={`font-bold text-base ${isCompleted ? 'text-gray-400' : 'text-white'}`}>
+          <Text className={`font-bold text-sm ${isCompleted ? 'text-gray-400' : 'text-white'}`}>
             {isCompleted ? '👀 다시 보기' : '🚀 시작하기'}
           </Text>
         </View>

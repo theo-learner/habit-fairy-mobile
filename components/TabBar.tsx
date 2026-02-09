@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Platform } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -91,6 +92,10 @@ function TabButton({
 export default function TabBar() {
   const router = useRouter();
   const pathname = usePathname();
+  const insets = useSafeAreaInsets();
+  
+  // Calculate bottom padding: minimum 12px, or safe area + 8px
+  const bottomPadding = Math.max(12, insets.bottom + 8);
 
   const handlePress = (path: string) => {
     playButtonHaptic();
@@ -101,16 +106,19 @@ export default function TabBar() {
   };
 
   return (
-    <View className="absolute bottom-8 left-4 right-4 items-center">
+    <View 
+      className="absolute left-3 right-3 items-center"
+      style={{ bottom: bottomPadding }}
+    >
       {/* Glass + Clay style container */}
       <View 
-        className="flex-row bg-white/95 rounded-3xl px-4 py-2 items-center justify-around w-full max-w-sm border-2 border-white"
+        className="flex-row bg-white/95 rounded-2xl px-3 py-1.5 items-center justify-around w-full max-w-sm border-2 border-white"
         style={{
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.15,
-          shadowRadius: 20,
-          elevation: 10,
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.12,
+          shadowRadius: 16,
+          elevation: 8,
         }}
       >
         {TABS.map((tab) => {

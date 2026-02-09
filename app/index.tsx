@@ -95,30 +95,32 @@ function HomeScreenContent() {
           />
         }
       >
-        {/* Fairy Section - Enhanced with Clay style */}
-        <Animated.View entering={FadeIn.duration(600)} className="items-center py-8">
+        {/* Fairy Section - Compact */}
+        <Animated.View entering={FadeIn.duration(600)} className="items-center pt-4 pb-2">
           <FairyCharacter
             emotion={fairyEmotion}
             message={greeting}
-            size="lg"
+            size="md"
             showMessage
           />
-          {/* Star Counter - Clay style pill */}
-          <View className="mt-4 bg-white px-6 py-3 rounded-2xl shadow-clay-md border-2 border-white">
-            <Text className="font-bold text-amber-600 text-base">
-              ⭐ 모은 별: {totalStars}개
-            </Text>
-          </View>
         </Animated.View>
 
-        {/* Journey Map Title - Enhanced */}
-        <View className="px-6 mb-3">
-          <Text className="text-2xl font-bold text-gray-700 font-sans">
-            🗺️ 오늘의 여정
-          </Text>
-          <Text className="text-gray-400 text-sm mt-1">
-            오른쪽으로 스와이프해서 미션을 확인하세요 👉
-          </Text>
+        {/* Journey Header with Star Counter */}
+        <View className="px-5 mb-2 flex-row items-center justify-between">
+          <View>
+            <Text className="text-xl font-bold text-gray-700 font-sans">
+              🗺️ 오늘의 여정
+            </Text>
+            <Text className="text-gray-400 text-xs mt-0.5">
+              스와이프해서 미션 확인 👉
+            </Text>
+          </View>
+          {/* Star Counter - Integrated */}
+          <View className="bg-white px-4 py-2 rounded-2xl shadow-clay-sm border border-amber-100">
+            <Text className="font-bold text-amber-600 text-sm">
+              ⭐ {totalStars}개
+            </Text>
+          </View>
         </View>
 
         {/* Horizontal ScrollView (Journey Map) */}
@@ -129,15 +131,15 @@ function HomeScreenContent() {
             contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 16 }}
             className="flex-row"
             decelerationRate="fast"
-            snapToInterval={300} // card width (approx) + margin
+            snapToInterval={272} // card width (256px) + margin (16px)
           >
             {safeMissions.length === 0 ? (
-              <View className="w-80 h-72 bg-white rounded-4xl items-center justify-center shadow-clay-lg mx-2 border-2 border-magic-lavender/30 p-6">
-                <Text className="text-6xl mb-4">✨</Text>
-                <Text className="text-gray-600 text-center mb-4 font-bold text-lg">
+              <View className="w-64 h-56 bg-white rounded-3xl items-center justify-center shadow-clay-md mx-2 border border-magic-lavender/30 p-4">
+                <Text className="text-5xl mb-3">✨</Text>
+                <Text className="text-gray-600 text-center mb-2 font-bold text-base">
                   아직 미션이 없어요!
                 </Text>
-                <Text className="text-gray-400 text-center text-sm">
+                <Text className="text-gray-400 text-center text-xs">
                   설정에서 미션을 추가해주세요 🎯
                 </Text>
               </View>
@@ -157,12 +159,12 @@ function HomeScreenContent() {
               ))
             )}
             
-            {/* End of Journey Placeholder - Enhanced */}
+            {/* End of Journey Placeholder */}
              {safeMissions.length > 0 && (
-              <View className="w-24 h-96 items-center justify-center ml-2">
-                <View className="bg-white/80 rounded-3xl p-4 shadow-clay-sm border border-white">
-                  <Text className="text-3xl">🏁</Text>
-                  <Text className="text-xs text-gray-500 mt-2 font-bold text-center">도착!</Text>
+              <View className="w-16 h-72 items-center justify-center ml-1">
+                <View className="bg-white/80 rounded-2xl p-3 shadow-clay-sm border border-white">
+                  <Text className="text-2xl">🏁</Text>
+                  <Text className="text-[10px] text-gray-500 mt-1 font-bold text-center">도착!</Text>
                 </View>
               </View>
             )}
