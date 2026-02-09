@@ -17,7 +17,8 @@ module.exports = {
         'clay-pressed': 'inset 2px 2px 4px rgba(0, 0, 0, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 1)',
       },
       fontFamily: {
-        sans: ['Nunito', 'System'],
+        sans: ['Jua', 'Nunito', 'System'],
+        'jua': ['Jua'],
       },
     },
   },

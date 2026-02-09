@@ -1,7 +1,7 @@
 import '../global.css';
 import React, { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { View, Pressable, Text } from 'react-native';
+import { View, Pressable, Text, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
@@ -36,15 +36,35 @@ export default function RootLayout() {
   const segment = segments[0] || 'index';
   const showTabBar = ['index', 'rewards', 'manage', 'dashboard'].includes(segment);
 
+  const isWeb = Platform.OS === 'web';
+
   return (
     <ErrorBoundary fallbackMessage="Something went wrong">
       <StatusBar style="dark" />
-      <View className="flex-1 bg-magic-bg">
+      {/* 
+        On Web, we constrain the app to a mobile-like frame.
+        We center it and apply a max-width.
+      */}
+      <View 
+        className="flex-1 bg-magic-bg"
+        style={isWeb ? {
+          maxWidth: 480,
+          width: '100%',
+          alignSelf: 'center',
+          height: '100%',
+          // On web, View maps to a div, so these styles work.
+          // We add a subtle shadow and rounded corners for effect if not full screen on mobile.
+          // But usually mobile apps are full screen. Let's stick to the prompt's request.
+          boxShadow: '0 0 40px rgba(0,0,0,0.2)',
+          minHeight: '100vh',
+        } : {}}
+      >
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: '#F5F3FF' }, // magic-bg
             headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: 'Nunito', fontWeight: 'bold', color: '#4B5563' },
+            // Use Jua font for headers too, fallback to system
+            headerTitleStyle: { fontFamily: 'Jua', fontWeight: 'bold', color: '#4B5563' },
             headerTitleAlign: 'center',
             contentStyle: { backgroundColor: '#F5F3FF' },
           }}
