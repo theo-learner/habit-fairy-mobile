@@ -149,11 +149,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       ]);
 
       // 🌟 진화 시스템 연동: 미션 완료 시 경험치 획득 (별 1개 = 5 EXP)
-      const expGain = safeStarReward * 5;
-      // Lazy import to avoid circular dependency
-      import('@/store/usePetStore').then(({ usePetStore }) => {
-        usePetStore.getState().gainExp(expGain);
-      });
+      // TODO: Re-enable after fixing PetFactory initialization
+      // const expGain = safeStarReward * 5;
+      // import('@/store/usePetStore').then(({ usePetStore }) => {
+      //   usePetStore.getState().gainExp(expGain);
+      // });
     } catch (e) {
       console.error('[HabitFairy] completeMission 실패:', e);
     }
