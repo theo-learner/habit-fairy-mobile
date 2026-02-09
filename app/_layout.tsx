@@ -2,6 +2,7 @@ import '../global.css';
 import React, { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, Pressable, Text, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
@@ -45,24 +46,20 @@ export default function RootLayout() {
         On Web, we constrain the app to a mobile-like frame.
         We center it and apply a max-width.
       */}
-      <View 
+      <LinearGradient
+        colors={['#FFD1DC', '#E6E6FA', '#D1F2EB']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         className="flex-1"
-        style={[
-          { 
-            // Soft Pastel Gradient Background
-            background: 'linear-gradient(to bottom right, #FFD1DC, #E6E6FA, #D1F2EB)',
-            backgroundColor: '#FFF5F5', // Fallback
-          },
-          isWeb ? {
-            maxWidth: 480,
-            width: '100%',
-            alignSelf: 'center',
-            height: '100%',
-            boxShadow: '0 0 40px rgba(0,0,0,0.1)',
-            minHeight: '100vh',
-            fontFamily: 'Quicksand, sans-serif',
-          } : {}
-        ]}
+        style={isWeb ? {
+          maxWidth: 480,
+          width: '100%',
+          alignSelf: 'center',
+          height: '100%',
+          boxShadow: '0 0 40px rgba(0,0,0,0.1)',
+          minHeight: '100vh',
+          fontFamily: 'Quicksand, sans-serif',
+        } : {}}
       >
         <Stack
           screenOptions={{
@@ -93,7 +90,7 @@ export default function RootLayout() {
           onClose={() => setGateVisible(false)} 
           onSuccess={handleGateSuccess} 
         />
-      </View>
+      </LinearGradient>
     </ErrorBoundary>
   );
 }

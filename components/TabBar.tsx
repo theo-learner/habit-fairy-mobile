@@ -23,10 +23,10 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   { name: 'index', label: '홈', icon: '🏠', path: '/', activeColor: '#FFB7B2' },
-  { name: 'character', label: '친구', icon: '🎭', path: '/character', activeColor: '#C7CEEA' },
-  { name: 'rewards', label: '꾸미기', icon: '👗', path: '/rewards', activeColor: '#FFDAC1' },
-  { name: 'dashboard', label: '기록', icon: '📊', path: '/dashboard', activeColor: '#B5EAD7' },
-  { name: 'manage', label: '관리', icon: '⚙️', path: '/manage', activeColor: '#888888', protected: true },
+  { name: 'character', label: '친구', icon: '🧸', path: '/character', activeColor: '#C7CEEA' },
+  { name: 'rewards', label: '꾸미기', icon: '🎀', path: '/rewards', activeColor: '#FFDAC1' },
+  { name: 'dashboard', label: '기록', icon: '📈', path: '/dashboard', activeColor: '#B5EAD7' },
+  { name: 'manage', label: '설정', icon: '🔧', path: '/manage', activeColor: '#C7CEEA', protected: true },
 ];
 
 function TabButton({ 

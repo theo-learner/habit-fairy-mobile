@@ -46,18 +46,11 @@ function PaginationDots({
           <Pressable
             key={index}
             onPress={() => onDotPress?.(index)}
-            className={`
-              rounded-full transition-all
-              ${isActive 
-                ? 'w-6 h-2 bg-magic-purple' 
-                : 'w-2 h-2 bg-gray-300'
-              }
-            `}
+            className="rounded-full"
             style={{
-              shadowColor: isActive ? '#9333EA' : 'transparent',
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: isActive ? 0.4 : 0,
-              shadowRadius: 4,
+              width: isActive ? 24 : 8,
+              height: 8,
+              backgroundColor: isActive ? '#FFB7B2' : 'rgba(199, 206, 234, 0.5)',
             }}
           />
         );
@@ -180,29 +173,68 @@ function HomeScreenContent() {
           />
         </Animated.View>
 
-        {/* Journey Header with Star Counter */}
-        <View className="px-5 mb-2 flex-row items-center justify-between">
-          <View>
-            <Text className="text-xl font-bold text-gray-700 font-sans">
-              🗺️ 오늘의 여정
-            </Text>
-            <Text className="text-gray-400 text-xs mt-0.5">
-              스와이프해서 미션 확인 👉
-            </Text>
+        {/* Progress Card - 오늘의 진행률 */}
+        <Animated.View 
+          entering={FadeIn.delay(200).duration(500)}
+          className="mx-5 mb-4 p-4 rounded-3xl"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.8)',
+          }}
+        >
+          <View className="flex-row items-center justify-between mb-3">
+            <View>
+              <Text className="text-sm text-gray-500 font-semibold">오늘의 진행률</Text>
+              <Text className="text-lg font-bold text-gray-700">
+                {safeMissions.length > 0 
+                  ? allDone 
+                    ? '모두 완료! 🎉' 
+                    : `${todayCompletedCount}/${safeMissions.length} 완료`
+                  : '미션을 추가해주세요'}
+              </Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-3xl">
+                {allDone ? '🏆' : todayCompletedCount > 0 ? '🔥' : '💪'}
+              </Text>
+            </View>
           </View>
-          {/* Star Counter - Glass style */}
-          <View 
-            className="px-4 py-2 rounded-2xl"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.5)',
-              borderWidth: 1,
-              borderColor: 'rgba(255, 255, 255, 0.6)',
-            }}
-          >
-            <Text className="font-bold text-sm" style={{ color: '#FF9AA2' }}>
-              💎 {totalStars}개
-            </Text>
+          {/* Progress Bar */}
+          <View className="h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+            <View 
+              className="h-full rounded-full"
+              style={{ 
+                width: safeMissions.length > 0 ? `${(todayCompletedCount / safeMissions.length) * 100}%` : '0%',
+                backgroundColor: allDone ? '#B5EAD7' : '#FFB7B2',
+              }}
+            />
           </View>
+          {/* Stats Row */}
+          <View className="flex-row justify-around mt-3 pt-3" style={{ borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.5)' }}>
+            <View className="items-center">
+              <Text className="text-2xl">💎</Text>
+              <Text className="text-sm font-bold text-gray-600">{totalStars}</Text>
+              <Text className="text-xs text-gray-400">보석</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl">📅</Text>
+              <Text className="text-sm font-bold text-gray-600">5</Text>
+              <Text className="text-xs text-gray-400">연속일</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl">⭐</Text>
+              <Text className="text-sm font-bold text-gray-600">Lv.3</Text>
+              <Text className="text-xs text-gray-400">레벨</Text>
+            </View>
+          </View>
+        </Animated.View>
+
+        {/* Journey Header */}
+        <View className="px-5 mb-2">
+          <Text className="text-lg font-bold text-gray-700 font-sans">
+            🗺️ 오늘의 미션
+          </Text>
         </View>
 
         {/* Horizontal ScrollView (Journey Map) */}

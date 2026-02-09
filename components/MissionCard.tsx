@@ -222,47 +222,40 @@ export default function MissionCard({
           ${isCompleted ? 'opacity-95' : ''}
         `}
       >
-        {/* Confetti Effect for Completed */}
-        {isCompleted && (
-          <>
-            <View className="absolute inset-0 pointer-events-none overflow-hidden rounded-4xl">
-              <View className="absolute top-1/2 left-8"><Confetti delay={0} color="#FF6B6B" size={12} /></View>
-              <View className="absolute top-1/3 right-8"><Confetti delay={150} color="#4ECDC4" size={10} /></View>
-              <View className="absolute bottom-1/3 left-16"><Confetti delay={300} color="#FFE66D" size={14} /></View>
-              <View className="absolute top-1/2 left-1/2"><Confetti delay={450} color="#A8E6CF" size={8} /></View>
-              <View className="absolute bottom-1/4 right-16"><Confetti delay={600} color="#FF9FF3" size={11} /></View>
-              <View className="absolute top-1/4 left-1/3"><Confetti delay={750} color="#54A0FF" size={9} /></View>
-            </View>
-            <View className="absolute top-0 left-0 right-0 items-center -mt-5 z-20">
-              <Animated.View entering={ZoomIn.delay(200).springify()}>
-                <Text className="text-5xl">🎉</Text>
-              </Animated.View>
-            </View>
-          </>
-        )}
-
-        {/* Status Badge - Clay style */}
-        <View className="absolute top-4 right-4 z-10">
+        {/* Status Badge - Top Right */}
+        <View className="absolute top-3 right-3 z-10">
           {isCompleted ? (
-            <View className="bg-magic-lime px-4 py-1.5 rounded-full shadow-clay-sm border-2 border-white">
-              <Text className="text-white font-bold text-xs">완료! ✨</Text>
+            <View 
+              className="px-3 py-1.5 rounded-full"
+              style={{ backgroundColor: '#B5EAD7' }}
+            >
+              <Text className="text-white font-bold text-xs">완료 ✓</Text>
             </View>
           ) : (
-            <View className={`${theme.badge} px-4 py-1.5 rounded-full shadow-clay-sm border-2 border-white/50`}>
-              <Text className="text-white font-bold text-xs">도전! 💪</Text>
+            <View 
+              className="px-3 py-1.5 rounded-full"
+              style={{ backgroundColor: '#FFB7B2' }}
+            >
+              <Text className="text-white font-bold text-xs">도전!</Text>
             </View>
           )}
         </View>
 
-        {/* Icon Area - Compact Clay 3D style */}
-        <View className="mt-6 mb-2">
+        {/* Icon Area - Unified style */}
+        <View className="mt-8 mb-2">
           {isCompleted ? (
-            <View className="w-20 h-20 rounded-full bg-magic-mint items-center justify-center shadow-clay-md border-2 border-white">
+            <View 
+              className="w-20 h-20 rounded-full items-center justify-center"
+              style={{ backgroundColor: 'rgba(181, 234, 215, 0.3)' }}
+            >
               <Text className="text-4xl">{mission.icon}</Text>
             </View>
           ) : (
             <BouncingIcon>
-              <View className="w-20 h-20 rounded-full bg-white items-center justify-center shadow-clay-md border-2 border-white">
+              <View 
+                className="w-20 h-20 rounded-full items-center justify-center"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
                 <Text className="text-4xl">{mission.icon}</Text>
               </View>
             </BouncingIcon>
@@ -278,27 +271,37 @@ export default function MissionCard({
             {mission.description}
           </Text>
           
-          {/* Info Pills - Compact */}
-          <View className="flex-row gap-1.5">
+          {/* Info Pills */}
+          <View className="flex-row gap-2">
             {mission.timerSeconds > 0 && (
-              <View className="bg-white px-2.5 py-1 rounded-xl shadow-clay-sm border border-gray-100">
-                <Text className="text-[10px] text-gray-600 font-bold">⏱ {formatTimer(mission.timerSeconds)}</Text>
+              <View 
+                className="px-3 py-1 rounded-full"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+              >
+                <Text className="text-xs text-gray-600 font-semibold">⏱ {formatTimer(mission.timerSeconds)}</Text>
               </View>
             )}
-            <View className="bg-magic-yellow/20 px-2.5 py-1 rounded-xl shadow-clay-sm border border-yellow-200">
-              <Text className="text-[10px] text-yellow-700 font-bold">⭐ {mission.starReward}</Text>
+            <View 
+              className="px-3 py-1 rounded-full"
+              style={{ backgroundColor: 'rgba(255, 218, 193, 0.5)' }}
+            >
+              <Text className="text-xs font-semibold" style={{ color: '#FF9AA2' }}>⭐ {mission.starReward}</Text>
             </View>
           </View>
         </View>
 
-        {/* Action Button - Compact */}
-        <View className={`
-          w-full py-2.5 rounded-xl mt-2 items-center
-          ${isCompleted ? 'bg-gray-100 shadow-clay-inner' : `${theme.badge} shadow-clay-sm`}
-          border border-white/50
-        `}>
-          <Text className={`font-bold text-sm ${isCompleted ? 'text-gray-400' : 'text-white'}`}>
-            {isCompleted ? '👀 다시 보기' : '🚀 시작하기'}
+        {/* Action Button */}
+        <View 
+          className="w-full py-3 rounded-2xl mt-2 items-center"
+          style={{ 
+            backgroundColor: isCompleted ? 'rgba(181, 234, 215, 0.5)' : '#FFB7B2',
+          }}
+        >
+          <Text 
+            className="font-bold text-sm"
+            style={{ color: isCompleted ? '#666' : '#fff' }}
+          >
+            {isCompleted ? '✅ 기록 보기' : '🚀 시작하기'}
           </Text>
         </View>
 
