@@ -72,6 +72,20 @@ function HomeScreenContent() {
   const loadData = useAppStore((s) => s.loadData);
   const isMissionCompletedToday = useAppStore((s) => s.isMissionCompletedToday);
   const getTodayCompleted = useAppStore((s) => s.getTodayCompleted);
+  const getStreakDays = useAppStore((s) => s.getStreakDays);
+
+  // 연속 달성일 계산
+  const streakDays = getStreakDays();
+
+  // 레벨 계산 (별 기반: 0-9=Lv.1, 10-29=Lv.2, 30-59=Lv.3, 60-99=Lv.4, 100+=Lv.5)
+  const calculateLevel = (stars: number): number => {
+    if (stars >= 100) return 5;
+    if (stars >= 60) return 4;
+    if (stars >= 30) return 3;
+    if (stars >= 10) return 2;
+    return 1;
+  };
+  const currentLevel = calculateLevel(totalStars);
 
   const [refreshing, setRefreshing] = React.useState(false);
   const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
@@ -219,12 +233,12 @@ function HomeScreenContent() {
             </View>
             <View className="items-center">
               <Text className="text-2xl">📅</Text>
-              <Text className="text-sm font-bold text-gray-600">5</Text>
+              <Text className="text-sm font-bold text-gray-600">{streakDays}</Text>
               <Text className="text-xs text-gray-400">연속일</Text>
             </View>
             <View className="items-center">
               <Text className="text-2xl">⭐</Text>
-              <Text className="text-sm font-bold text-gray-600">Lv.3</Text>
+              <Text className="text-sm font-bold text-gray-600">Lv.{currentLevel}</Text>
               <Text className="text-xs text-gray-400">레벨</Text>
             </View>
           </View>
