@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        
+        body { margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; background: #f0f0f3; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        .device {
+            width: 375px; height: 750px; 
+            /* Space Gradient */
+            background: linear-gradient(180deg, #141E30 0%, #243B55 100%);
+            border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column;
+        }
+
+        /* Dark Mode Claymorphism */
+        .clay-card {
+            background: rgba(40, 50, 80, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 
+                8px 8px 16px 0 rgba(0, 0, 0, 0.4),
+                -4px -4px 12px 0 rgba(255, 255, 255, 0.1) inset;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .clay-btn {
+            border-radius: 50px;
+            box-shadow: 
+                4px 4px 8px 0 rgba(0,0,0,0.3),
+                -2px -2px 6px 0 rgba(255,255,255,0.2) inset;
+        }
+
+        .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+        .logo { font-size: 24px; font-weight: 700; color: #E0C3FC; text-shadow: 0 0 10px #E0C3FC; }
+        .menu-btn { width: 40px; height: 40px; background: #3a506b; display: grid; place-items: center; font-size: 20px; color: #fff; }
+
+        /* Space Elements */
+        .star { position: absolute; background: #fff; border-radius: 50%; opacity: 0.8; animation: twinkle 2s infinite ease-in-out; }
+        .s1 { top: 50px; left: 40px; width: 4px; height: 4px; }
+        .s2 { top: 120px; right: 60px; width: 6px; height: 6px; animation-delay: 0.5s; }
+        .s3 { top: 300px; left: 20px; width: 3px; height: 3px; animation-delay: 1s; }
+        
+        .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 1; }
+        
+        .character-container {
+            width: 200px; height: 200px; 
+            background: #4834d4; 
+            background: radial-gradient(circle at 30% 30%, #686de0, #4834d4);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 30px rgba(104, 109, 224, 0.6), -10px -10px 40px rgba(255,255,255,0.3) inset;
+            margin-bottom: 20px;
+            border: 4px solid rgba(255,255,255,0.1);
+        }
+        .character-emoji { font-size: 100px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.4)); }
+
+        .missions { padding: 20px; padding-bottom: 40px; z-index: 2; }
+        .section-title { font-size: 18px; color: #fff; margin-bottom: 15px; font-weight: 600; }
+        
+        .mission-card {
+            display: flex; align-items: center; padding: 15px; margin-bottom: 15px;
+            /* Override for item card */
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        .icon-box {
+            width: 50px; height: 50px; border-radius: 15px; margin-right: 15px;
+            display: flex; justify-content: center; align-items: center; font-size: 24px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .m-title { font-weight: 700; color: #fff; font-size: 16px; margin-bottom: 4px; }
+        .m-desc { color: #a4b0be; font-size: 12px; }
+
+        /* Palette */
+        .palette { position: absolute; bottom: 0; width: 100%; height: 60px; background: #1e272e; display: flex; justify-content: space-around; align-items: center; z-index: 3; }
+        .swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+    </style>
+</head>
+<body>
+    <div class="device">
+        <div class="star s1"></div>
+        <div class="star s2"></div>
+        <div class="star s3"></div>
+
+        <div class="header">
+            <div class="logo">Galaxy Habit</div>
+            <div class="clay-btn menu-btn">🪐</div>
+        </div>
+
+        <div class="hero">
+            <div class="character-container">
+                <div class="character-emoji">👩‍🚀</div>
+            </div>
+            <div style="background: #686de0; padding: 8px 16px; border-radius: 20px; font-weight: 700; color: #fff; box-shadow: 0 0 10px #686de0;">
+                Lv. 9 Pilot
+            </div>
+        </div>
+
+        <div class="missions">
+            <div class="section-title">Mission Control</div>
+            
+            <div class="clay-card mission-card">
+                <div class="icon-box">🛌</div>
+                <div class="m-info">
+                    <div class="m-title">Sleep Pod</div>
+                    <div class="m-desc">Go to bed by 9 PM</div>
+                </div>
+                <div style="font-size: 20px;">⭐</div>
+            </div>
+
+            <div class="clay-card mission-card">
+                <div class="icon-box">💧</div>
+                <div class="m-info">
+                    <div class="m-title">Fuel Up</div>
+                    <div class="m-desc">Drink a cup of water</div>
+                </div>
+                <div style="width: 24px; height: 24px; border: 2px solid #686de0; border-radius: 50%;"></div>
+            </div>
+        </div>
+
+        <div class="palette">
+            <div class="swatch" style="background: #141E30"></div>
+            <div class="swatch" style="background: #686de0"></div>
+            <div class="swatch" style="background: #E0C3FC"></div>
+            <div class="swatch" style="background: #f1c40f"></div>
+            <div style="font-size: 10px; color: #999; position: absolute; right: 10px; bottom: 5px;">Theme C: Space Explorer</div>
+        </div>
+    </div>
+</body>
+</html>
