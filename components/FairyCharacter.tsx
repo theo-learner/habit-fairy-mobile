@@ -171,17 +171,17 @@ export default function FairyCharacter({
         <Svg width={cfg.svgSize} height={cfg.svgSize} viewBox="0 0 100 100">
           <Defs>
             <LinearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0%" stopColor="#FFF5E6" />
-              <Stop offset="100%" stopColor="#FFE0B2" />
+              <Stop offset="0%" stopColor="#FFEDD5" />
+              <Stop offset="100%" stopColor="#FFD8A8" />
             </LinearGradient>
             <LinearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0%" stopColor="#FDBA74" />
-              <Stop offset="100%" stopColor="#FB923C" />
+              <Stop offset="0%" stopColor="#FB923C" />
+              <Stop offset="100%" stopColor="#F97316" />
             </LinearGradient>
             <LinearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0%" stopColor="#E0F2FE" stopOpacity={0.9} />
-              <Stop offset="50%" stopColor="#BAE6FD" stopOpacity={0.6} />
-              <Stop offset="100%" stopColor="#7DD3FC" stopOpacity={0.3} />
+              <Stop offset="0%" stopColor="#E0F2FE" stopOpacity={1} />
+              <Stop offset="50%" stopColor="#BAE6FD" stopOpacity={0.9} />
+              <Stop offset="100%" stopColor="#7DD3FC" stopOpacity={0.8} />
             </LinearGradient>
              <RadialGradient id="cheek" cx="50%" cy="50%" rx="50%" ry="50%">
                <Stop offset="0%" stopColor="#FDA4AF" stopOpacity={0.6} />
@@ -197,19 +197,19 @@ export default function FairyCharacter({
           */}
           <G transform="translate(0, 10)">
              {/* Left Wing */}
-             <Path d="M20 40 C 0 20, 10 0, 40 30 C 10 40, 0 60, 25 55 Z" fill="url(#wingGrad)" stroke="#BAE6FD" strokeWidth="0.5" opacity={0.8} transform="rotate(-10 40 40)" />
+             <Path d="M20 40 C 0 20, 10 0, 40 30 C 10 40, 0 60, 25 55 Z" fill="url(#wingGrad)" stroke="#38BDF8" strokeWidth="1" transform="rotate(-10 40 40)" />
              {/* Right Wing */}
-             <Path d="M80 40 C 100 20, 90 0, 60 30 C 90 40, 100 60, 75 55 Z" fill="url(#wingGrad)" stroke="#BAE6FD" strokeWidth="0.5" opacity={0.8} transform="rotate(10 60 40)" />
+             <Path d="M80 40 C 100 20, 90 0, 60 30 C 90 40, 100 60, 75 55 Z" fill="url(#wingGrad)" stroke="#38BDF8" strokeWidth="1" transform="rotate(10 60 40)" />
           </G>
 
           {/* Hair Back */}
           <Circle cx="50" cy="45" r="26" fill="url(#hairGrad)" />
 
           {/* Face Shape */}
-          <Circle cx="50" cy="50" r="22" fill="url(#faceGrad)" stroke="#FED7AA" strokeWidth="0.5" />
+          <Circle cx="50" cy="50" r="22" fill="url(#faceGrad)" stroke="#FDBA74" strokeWidth="1" />
 
           {/* Hair Front (Bangs) */}
-          <Path d="M28 40 Q 50 20 72 40 Q 75 45 72 48 Q 50 30 28 48 Q 25 45 28 40" fill="url(#hairGrad)" />
+          <Path d="M28 40 Q 50 20 72 40 Q 75 45 72 48 Q 50 30 28 48 Q 25 45 28 40" fill="url(#hairGrad)" stroke="#F97316" strokeWidth="0.5" />
 
           {/* Eyes */}
           <Path d={eyes.left} stroke="#4B5563" strokeWidth="2.5" strokeLinecap="round" fill="none" />
