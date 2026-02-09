@@ -156,10 +156,12 @@ export const CATEGORY_LABELS: Record<MissionCategory, string> = {
   morning: '🌅 아침 루틴',
   daytime: '☀️ 낮 활동',
   evening: '🌙 저녁 루틴',
+  study: '📖 공부 시간',
+  health: '💪 건강 지키기',
 };
 
 /** 카테고리 순서 */
-export const CATEGORY_ORDER: MissionCategory[] = ['morning', 'daytime', 'evening'];
+export const CATEGORY_ORDER: MissionCategory[] = ['morning', 'daytime', 'study', 'health', 'evening'];
 
 /** 커스텀 미션 목록 로드 — 배열 유효성 검증 */
 export async function getCustomMissions(): Promise<Mission[]> {
@@ -270,6 +272,8 @@ export function groupMissionsByCategory(
     morning: [],
     daytime: [],
     evening: [],
+    study: [],
+    health: [],
   };
   const safeMissions = Array.isArray(missions) ? missions : [];
   for (const m of safeMissions) {

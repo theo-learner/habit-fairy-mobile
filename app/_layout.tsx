@@ -1,123 +1,79 @@
-// ============================================
-// 루트 레이아웃 — 탭 네비게이션
-// ErrorBoundary로 각 탭 화면 감싸기
-// 관리 탭 추가
-// ============================================
-
-import React, { useEffect } from 'react';
-import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
+import '../global.css';
+import React, { useEffect, useState } from 'react';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { View, Pressable, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
-
-/** 탭 아이콘 컴포넌트 */
-function TabIcon({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) {
-  return (
-    <View style={styles.tabIcon}>
-      <Text style={[styles.tabEmoji, focused && styles.tabEmojiActive]}>{emoji}</Text>
-      <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>{label}</Text>
-    </View>
-  );
-}
+import TabBar from '@/components/TabBar';
+import ParentsGate from '@/components/ParentsGate';
 
 export default function RootLayout() {
   const loadData = useAppStore((s) => s.loadData);
+  const router = useRouter();
+  const segments = useSegments();
+  const [gateVisible, setGateVisible] = useState(false);
 
-  // 앱 시작 시 데이터 로드
+  // Load data on startup
   useEffect(() => {
     loadData().catch((e) => {
-      console.error('[HabitFairy] 초기 데이터 로드 실패:', e);
+      console.error('[HabitFairy] Data load failed:', e);
     });
   }, []);
 
+  const handleSettingsPress = () => {
+    setGateVisible(true);
+  };
+
+  const handleGateSuccess = () => {
+    router.push('/manage');
+  };
+
+  // Determine if we should show the TabBar
+  // Show only on main screens: index, rewards, dashboard
+  // Manage is also a main screen but protected. 
+  // We'll show tab bar on these pages.
+  const segment = segments[0] || 'index';
+  const showTabBar = ['index', 'rewards', 'manage', 'dashboard'].includes(segment);
+
   return (
-    <ErrorBoundary fallbackMessage="앱을 시작하는 중 문제가 발생했어요">
+    <ErrorBoundary fallbackMessage="Something went wrong">
       <StatusBar style="dark" />
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: styles.tabBar,
-          tabBarShowLabel: false,
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TabIcon emoji="🏠" label="홈" focused={focused} />
-            ),
+      <View className="flex-1 bg-magic-bg">
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: '#F5F3FF' }, // magic-bg
+            headerShadowVisible: false,
+            headerTitleStyle: { fontFamily: 'Nunito', fontWeight: 'bold', color: '#4B5563' },
+            headerTitleAlign: 'center',
+            contentStyle: { backgroundColor: '#F5F3FF' },
           }}
+        >
+          <Stack.Screen 
+            name="index" 
+            options={{ 
+              title: '습관요정 별이',
+              headerRight: () => (
+                <Pressable onPress={handleSettingsPress} className="p-2">
+                  <Text className="text-2xl">⚙️</Text>
+                </Pressable>
+              ),
+            }} 
+          />
+          <Stack.Screen name="rewards" options={{ title: '꾸미기' }} />
+          <Stack.Screen name="manage" options={{ title: '미션 관리' }} />
+          <Stack.Screen name="dashboard" options={{ title: '대시보드' }} />
+          <Stack.Screen name="mission/[id]" options={{ title: '미션 수행', headerShown: false }} />
+        </Stack>
+
+        {showTabBar && <TabBar />}
+
+        <ParentsGate 
+          visible={gateVisible} 
+          onClose={() => setGateVisible(false)} 
+          onSuccess={handleGateSuccess} 
         />
-        <Tabs.Screen
-          name="rewards"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TabIcon emoji="👗" label="꾸미기" focused={focused} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="manage"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TabIcon emoji="⚙️" label="관리" focused={focused} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="dashboard"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TabIcon emoji="📊" label="대시보드" focused={focused} />
-            ),
-          }}
-        />
-        {/* 미션 실행 화면 — 탭에서 숨김 */}
-        <Tabs.Screen
-          name="mission/[id]"
-          options={{
-            href: null, // 탭에 표시하지 않음
-          }}
-        />
-      </Tabs>
+      </View>
     </ErrorBoundary>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
-    height: 80,
-    paddingBottom: 16,
-    paddingTop: 8,
-    // 그림자
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  tabIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
-  },
-  tabEmoji: {
-    fontSize: 24,
-  },
-  tabEmojiActive: {
-    fontSize: 28,
-  },
-  tabLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#9CA3AF',
-  },
-  tabLabelActive: {
-    color: '#F59E0B',
-    fontWeight: '700',
-  },
-});

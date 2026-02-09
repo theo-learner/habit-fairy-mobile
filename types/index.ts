@@ -2,8 +2,8 @@
 // 습관요정 (HabitFairy) Mobile — 타입 정의
 // ============================================
 
-/** 미션 카테고리 (시간대) */
-export type MissionCategory = 'morning' | 'daytime' | 'evening';
+/** 미션 카테고리 (시간대 + 활동) */
+export type MissionCategory = 'morning' | 'daytime' | 'evening' | 'study' | 'health';
 
 /** 미션 정의 */
 export interface Mission {

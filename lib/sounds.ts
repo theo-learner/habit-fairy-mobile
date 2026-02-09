@@ -23,6 +23,9 @@ export async function playCompleteHaptic(): Promise<void> {
   }
 }
 
+/** 성공 사운드 (Haptic alias) */
+export const playSuccessSound = playCompleteHaptic;
+
 /** 별 획득 햅틱 — 중간 탭 */
 export async function playStarHaptic(): Promise<void> {
   try {

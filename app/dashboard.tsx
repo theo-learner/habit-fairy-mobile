@@ -23,8 +23,39 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useAppStore } from '@/lib/store';
 import { MISSION_ICONS as ICON_OPTIONS } from '@/types';
+import { CATEGORY_LABELS, CATEGORY_ORDER } from '@/lib/missions';
 import { playButtonHaptic } from '@/lib/sounds';
 import type { MissionCategory } from '@/types';
+
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  withSpring,
+} from 'react-native-reanimated';
+
+/** 불꽃 아이콘 애니메이션 */
+function FlameIcon() {
+  const scale = useSharedValue(1);
+  React.useEffect(() => {
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.2, { duration: 600 }),
+        withTiming(1.0, { duration: 600 }),
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return <Animated.Text style={[styles.summaryEmoji, animatedStyle]}>🔥</Animated.Text>;
+}
 
 /** 주간 막대 그래프 */
 function WeeklyBar({ day, rate, maxHeight = 100 }: { day: string; rate: number; maxHeight?: number }) {
@@ -196,7 +227,7 @@ export default function DashboardScreen() {
             <Text style={styles.summaryLabel}>모은 별</Text>
           </View>
           <View style={styles.summaryCard}>
-            <Text style={styles.summaryEmoji}>🔥</Text>
+            <FlameIcon />
             <Text style={[styles.summaryValue, { color: '#EF4444' }]}>{streakDays}일</Text>
             <Text style={styles.summaryLabel}>연속 달성</Text>
           </View>
@@ -341,15 +372,16 @@ export default function DashboardScreen() {
               )}
             </ScrollView>
 
-            {/* 시간대 */}
-            <Text style={styles.fieldLabel}>시간대</Text>
-            <View style={styles.categoryRow}>
-              {(['morning', 'daytime', 'evening'] as MissionCategory[]).map((cat) => (
+            {/* 시간대 (카테고리) */}
+            <Text style={styles.fieldLabel}>카테고리</Text>
+            <View style={[styles.categoryRow, { flexWrap: 'wrap' }]}>
+              {CATEGORY_ORDER.map((cat) => (
                 <Pressable
                   key={cat}
                   onPress={() => setNewMissionCategory(cat)}
                   style={[
                     styles.categoryOption,
+                    { minWidth: '30%', marginBottom: 8 },
                     newMissionCategory === cat && styles.categoryOptionActive,
                   ]}
                 >
@@ -359,7 +391,7 @@ export default function DashboardScreen() {
                       newMissionCategory === cat && styles.categoryOptionTextActive,
                     ]}
                   >
-                    {cat === 'morning' ? '🌅 아침' : cat === 'daytime' ? '☀️ 낮' : '🌙 저녁'}
+                    {CATEGORY_LABELS[cat]}
                   </Text>
                 </Pressable>
               ))}

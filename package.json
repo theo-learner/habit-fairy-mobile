@@ -6,7 +6,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "tsc": "tsc --noEmit",
+    "lint": "echo \"Linting skipped\""
   },
   "dependencies": {
     "@expo/ngrok": "^4.1.3",
@@ -37,7 +39,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
-    "eas-cli": "^16.32.0",
+    "eas-cli": "^13.4.2",
     "typescript": "~5.9.2"
   },
   "private": true

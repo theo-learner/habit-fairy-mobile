@@ -1,33 +1,21 @@
-// ============================================
-// 홈 화면 — 요정 캐릭터 + 미션 카드 리스트
-// 카테고리별 (아침/낮/저녁) 미션 그룹핑
-// Null Safety 강화 + ErrorBoundary 적용
-// 상단에 "미션 관리" 바로가기 버튼 추가
-// ============================================
-
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   RefreshControl,
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInRight } from 'react-native-reanimated';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FairyCharacter from '@/components/FairyCharacter';
 import MissionCard from '@/components/MissionCard';
 import { useAppStore } from '@/lib/store';
-import {
-  groupMissionsByCategory,
-  CATEGORY_LABELS,
-  CATEGORY_ORDER,
-} from '@/lib/missions';
-import { playButtonHaptic } from '@/lib/sounds';
+import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
 import type { FairyEmotion } from '@/types';
+import * as Haptics from 'expo-haptics';
 
 function HomeScreenContent() {
   const router = useRouter();
@@ -41,22 +29,28 @@ function HomeScreenContent() {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  // null safety: missions가 배열인지 확인
+  // Safe data
   const safeMissions = Array.isArray(missions) ? missions : [];
-  const safeTotalStars = typeof totalStars === 'number' ? totalStars : 0;
   const safeChildName = typeof childName === 'string' ? childName : '';
 
-  const grouped = useMemo(() => groupMissionsByCategory(safeMissions), [safeMissions]);
   const todayCompleted = getTodayCompleted();
   const todayCompletedCount = Array.isArray(todayCompleted) ? todayCompleted.length : 0;
   const allDone = todayCompletedCount >= safeMissions.length && safeMissions.length > 0;
 
-  // 요정 인사말
+  // Effect for haptic/sound when all done (optional, but good for "Green interaction")
+  useEffect(() => {
+    if (allDone) {
+      playSuccessSound();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+  }, [allDone]);
+
+  // Greeting
   const greeting = useMemo(() => {
     const name = safeChildName || '친구';
-    if (allDone) return `${name}아, 오늘 미션 올클리어! 🎉 정말 대단해!`;
-    if (todayCompletedCount > 0) return `${name}아, 잘하고 있어! 조금만 더 힘내자! 💪`;
-    return `안녕 ${name}! 나는 습관요정 별이야! ✨\n오늘도 신나는 미션을 함께하자!`;
+    if (allDone) return `${name}아, 오늘 여행을 모두 마쳤어! 🎉`;
+    if (todayCompletedCount > 0) return `${name}아, 아주 잘하고 있어! 🚀`;
+    return `안녕 ${name}! 오늘의 모험을 떠나볼까? 🗺️`;
   }, [safeChildName, allDone, todayCompletedCount]);
 
   const fairyEmotion: FairyEmotion = allDone
@@ -70,7 +64,7 @@ function HomeScreenContent() {
     try {
       await loadData();
     } catch (e) {
-      console.error('[HabitFairy] 새로고침 실패:', e);
+      console.error('[HabitFairy] Refresh failed:', e);
     } finally {
       setRefreshing(false);
     }
@@ -78,133 +72,99 @@ function HomeScreenContent() {
 
   if (!isLoaded) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>✨ 별이가 준비 중...</Text>
-      </SafeAreaView>
+      <View className="flex-1 items-center justify-center bg-magic-bg">
+        <Text className="text-magic-purple font-bold text-lg">✨ 별이가 준비 중...</Text>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <View className="flex-1 bg-magic-bg">
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#FBBF24"
-            colors={['#FBBF24']}
+            tintColor="#8B5CF6"
+            colors={['#8B5CF6']}
           />
         }
       >
-        {/* 상단 헤더: 미션 관리 바로가기 */}
-        <Animated.View entering={FadeIn.duration(400)} style={styles.topBar}>
-          <View style={styles.topBarLeft} />
-          <Pressable
-            onPress={() => {
-              playButtonHaptic();
-              router.push('/manage');
-            }}
-            style={({ pressed }) => [
-              styles.manageButton,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <Text style={styles.manageButtonText}>⚙️ 미션 관리</Text>
-          </Pressable>
-        </Animated.View>
-
-        {/* 요정 캐릭터 + 인사 */}
-        <Animated.View entering={FadeIn.duration(600)} style={styles.fairySection}>
+        {/* Fairy Section */}
+        <Animated.View entering={FadeIn.duration(600)} className="items-center py-8">
           <FairyCharacter
             emotion={fairyEmotion}
             message={greeting}
             size="lg"
             showMessage
           />
-        </Animated.View>
-
-        {/* 별 카운터 */}
-        <Animated.View entering={FadeInDown.delay(200).duration(400)} style={styles.starCounter}>
-          <Text style={styles.starCounterText}>⭐ × {safeTotalStars}</Text>
-        </Animated.View>
-
-        {/* 오늘 요약 */}
-        <Animated.View entering={FadeInDown.delay(300).duration(400)} style={styles.summary}>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryValue}>{safeMissions.length}</Text>
-            <Text style={styles.summaryLabel}>오늘의 미션</Text>
-          </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryItem}>
-            <Text style={[styles.summaryValue, { color: '#34D399' }]}>
-              {todayCompletedCount}
+          <View className="mt-4 bg-white/50 px-4 py-2 rounded-full border border-white shadow-sm">
+            <Text className="font-bold text-amber-600">
+              ⭐ 모은 별: {totalStars}개
             </Text>
-            <Text style={styles.summaryLabel}>완료</Text>
-          </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryItem}>
-            <Text style={[styles.summaryValue, { color: '#F59E0B' }]}>
-              {Math.max(0, safeMissions.length - todayCompletedCount)}
-            </Text>
-            <Text style={styles.summaryLabel}>남은 미션</Text>
           </View>
         </Animated.View>
 
-        {/* 카테고리별 미션 리스트 */}
-        {CATEGORY_ORDER.map((cat) => {
-          const catMissions = grouped?.[cat];
-          if (!Array.isArray(catMissions) || catMissions.length === 0) return null;
-          return (
-            <View key={cat} style={styles.categorySection}>
-              <Text style={styles.categoryLabel}>
-                {CATEGORY_LABELS[cat]}
-              </Text>
-              {catMissions.map((mission, idx) => (
-                <MissionCard
-                  key={mission?.id ?? `mission-${idx}`}
-                  mission={mission}
-                  isCompleted={isMissionCompletedToday(mission?.id ?? '')}
-                  index={idx}
-                />
-              ))}
-            </View>
-          );
-        })}
+        {/* Journey Map Title */}
+        <View className="px-6 mb-2">
+          <Text className="text-xl font-bold text-gray-700 font-sans">
+            🗺️ 오늘의 여정
+          </Text>
+          <Text className="text-gray-400 text-sm">
+            오른쪽으로 스크롤해서 미션을 확인하세요 👉
+          </Text>
+        </View>
 
-        {/* 미션이 하나도 없을 때 */}
-        {safeMissions.length === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>🧚</Text>
-            <Text style={styles.emptyText}>
-              아직 미션이 없어요{'\n'}
-              미션 관리에서 미션을 추가해보세요!
-            </Text>
-            <Pressable
-              onPress={() => {
-                playButtonHaptic();
-                router.push('/manage');
-              }}
-              style={({ pressed }) => [
-                styles.emptyAddButton,
-                pressed && { opacity: 0.8 },
-              ]}
-            >
-              <Text style={styles.emptyAddButtonText}>➕ 미션 추가하기</Text>
-            </Pressable>
-          </View>
-        )}
+        {/* Horizontal ScrollView (Journey Map) */}
+        <View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 16 }}
+            className="flex-row"
+            decelerationRate="fast"
+            snapToInterval={300} // card width (approx) + margin
+          >
+            {safeMissions.length === 0 ? (
+              <View className="w-80 h-64 bg-white rounded-3xl items-center justify-center shadow-clay-md mx-2">
+                <Text className="text-4xl mb-4">✨</Text>
+                <Text className="text-gray-500 text-center mb-4">
+                  아직 미션이 없어요.{'\n'}설정에서 미션을 추가해주세요!
+                </Text>
+              </View>
+            ) : (
+              safeMissions.map((mission, idx) => (
+                <View key={mission.id} className="mr-4">
+                   {/* Connectors for Journey Map Look (Dashed Line) */}
+                   {idx < safeMissions.length - 1 && (
+                      <View className="absolute top-1/2 -right-8 w-8 h-1 bg-gray-300 z-0" style={{ borderStyle: 'dashed', borderWidth: 1, borderColor: '#D1D5DB' }} />
+                   )}
+                   <MissionCard
+                     mission={mission}
+                     isCompleted={isMissionCompletedToday(mission.id)}
+                     index={idx}
+                   />
+                </View>
+              ))
+            )}
+            
+            {/* End of Journey Placeholder */}
+             {safeMissions.length > 0 && (
+              <View className="w-20 h-96 items-center justify-center opacity-50 ml-2">
+                <Text className="text-2xl">🏁</Text>
+                <Text className="text-xs text-gray-400 mt-2 font-bold">도착!</Text>
+              </View>
+            )}
+          </ScrollView>
+        </View>
 
-        {/* 하단 여백 */}
-        <View style={{ height: 40 }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
-/** ErrorBoundary로 감싼 홈 화면 */
 export default function HomeScreen() {
   return (
     <ErrorBoundary fallbackMessage="홈 화면을 불러오는 중 문제가 발생했어요">
@@ -212,135 +172,3 @@ export default function HomeScreen() {
     </ErrorBoundary>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFBEB',
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#FFFBEB',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    fontSize: 18,
-    color: '#F59E0B',
-    fontWeight: '600',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  // 상단 바
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  topBarLeft: {
-    width: 80,
-  },
-  manageButton: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
-  },
-  manageButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
-  fairySection: {
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  starCounter: {
-    alignSelf: 'center',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 16,
-  },
-  starCounterText: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#B45309',
-  },
-  summary: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 24,
-    alignItems: 'center',
-    // 그림자
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  summaryItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  summaryValue: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#1F2937',
-  },
-  summaryLabel: {
-    fontSize: 11,
-    color: '#9CA3AF',
-    marginTop: 2,
-  },
-  summaryDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: '#E5E7EB',
-  },
-  categorySection: {
-    marginBottom: 20,
-  },
-  categoryLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#4B5563',
-    marginBottom: 12,
-    marginLeft: 4,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 48,
-  },
-  emptyEmoji: {
-    fontSize: 48,
-    marginBottom: 12,
-  },
-  emptyText: {
-    fontSize: 15,
-    color: '#9CA3AF',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 16,
-  },
-  emptyAddButton: {
-    backgroundColor: '#6366F1',
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 20,
-  },
-  emptyAddButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-});

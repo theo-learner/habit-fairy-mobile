@@ -1,6 +1,6 @@
 // ============================================
-// 요정 캐릭터 "별이" — React Native SVG + Reanimated
-// 감정 표현, 반짝임 파티클, 말풍선
+// 요정 캐릭터 "별이" 리디자인 (v2)
+// 더 세련되고 매력적인 요정 캐릭터
 // ============================================
 
 import React, { useEffect } from 'react';
@@ -9,13 +9,11 @@ import Svg, {
   Circle,
   Ellipse,
   Path,
-  Polygon,
   Defs,
+  LinearGradient,
   RadialGradient,
   Stop,
   G,
-  Line,
-  Text as SvgText,
 } from 'react-native-svg';
 import Animated, {
   useSharedValue,
@@ -27,6 +25,7 @@ import Animated, {
   Easing,
   FadeIn,
   FadeOut,
+  ZoomIn,
 } from 'react-native-reanimated';
 import type { FairyEmotion } from '@/types';
 
@@ -37,31 +36,54 @@ interface FairyCharacterProps {
   showMessage?: boolean;
 }
 
+/** 감정별 눈 표현 (더 디테일하게) */
+const EYE_PATHS: Record<FairyEmotion, { left: string; right: string; closed?: boolean }> = {
+  happy: { 
+    left: 'M36 44 Q40 40 44 44', 
+    right: 'M56 44 Q60 40 64 44',
+    closed: true 
+  },
+  excited: { 
+    left: 'M36 42 A 4 4 0 0 1 44 42', 
+    right: 'M56 42 A 4 4 0 0 1 64 42',
+    closed: false
+  },
+  cheering: { 
+    left: 'M36 44 Q40 38 44 44', 
+    right: 'M56 44 Q60 38 64 44',
+    closed: true
+  },
+  celebrating: { 
+    left: 'M35 43 L39 40 L43 43', 
+    right: 'M57 43 L61 40 L65 43',
+    closed: true 
+  },
+  sleeping: { 
+    left: 'M36 45 Q40 47 44 45', 
+    right: 'M56 45 Q60 47 64 45',
+    closed: true
+  },
+  waving: { 
+    left: 'M36 42 A 3 5 0 0 1 42 42', 
+    right: 'M58 42 A 3 5 0 0 1 64 42',
+    closed: false
+  },
+};
+
 /** 감정별 입 표현 */
 const MOUTH_PATHS: Record<FairyEmotion, string> = {
-  happy: 'M35 52 Q40 58 45 52',
-  excited: 'M34 50 Q40 60 46 50',
-  cheering: 'M33 50 Q40 62 47 50',
-  celebrating: 'M33 50 Q40 62 47 50',
-  sleeping: 'M37 54 Q40 56 43 54',
-  waving: 'M35 52 Q40 58 45 52',
+  happy: 'M46 52 Q50 56 54 52',
+  excited: 'M45 52 Q50 60 55 52 Z', // Open mouth
+  cheering: 'M45 52 Q50 58 55 52',
+  celebrating: 'M45 50 Q50 62 55 50', // Big smile
+  sleeping: 'M48 54 Q50 55 52 54', // Small O
+  waving: 'M46 52 Q50 55 54 52',
 };
 
-/** 감정별 눈 표현 */
-const EYE_PATHS: Record<FairyEmotion, { left: string; right: string }> = {
-  happy: { left: 'M28 42 Q30 38 32 42', right: 'M48 42 Q50 38 52 42' },
-  excited: { left: 'M28 40 Q30 36 32 40', right: 'M48 40 Q50 36 52 40' },
-  cheering: { left: 'M28 42 Q30 37 32 42', right: 'M48 42 Q50 37 52 42' },
-  celebrating: { left: 'M28 41 Q30 36 32 41', right: 'M48 41 Q50 36 52 41' },
-  sleeping: { left: 'M28 42 L32 42', right: 'M48 42 L52 42' },
-  waving: { left: 'M28 42 Q30 38 32 42', right: 'M48 42 Q50 38 52 42' },
-};
-
-/** 사이즈별 설정 */
 const SIZE_CONFIG = {
-  sm: { svgSize: 80, container: 96 },
-  md: { svgSize: 120, container: 144 },
-  lg: { svgSize: 180, container: 208 },
+  sm: { svgSize: 80, container: 90 },
+  md: { svgSize: 140, container: 160 },
+  lg: { svgSize: 200, container: 220 },
 };
 
 export default function FairyCharacter({
@@ -75,149 +97,160 @@ export default function FairyCharacter({
   const mouth = MOUTH_PATHS[emotion];
   const isSleeping = emotion === 'sleeping';
 
-  // 떠다니는 애니메이션
+  // Animations
   const floatY = useSharedValue(0);
-  // 반짝임 opacity
-  const sparkle1 = useSharedValue(0);
-  const sparkle2 = useSharedValue(0);
-  const sparkle3 = useSharedValue(0);
+  const wingRotate = useSharedValue(0);
+  const glowOpacity = useSharedValue(0.6);
 
   useEffect(() => {
-    // 위아래로 둥실둥실
+    // Floating
     floatY.value = withRepeat(
       withSequence(
-        withTiming(-8, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-10, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
+        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
       ),
       -1,
-      true,
+      true
     );
 
-    // 반짝임 파티클 사이클
-    sparkle1.value = withRepeat(
+    // Wing Flapping
+    wingRotate.value = withRepeat(
       withSequence(
-        withTiming(1, { duration: 600 }),
-        withTiming(0, { duration: 600 }),
-        withDelay(1200, withTiming(0, { duration: 0 })),
+        withTiming(15, { duration: 200, easing: Easing.inOut(Easing.quad) }),
+        withTiming(-10, { duration: 200, easing: Easing.inOut(Easing.quad) }),
       ),
       -1,
+      true
     );
-    sparkle2.value = withDelay(
-      800,
-      withRepeat(
-        withSequence(
-          withTiming(1, { duration: 600 }),
-          withTiming(0, { duration: 600 }),
-          withDelay(1200, withTiming(0, { duration: 0 })),
-        ),
-        -1,
+
+    // Glow Pulse
+    glowOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.8, { duration: 1500 }),
+        withTiming(0.4, { duration: 1500 }),
       ),
-    );
-    sparkle3.value = withDelay(
-      1600,
-      withRepeat(
-        withSequence(
-          withTiming(1, { duration: 600 }),
-          withTiming(0, { duration: 600 }),
-          withDelay(1200, withTiming(0, { duration: 0 })),
-        ),
-        -1,
-      ),
+      -1,
+      true
     );
   }, []);
 
-  const floatStyle = useAnimatedStyle(() => ({
+  const containerStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: floatY.value }],
   }));
 
-  const sparkle1Style = useAnimatedStyle(() => ({ opacity: sparkle1.value }));
-  const sparkle2Style = useAnimatedStyle(() => ({ opacity: sparkle2.value }));
-  const sparkle3Style = useAnimatedStyle(() => ({ opacity: sparkle3.value }));
+  const leftWingStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${wingRotate.value}deg` }, { translateX: 5 }],
+  }));
+
+  const rightWingStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${-wingRotate.value}deg` }, { translateX: -5 }],
+  }));
+  
+  const auraStyle = useAnimatedStyle(() => ({
+     opacity: glowOpacity.value
+  }));
 
   return (
     <View style={styles.container}>
-      {/* 요정 캐릭터 본체 */}
-      <Animated.View
-        style={[{ width: cfg.container, height: cfg.container, alignItems: 'center', justifyContent: 'center' }, floatStyle]}
-      >
-        {/* 반짝임 파티클 */}
-        <Animated.Text style={[styles.sparkle, { top: -4, right: -4 }, sparkle1Style]}>
-          ✨
-        </Animated.Text>
-        <Animated.Text style={[styles.sparkle, { bottom: 0, left: -8 }, sparkle2Style]}>
-          ⭐
-        </Animated.Text>
-        <Animated.Text style={[styles.sparkle, { top: '25%', right: -12 }, sparkle3Style]}>
-          💫
-        </Animated.Text>
+      <Animated.View style={[styles.characterWrap, { width: cfg.container, height: cfg.container }, containerStyle]}>
+        
+        {/* Aura / Glow behind */}
+        <Animated.View style={[{ position: 'absolute', width: cfg.svgSize, height: cfg.svgSize }, auraStyle]}>
+          <Svg width="100%" height="100%" viewBox="0 0 100 100">
+             <Defs>
+                <RadialGradient id="aura" cx="50%" cy="50%" rx="50%" ry="50%">
+                   <Stop offset="0%" stopColor="#FFF7ED" stopOpacity={0.8} />
+                   <Stop offset="70%" stopColor="#FEF3C7" stopOpacity={0.3} />
+                   <Stop offset="100%" stopColor="#FEF3C7" stopOpacity={0} />
+                </RadialGradient>
+             </Defs>
+             <Circle cx="50" cy="50" r="48" fill="url(#aura)" />
+          </Svg>
+        </Animated.View>
 
-        {/* SVG 요정 */}
-        <Svg width={cfg.svgSize} height={cfg.svgSize} viewBox="0 0 80 80">
+        <Svg width={cfg.svgSize} height={cfg.svgSize} viewBox="0 0 100 100">
           <Defs>
-            <RadialGradient id="bodyGrad" cx="40%" cy="35%" rx="60%" ry="60%">
-              <Stop offset="0%" stopColor="#FFF8E8" />
-              <Stop offset="50%" stopColor="#FFE4B5" />
-              <Stop offset="100%" stopColor="#FFDAA0" />
-            </RadialGradient>
-            <RadialGradient id="wingGrad" cx="50%" cy="50%" rx="50%" ry="50%">
-              <Stop offset="0%" stopColor="#E8D4FF" stopOpacity={0.8} />
-              <Stop offset="100%" stopColor="#C4B0FF" stopOpacity={0.3} />
+            <LinearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0%" stopColor="#FFF5E6" />
+              <Stop offset="100%" stopColor="#FFE0B2" />
+            </LinearGradient>
+            <LinearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0%" stopColor="#FDBA74" />
+              <Stop offset="100%" stopColor="#FB923C" />
+            </LinearGradient>
+            <LinearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
+              <Stop offset="0%" stopColor="#E0F2FE" stopOpacity={0.9} />
+              <Stop offset="50%" stopColor="#BAE6FD" stopOpacity={0.6} />
+              <Stop offset="100%" stopColor="#7DD3FC" stopOpacity={0.3} />
+            </LinearGradient>
+             <RadialGradient id="cheek" cx="50%" cy="50%" rx="50%" ry="50%">
+               <Stop offset="0%" stopColor="#FDA4AF" stopOpacity={0.6} />
+               <Stop offset="100%" stopColor="#FDA4AF" stopOpacity={0} />
             </RadialGradient>
           </Defs>
 
-          {/* 날개 */}
-          <Ellipse cx={18} cy={40} rx={12} ry={16} fill="url(#wingGrad)" opacity={0.6} />
-          <Ellipse cx={62} cy={40} rx={12} ry={16} fill="url(#wingGrad)" opacity={0.6} />
+          {/* Wings - Animated via props not possible easily in SVG direct, so static base or group transform if supported. 
+              Using Reanimated View for wings is better but complex layout. 
+              Here we draw static wings for simplicity or use specific props if reanimated-svg.
+              Let's keep them static in SVG but maybe slight path animation if possible? 
+              For now, static elegant wings.
+          */}
+          <G transform="translate(0, 10)">
+             {/* Left Wing */}
+             <Path d="M20 40 C 0 20, 10 0, 40 30 C 10 40, 0 60, 25 55 Z" fill="url(#wingGrad)" stroke="#BAE6FD" strokeWidth="0.5" opacity={0.8} transform="rotate(-10 40 40)" />
+             {/* Right Wing */}
+             <Path d="M80 40 C 100 20, 90 0, 60 30 C 90 40, 100 60, 75 55 Z" fill="url(#wingGrad)" stroke="#BAE6FD" strokeWidth="0.5" opacity={0.8} transform="rotate(10 60 40)" />
+          </G>
 
-          {/* 몸체 */}
-          <Circle cx={40} cy={42} r={22} fill="url(#bodyGrad)" />
-          <Ellipse cx={35} cy={35} rx={8} ry={6} fill="white" opacity={0.15} />
+          {/* Hair Back */}
+          <Circle cx="50" cy="45" r="26" fill="url(#hairGrad)" />
 
-          {/* 별 왕관 */}
-          <Polygon
-            points="40,12 42,18 48,18 43,22 45,28 40,25 35,28 37,22 32,18 38,18"
-            fill="#FBBF24"
-            stroke="#F59E0B"
-            strokeWidth={0.5}
-          />
-          <Circle cx={40} cy={20} r={2} fill="#FEF3C7" opacity={0.8} />
+          {/* Face Shape */}
+          <Circle cx="50" cy="50" r="22" fill="url(#faceGrad)" stroke="#FED7AA" strokeWidth="0.5" />
 
-          {/* 눈 */}
-          <Path d={eyes.left} stroke="#5B4530" strokeWidth={2.5} strokeLinecap="round" fill="none" />
-          <Path d={eyes.right} stroke="#5B4530" strokeWidth={2.5} strokeLinecap="round" fill="none" />
-          {!isSleeping && (
-            <>
-              <Circle cx={29.5} cy={40} r={0.8} fill="white" />
-              <Circle cx={49.5} cy={40} r={0.8} fill="white" />
-            </>
+          {/* Hair Front (Bangs) */}
+          <Path d="M28 40 Q 50 20 72 40 Q 75 45 72 48 Q 50 30 28 48 Q 25 45 28 40" fill="url(#hairGrad)" />
+
+          {/* Eyes */}
+          <Path d={eyes.left} stroke="#4B5563" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          <Path d={eyes.right} stroke="#4B5563" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          
+          {/* Eye Highlights (Sparkle) if open */}
+          {!eyes.closed && (
+             <>
+               <Circle cx="39" cy="41" r="1.5" fill="white" />
+               <Circle cx="61" cy="41" r="1.5" fill="white" />
+             </>
           )}
 
-          {/* 볼 터치 */}
-          <Circle cx={25} cy={47} r={4} fill="#FFB8D0" opacity={0.5} />
-          <Circle cx={55} cy={47} r={4} fill="#FFB8D0" opacity={0.5} />
+          {/* Cheeks */}
+          <Circle cx="34" cy="54" r="5" fill="url(#cheek)" />
+          <Circle cx="66" cy="54" r="5" fill="url(#cheek)" />
 
-          {/* 입 */}
-          <Path d={mouth} stroke="#D97082" strokeWidth={1.8} strokeLinecap="round" fill="none" />
+          {/* Mouth */}
+          <Path d={mouth} stroke="#F43F5E" strokeWidth="2" strokeLinecap="round" fill={emotion === 'excited' ? '#F43F5E' : 'none'} />
 
-          {/* Zzz (수면) */}
+          {/* Crown / Accessory */}
+          <Path d="M42 20 L45 28 L50 22 L55 28 L58 20" stroke="#FBBF24" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <Circle cx="42" cy="20" r="2" fill="#FCD34D" />
+          <Circle cx="50" cy="22" r="2" fill="#FCD34D" />
+          <Circle cx="58" cy="20" r="2" fill="#FCD34D" />
+          
+          {/* Sleeping Zzz */}
           {isSleeping && (
-            <G>
-              <SvgText x={58} y={32} fontSize={8} fill="#A78BFA" fontWeight="bold">z</SvgText>
-              <SvgText x={63} y={27} fontSize={6} fill="#A78BFA" fontWeight="bold" opacity={0.7}>z</SvgText>
-              <SvgText x={66} y={23} fontSize={4} fill="#A78BFA" fontWeight="bold" opacity={0.4}>z</SvgText>
-            </G>
+             <G>
+               <Path d="M75 30 L85 30 L75 40 L85 40" stroke="#8B5CF6" strokeWidth="2" fill="none" transform="scale(0.8)" />
+             </G>
           )}
         </Svg>
       </Animated.View>
 
-      {/* 말풍선 */}
+      {/* Message Bubble */}
       {showMessage && message && (
-        <Animated.View
-          entering={FadeIn.duration(300).springify()}
-          exiting={FadeOut.duration(200)}
+        <Animated.View 
+          entering={ZoomIn.duration(400).springify()}
           style={styles.bubble}
         >
-          {/* 말풍선 꼬리 */}
           <View style={styles.bubbleTail} />
           <Text style={styles.bubbleText}>{message}</Text>
         </Animated.View>
@@ -229,48 +262,45 @@ export default function FairyCharacter({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'center',
   },
-  sparkle: {
-    position: 'absolute',
-    fontSize: 16,
+  characterWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
     zIndex: 10,
   },
   bubble: {
-    position: 'relative',
-    maxWidth: 280,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#FFFBEB',
-    borderRadius: 20,
+    marginTop: 8,
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(253, 230, 138, 0.6)',
-    // 그림자 (iOS + Android)
+    borderColor: '#E5E7EB',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 3,
+    maxWidth: 260,
   },
   bubbleTail: {
     position: 'absolute',
-    top: -8,
+    top: -6,
     left: '50%',
     marginLeft: -6,
     width: 12,
     height: 12,
-    backgroundColor: '#FFFBEB',
+    backgroundColor: 'white',
     borderTopWidth: 1,
     borderLeftWidth: 1,
-    borderColor: 'rgba(253, 230, 138, 0.6)',
+    borderColor: '#E5E7EB',
     transform: [{ rotate: '45deg' }],
-    borderRadius: 2,
   },
   bubbleText: {
     fontSize: 14,
-    lineHeight: 20,
     color: '#374151',
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
   },
 });
