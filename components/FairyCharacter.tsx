@@ -159,9 +159,9 @@ export default function FairyCharacter({
           <Svg width="100%" height="100%" viewBox="0 0 100 100">
              <Defs>
                 <RadialGradient id="aura" cx="50%" cy="50%" rx="50%" ry="50%">
-                   <Stop offset="0%" stopColor="#FFF7ED" stopOpacity={0.8} />
-                   <Stop offset="70%" stopColor="#FEF3C7" stopOpacity={0.3} />
-                   <Stop offset="100%" stopColor="#FEF3C7" stopOpacity={0} />
+                   <Stop offset="0%" stopColor="#FFF7ED" stopOpacity={1} />
+                   <Stop offset="70%" stopColor="#FDE68A" stopOpacity={0.6} />
+                   <Stop offset="100%" stopColor="#FDE68A" stopOpacity={0} />
                 </RadialGradient>
              </Defs>
              <Circle cx="50" cy="50" r="48" fill="url(#aura)" />
@@ -176,12 +176,12 @@ export default function FairyCharacter({
             </LinearGradient>
             <LinearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
               <Stop offset="0%" stopColor="#FB923C" />
-              <Stop offset="100%" stopColor="#EA580C" />
+              <Stop offset="100%" stopColor="#C2410C" />
             </LinearGradient>
             <LinearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
               <Stop offset="0%" stopColor="#BAE6FD" stopOpacity={1} />
-              <Stop offset="50%" stopColor="#7DD3FC" stopOpacity={0.9} />
-              <Stop offset="100%" stopColor="#38BDF8" stopOpacity={0.8} />
+              <Stop offset="50%" stopColor="#38BDF8" stopOpacity={0.9} />
+              <Stop offset="100%" stopColor="#0EA5E9" stopOpacity={0.8} />
             </LinearGradient>
              <RadialGradient id="cheek" cx="50%" cy="50%" rx="50%" ry="50%">
                <Stop offset="0%" stopColor="#FDA4AF" stopOpacity={0.6} />
