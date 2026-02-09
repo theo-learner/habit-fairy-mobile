@@ -26,7 +26,7 @@ interface MissionCardProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-// 2026 Clay-style category themes (Dopamine Brights)
+// Soft Pastel Glassmorphism category themes
 const CATEGORY_THEMES: Record<MissionCategory, { 
   bg: string; 
   border: string; 
@@ -36,44 +36,44 @@ const CATEGORY_THEMES: Record<MissionCategory, {
   glow: string;
 }> = {
   morning: { 
-    bg: 'bg-clay-orange-light', 
-    border: 'border-clay-orange-main/30', 
-    badge: 'bg-clay-orange-main', 
-    iconBg: 'bg-gradient-to-br from-orange-100 to-amber-50',
-    gradient: 'from-orange-400 to-amber-500',
+    bg: 'bg-white/45', 
+    border: 'border-white/60', 
+    badge: 'bg-magic-peach', 
+    iconBg: 'bg-magic-peach',
+    gradient: 'from-magic-peach to-magic-pink',
     glow: 'shadow-glow-pink',
   },
   daytime: { 
-    bg: 'bg-clay-blue-light', 
-    border: 'border-clay-blue-main/30', 
-    badge: 'bg-clay-blue-main', 
-    iconBg: 'bg-gradient-to-br from-sky-100 to-cyan-50',
-    gradient: 'from-sky-400 to-cyan-500',
-    glow: 'shadow-glow-cyan',
+    bg: 'bg-white/45', 
+    border: 'border-white/60', 
+    badge: 'bg-magic-lavender', 
+    iconBg: 'bg-magic-lavender',
+    gradient: 'from-magic-lavender to-magic-purple',
+    glow: 'shadow-glow-lavender',
   },
   evening: { 
-    bg: 'bg-clay-purple-light', 
-    border: 'border-clay-purple-main/30', 
-    badge: 'bg-clay-purple-main', 
-    iconBg: 'bg-gradient-to-br from-violet-100 to-purple-50',
-    gradient: 'from-violet-500 to-purple-600',
-    glow: 'shadow-glow-purple',
+    bg: 'bg-white/45', 
+    border: 'border-white/60', 
+    badge: 'bg-magic-purple', 
+    iconBg: 'bg-magic-purple',
+    gradient: 'from-magic-purple to-magic-lavender',
+    glow: 'shadow-glow-lavender',
   },
   study: { 
-    bg: 'bg-clay-pink-light', 
-    border: 'border-clay-pink-main/30', 
-    badge: 'bg-clay-pink-main', 
-    iconBg: 'bg-gradient-to-br from-pink-100 to-rose-50',
-    gradient: 'from-pink-400 to-rose-500',
-    glow: 'shadow-glow-pink',
+    bg: 'bg-white/45', 
+    border: 'border-white/60', 
+    badge: 'bg-magic-lime', 
+    iconBg: 'bg-magic-lime',
+    gradient: 'from-magic-lime to-magic-mint',
+    glow: 'shadow-glow-mint',
   },
   health: { 
-    bg: 'bg-clay-green-light', 
-    border: 'border-clay-green-main/30', 
-    badge: 'bg-clay-green-main', 
-    iconBg: 'bg-gradient-to-br from-emerald-100 to-green-50',
-    gradient: 'from-emerald-400 to-green-500',
-    glow: 'shadow-glow-cyan',
+    bg: 'bg-white/45', 
+    border: 'border-white/60', 
+    badge: 'bg-magic-mint', 
+    iconBg: 'bg-magic-mint',
+    gradient: 'from-magic-mint to-magic-secondary',
+    glow: 'shadow-glow-mint',
   },
 };
 

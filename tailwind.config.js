@@ -5,50 +5,63 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // 2026 Dopamine Brights + Cream Background
+        // Theme 6: Soft Pastel (소프트 파스텔)
         magic: {
-          // Cream/Warm backgrounds (눈 피로 감소)
-          bg: '#FFF9F5',        // Warm cream
-          bgAlt: '#F7F4F1',     // Soft greige
+          // Pastel gradient backgrounds
+          bg: '#FFF5F5',           // Soft pink white
+          bgAlt: '#F8F4FF',        // Lavender tint
+          bgGradientStart: '#FFD1DC',  // Pink
+          bgGradientMid: '#E6E6FA',    // Lavender  
+          bgGradientEnd: '#D1F2EB',    // Mint
           
-          // Dopamine Brights (생동감 있는 컬러)
-          purple: '#9333EA',    // Vivid purple
-          pink: '#EC4899',      // Hot pink
-          coral: '#F97316',     // Coral orange
-          lime: '#84CC16',      // Fresh lime
-          cyan: '#06B6D4',      // Electric cyan
-          yellow: '#FACC15',    // Sunshine yellow
+          // Primary colors
+          primary: '#FFB7B2',      // Soft coral pink
+          secondary: '#B5EAD7',    // Mint green
+          accent: '#E2F0CB',       // Soft lime
           
-          // Soft accents
-          lavender: '#E9D5FF',  // Soft lavender
-          peach: '#FED7AA',     // Soft peach
-          mint: '#A7F3D0',      // Soft mint
+          // Additional pastels
+          purple: '#C7CEEA',       // Soft lavender
+          pink: '#FF9AA2',         // Coral
+          peach: '#FFDAC1',        // Peach
+          mint: '#B5EAD7',         // Mint
+          lime: '#E2F0CB',         // Lime
+          lavender: '#E6E6FA',     // Lavender
+          
+          // Glass effect
+          glass: 'rgba(255, 255, 255, 0.45)',
+          glassBorder: 'rgba(255, 255, 255, 0.6)',
         },
         
-        // Clay-style category colors (더 선명하고 입체적)
+        // Soft pastel category colors
         clay: {
-          orange: { light: '#FFF7ED', main: '#FB923C', dark: '#EA580C' },
-          blue: { light: '#F0F9FF', main: '#38BDF8', dark: '#0284C7' },
-          purple: { light: '#FAF5FF', main: '#A855F7', dark: '#7C3AED' },
-          green: { light: '#F0FDF4', main: '#4ADE80', dark: '#16A34A' },
-          pink: { light: '#FFF1F2', main: '#FB7185', dark: '#E11D48' },
+          orange: { light: '#FFF5F0', main: '#FFDAC1', dark: '#FFB7B2' },
+          blue: { light: '#F0F8FF', main: '#C7CEEA', dark: '#B5C7EA' },
+          purple: { light: '#FAF5FF', main: '#E6E6FA', dark: '#C7CEEA' },
+          green: { light: '#F0FDF4', main: '#B5EAD7', dark: '#98D8C8' },
+          pink: { light: '#FFF5F5', main: '#FFB7B2', dark: '#FF9AA2' },
         },
       },
       boxShadow: {
-        // Enhanced Claymorphism shadows (2026 3D 점토 스타일)
-        'clay-sm': '4px 4px 8px rgba(0, 0, 0, 0.08), -4px -4px 8px rgba(255, 255, 255, 0.9), inset 1px 1px 2px rgba(255, 255, 255, 0.5)',
-        'clay-md': '6px 6px 12px rgba(0, 0, 0, 0.1), -6px -6px 12px rgba(255, 255, 255, 0.95), inset 2px 2px 4px rgba(255, 255, 255, 0.6)',
-        'clay-lg': '10px 10px 20px rgba(0, 0, 0, 0.12), -10px -10px 20px rgba(255, 255, 255, 1), inset 3px 3px 6px rgba(255, 255, 255, 0.7)',
-        'clay-pressed': 'inset 4px 4px 8px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(255, 255, 255, 0.7)',
-        'clay-inner': 'inset 4px 4px 8px rgba(0, 0, 0, 0.05), inset -2px -2px 4px rgba(255, 255, 255, 0.8)',
+        // Soft Pastel Glassmorphism shadows
+        'glass-sm': '0 4px 16px rgba(31, 38, 135, 0.05)',
+        'glass-md': '0 8px 32px rgba(31, 38, 135, 0.07)',
+        'glass-lg': '0 12px 40px rgba(31, 38, 135, 0.1)',
         
-        // Dopamine glow effects
-        'glow-purple': '0 0 20px rgba(147, 51, 234, 0.4)',
-        'glow-pink': '0 0 20px rgba(236, 72, 153, 0.4)',
-        'glow-cyan': '0 0 20px rgba(6, 182, 212, 0.4)',
+        // Soft clay shadows (톤다운)
+        'clay-sm': '0 4px 12px rgba(0, 0, 0, 0.05)',
+        'clay-md': '0 6px 20px rgba(0, 0, 0, 0.06)',
+        'clay-lg': '0 10px 30px rgba(0, 0, 0, 0.08)',
+        'clay-pressed': 'inset 2px 2px 6px rgba(0, 0, 0, 0.06)',
+        'clay-inner': 'inset 2px 2px 4px rgba(0, 0, 0, 0.04)',
+        
+        // Soft glow effects
+        'glow-pink': '0 0 15px rgba(255, 183, 178, 0.4)',
+        'glow-mint': '0 0 15px rgba(181, 234, 215, 0.4)',
+        'glow-lavender': '0 0 15px rgba(199, 206, 234, 0.4)',
       },
       fontFamily: {
-        sans: ['Jua', 'Nunito', 'System'],
+        sans: ['Quicksand', 'Jua', 'Nunito', 'System'],
+        'quicksand': ['Quicksand'],
         'jua': ['Jua'],
       },
       borderRadius: {

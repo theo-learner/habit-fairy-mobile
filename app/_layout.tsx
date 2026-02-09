@@ -46,28 +46,31 @@ export default function RootLayout() {
         We center it and apply a max-width.
       */}
       <View 
-        className="flex-1 bg-magic-bg"
-        style={isWeb ? {
-          maxWidth: 480,
-          width: '100%',
-          alignSelf: 'center',
-          height: '100%',
-          // On web, View maps to a div, so these styles work.
-          // We add a subtle shadow and rounded corners for effect if not full screen on mobile.
-          // But usually mobile apps are full screen. Let's stick to the prompt's request.
-          boxShadow: '0 0 40px rgba(0,0,0,0.2)',
-          minHeight: '100vh',
-          fontFamily: 'Jua',
-        } : {}}
+        className="flex-1"
+        style={[
+          { 
+            // Soft Pastel Gradient Background
+            background: 'linear-gradient(to bottom right, #FFD1DC, #E6E6FA, #D1F2EB)',
+            backgroundColor: '#FFF5F5', // Fallback
+          },
+          isWeb ? {
+            maxWidth: 480,
+            width: '100%',
+            alignSelf: 'center',
+            height: '100%',
+            boxShadow: '0 0 40px rgba(0,0,0,0.1)',
+            minHeight: '100vh',
+            fontFamily: 'Quicksand, sans-serif',
+          } : {}
+        ]}
       >
         <Stack
           screenOptions={{
-            headerStyle: { backgroundColor: '#F5F3FF' }, // magic-bg
+            headerStyle: { backgroundColor: 'transparent' },
             headerShadowVisible: false,
-            // Use Jua font for headers too, fallback to system
-            headerTitleStyle: { fontFamily: 'Jua', color: '#4B5563' },
+            headerTitleStyle: { fontFamily: 'Quicksand', fontWeight: '700', color: '#4A4A4A' },
             headerTitleAlign: 'center',
-            contentStyle: { backgroundColor: '#F5F3FF' },
+            contentStyle: { backgroundColor: 'transparent' },
           }}
         >
           <Stack.Screen 

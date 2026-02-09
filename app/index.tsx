@@ -147,17 +147,17 @@ function HomeScreenContent() {
 
   if (!isLoaded) {
     return (
-      <View className="flex-1 items-center justify-center bg-magic-bg">
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: 'transparent' }}>
         <Animated.View entering={FadeIn.duration(800)} className="items-center">
           <Text className="text-5xl mb-4">✨</Text>
-          <Text className="text-magic-purple font-bold text-lg">별이가 준비 중...</Text>
+          <Text className="text-gray-600 font-bold text-lg">별이가 준비 중...</Text>
         </Animated.View>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-magic-bg">
+    <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -190,10 +190,17 @@ function HomeScreenContent() {
               스와이프해서 미션 확인 👉
             </Text>
           </View>
-          {/* Star Counter - Integrated */}
-          <View className="bg-white px-4 py-2 rounded-2xl shadow-clay-sm border border-amber-100">
-            <Text className="font-bold text-amber-600 text-sm">
-              ⭐ {totalStars}개
+          {/* Star Counter - Glass style */}
+          <View 
+            className="px-4 py-2 rounded-2xl"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.5)',
+              borderWidth: 1,
+              borderColor: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
+            <Text className="font-bold text-sm" style={{ color: '#FF9AA2' }}>
+              💎 {totalStars}개
             </Text>
           </View>
         </View>

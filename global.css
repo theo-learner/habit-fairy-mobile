@@ -1,14 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   html, body {
-    font-family: 'Jua', sans-serif !important;
+    font-family: 'Quicksand', 'Jua', sans-serif !important;
+    background: linear-gradient(to bottom right, #FFD1DC, #E6E6FA, #D1F2EB);
+    min-height: 100vh;
   }
 }
 
-/* Force Jua font on all text-related elements in Web */
+/* Force Quicksand font on all text-related elements in Web */
 * {
-  font-family: 'Jua', sans-serif !important;
+  font-family: 'Quicksand', 'Jua', sans-serif !important;
 }
