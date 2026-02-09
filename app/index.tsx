@@ -48,9 +48,9 @@ function HomeScreenContent() {
   // Greeting
   const greeting = useMemo(() => {
     const name = safeChildName || '친구';
-    if (allDone) return `${name}아, 오늘 여행을 모두 마쳤어! 🎉 (v2.1)`;
-    if (todayCompletedCount > 0) return `${name}아, 아주 잘하고 있어! 🚀 (v2.1)`;
-    return `안녕 ${name}! 오늘의 모험을 떠나볼까? 🗺️ (v2.1)`;
+    if (allDone) return `${name}아, 오늘 여행을 모두 마쳤어! 🎉`;
+    if (todayCompletedCount > 0) return `${name}아, 아주 잘하고 있어! 🚀`;
+    return `안녕 ${name}! 오늘의 모험을 떠나볼까? 🗺️`;
   }, [safeChildName, allDone, todayCompletedCount]);
 
   const fairyEmotion: FairyEmotion = allDone
