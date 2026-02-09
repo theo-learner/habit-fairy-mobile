@@ -73,7 +73,10 @@ function HomeScreenContent() {
   if (!isLoaded) {
     return (
       <View className="flex-1 items-center justify-center bg-magic-bg">
-        <Text className="text-magic-purple font-bold text-lg">✨ 별이가 준비 중...</Text>
+        <Animated.View entering={FadeIn.duration(800)} className="items-center">
+          <Text className="text-5xl mb-4">✨</Text>
+          <Text className="text-magic-purple font-bold text-lg">별이가 준비 중...</Text>
+        </Animated.View>
       </View>
     );
   }
@@ -87,12 +90,12 @@ function HomeScreenContent() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#8B5CF6"
-            colors={['#8B5CF6']}
+            tintColor="#9333EA"
+            colors={['#9333EA', '#EC4899', '#06B6D4']}
           />
         }
       >
-        {/* Fairy Section */}
+        {/* Fairy Section - Enhanced with Clay style */}
         <Animated.View entering={FadeIn.duration(600)} className="items-center py-8">
           <FairyCharacter
             emotion={fairyEmotion}
@@ -100,20 +103,21 @@ function HomeScreenContent() {
             size="lg"
             showMessage
           />
-          <View className="mt-4 bg-white/50 px-4 py-2 rounded-full border border-white shadow-sm">
-            <Text className="font-bold text-amber-600">
+          {/* Star Counter - Clay style pill */}
+          <View className="mt-4 bg-white px-6 py-3 rounded-2xl shadow-clay-md border-2 border-white">
+            <Text className="font-bold text-amber-600 text-base">
               ⭐ 모은 별: {totalStars}개
             </Text>
           </View>
         </Animated.View>
 
-        {/* Journey Map Title */}
-        <View className="px-6 mb-2">
-          <Text className="text-xl font-bold text-gray-700 font-sans">
+        {/* Journey Map Title - Enhanced */}
+        <View className="px-6 mb-3">
+          <Text className="text-2xl font-bold text-gray-700 font-sans">
             🗺️ 오늘의 여정
           </Text>
-          <Text className="text-gray-400 text-sm">
-            오른쪽으로 스크롤해서 미션을 확인하세요 👉
+          <Text className="text-gray-400 text-sm mt-1">
+            오른쪽으로 스와이프해서 미션을 확인하세요 👉
           </Text>
         </View>
 
@@ -128,10 +132,13 @@ function HomeScreenContent() {
             snapToInterval={300} // card width (approx) + margin
           >
             {safeMissions.length === 0 ? (
-              <View className="w-80 h-64 bg-white rounded-3xl items-center justify-center shadow-clay-md mx-2">
-                <Text className="text-4xl mb-4">✨</Text>
-                <Text className="text-gray-500 text-center mb-4">
-                  아직 미션이 없어요.{'\n'}설정에서 미션을 추가해주세요!
+              <View className="w-80 h-72 bg-white rounded-4xl items-center justify-center shadow-clay-lg mx-2 border-2 border-magic-lavender/30 p-6">
+                <Text className="text-6xl mb-4">✨</Text>
+                <Text className="text-gray-600 text-center mb-4 font-bold text-lg">
+                  아직 미션이 없어요!
+                </Text>
+                <Text className="text-gray-400 text-center text-sm">
+                  설정에서 미션을 추가해주세요 🎯
                 </Text>
               </View>
             ) : (
@@ -150,11 +157,13 @@ function HomeScreenContent() {
               ))
             )}
             
-            {/* End of Journey Placeholder */}
+            {/* End of Journey Placeholder - Enhanced */}
              {safeMissions.length > 0 && (
-              <View className="w-20 h-96 items-center justify-center opacity-50 ml-2">
-                <Text className="text-2xl">🏁</Text>
-                <Text className="text-xs text-gray-400 mt-2 font-bold">도착!</Text>
+              <View className="w-24 h-96 items-center justify-center ml-2">
+                <View className="bg-white/80 rounded-3xl p-4 shadow-clay-sm border border-white">
+                  <Text className="text-3xl">🏁</Text>
+                  <Text className="text-xs text-gray-500 mt-2 font-bold text-center">도착!</Text>
+                </View>
               </View>
             )}
           </ScrollView>
