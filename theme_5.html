@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375, height=750, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Theme 5: Modern Dark</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111111;
+            --accent-1: #00FF94; /* Neon Green */
+            --accent-2: #FF0055; /* Neon Pink */
+            --accent-3: #00D4FF; /* Neon Blue */
+            --text-primary: #FFFFFF;
+            --text-secondary: #888888;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .device {
+            width: 375px;
+            height: 750px;
+            background: var(--bg-color);
+            border-radius: 40px;
+            box-shadow: 0 0 50px rgba(0, 255, 148, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            box-sizing: border-box;
+            border: 1px solid #222;
+        }
+
+        /* Background glow */
+        .glow-bg {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0,255,148,0.15) 0%, rgba(0,0,0,0) 70%);
+            top: -100px;
+            right: -100px;
+            z-index: 0;
+            filter: blur(40px);
+        }
+
+        .glow-bg-2 {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255,0,85,0.1) 0%, rgba(0,0,0,0) 70%);
+            bottom: 50px;
+            left: -50px;
+            z-index: 0;
+            filter: blur(50px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .header span {
+            color: var(--accent-1);
+        }
+
+        .date {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .user-pic {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #222;
+            border: 2px solid var(--accent-3);
+            box-shadow: 0 0 15px var(--accent-3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #222;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 20px rgba(0,255,148,0.2);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .long-card {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .long-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-1);
+            width: 75%;
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .list-section {
+            z-index: 1;
+            flex-grow: 1;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            backdrop-filter: blur(10px);
+        }
+
+        .task-item:hover {
+            border-color: var(--accent-3);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .check-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #444;
+            margin-right: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .task-item.done .check-circle {
+            border-color: var(--accent-1);
+            background: var(--accent-1);
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+        
+        .task-content h4 { margin: 0; font-size: 16px; font-weight: 500; }
+        .task-content p { margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); }
+
+        .nav-bar {
+            background: rgba(20,20,20,0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid #333;
+            height: 80px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            left: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 10px; /* safe area */
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+
+        .nav-icon.active {
+            opacity: 1;
+            color: var(--accent-1);
+            text-shadow: 0 0 15px var(--accent-1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="device">
+        <div class="glow-bg"></div>
+        <div class="glow-bg-2"></div>
+
+        <div class="header">
+            <div>
+                <div class="date">Monday, Feb 9</div>
+                <h1>Overview<span style="color: var(--accent-1)">.</span></h1>
+            </div>
+            <div class="user-pic"></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card long-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 14px; font-weight: 700; color: var(--accent-1);">WEEKLY GOAL</div>
+                    <div style="font-size: 12px; color: #888;">75%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--accent-3);">💧</div>
+                <div>
+                    <div class="stat-value">1.2L</div>
+                    <div class="stat-label">Hydration</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="color: var(--accent-2);">❤️</div>
+                <div>
+                    <div class="stat-value">85</div>
+                    <div class="stat-label">HRV</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-section">
+            <div class="list-header">
+                <span>Today's Tasks</span>
+                <span style="font-size: 14px; color: var(--accent-3); cursor: pointer;">View All</span>
+            </div>
+
+            <div class="task-item done">
+                <div class="check-circle">✓</div>
+                <div class="task-content">
+                    <h4 style="text-decoration: line-through; opacity: 0.5;">Morning Meditation</h4>
+                    <p>07:00 AM - 15 mins</p>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <div class="check-circle"></div>
+                <div class="task-content">
+                    <h4>Deep Work Session</h4>
+                    <p>10:00 AM - 2 hours</p>
+                </div>
+            </div>
+            
+             <div class="task-item">
+                <div class="check-circle"></div>
+                <div class="task-content">
+                    <h4>Gym Workout</h4>
+                    <p>06:00 PM - 1 hour</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-bar">
+            <div class="nav-icon active">⬡</div>
+            <div class="nav-icon">⚡</div>
+            <div class="nav-icon">⚙</div>
+        </div>
+    </div>
+</body>
+</html>

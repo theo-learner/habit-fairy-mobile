@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375, height=750, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Theme 1: Neo Glass</title>
+    <style>
+        :root {
+            --bg-color: #0f0c29;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .device {
+            width: 375px;
+            height: 750px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Gradient Mesh Overlay */
+        .mesh-bg {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.4), transparent 60%),
+                        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.4), transparent 50%);
+            filter: blur(60px);
+            z-index: 0;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 20px); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(to right, #fff, #ddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:active {
+            transform: scale(0.98);
+        }
+
+        .hero-card {
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
+        .hero-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .hero-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .stat-card {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .item-info h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .item-info p {
+            margin: 4px 0 0 0;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        .nav-bar {
+            margin-top: auto;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            height: 70px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            font-size: 24px;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            transform: translateY(-5px);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Floating elements for depth */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            backdrop-filter: blur(5px);
+        }
+        .b1 { width: 60px; height: 60px; top: 10%; right: -20px; animation: float 6s ease-in-out infinite; }
+        .b2 { width: 40px; height: 40px; bottom: 20%; left: -10px; animation: float 8s ease-in-out infinite reverse; }
+
+    </style>
+</head>
+<body>
+    <div class="device">
+        <div class="mesh-bg"></div>
+        
+        <!-- Decorative bubbles -->
+        <div class="bubble b1"></div>
+        <div class="bubble b2"></div>
+
+        <div class="content">
+            <div class="header">
+                <h1>Hello, User</h1>
+                <div class="icon-box" style="width: 40px; height: 40px; border-radius: 50%;">User</div>
+            </div>
+
+            <div class="glass-card hero-card">
+                <div class="hero-title">Weekly Progress</div>
+                <div class="hero-subtitle">You're doing great! Keep it up.</div>
+            </div>
+
+            <div class="grid-container">
+                <div class="glass-card stat-card">
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">Efficiency</div>
+                </div>
+                <div class="glass-card stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Streaks</div>
+                </div>
+            </div>
+
+            <div class="glass-card list-item">
+                <div class="icon-box">🔥</div>
+                <div class="item-info">
+                    <h3>Morning Run</h3>
+                    <p>06:00 AM • 30 mins</p>
+                </div>
+            </div>
+
+            <div class="glass-card list-item">
+                <div class="icon-box">💧</div>
+                <div class="item-info">
+                    <h3>Drink Water</h3>
+                    <p>Every 2 hours • 200ml</p>
+                </div>
+            </div>
+
+            <div class="nav-bar">
+                <div class="nav-item active">🏠</div>
+                <div class="nav-item">📊</div>
+                <div class="nav-item">⚙️</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
