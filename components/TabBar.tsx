@@ -6,18 +6,27 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  interpolateColor,
 } from 'react-native-reanimated';
 import { playButtonHaptic } from '@/lib/sounds';
 import * as Haptics from 'expo-haptics';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const TABS = [
+interface TabConfig {
+  name: string;
+  label: string;
+  icon: string;
+  path: string;
+  activeColor: string;
+  protected?: boolean;
+}
+
+const TABS: TabConfig[] = [
   { name: 'index', label: '홈', icon: '🏠', path: '/', activeColor: '#9333EA' },
   { name: 'character', label: '친구', icon: '🎭', path: '/character', activeColor: '#EC4899' },
   { name: 'rewards', label: '꾸미기', icon: '👗', path: '/rewards', activeColor: '#F97316' },
   { name: 'dashboard', label: '기록', icon: '📊', path: '/dashboard', activeColor: '#06B6D4' },
+  { name: 'manage', label: '관리', icon: '⚙️', path: '/manage', activeColor: '#6B7280', protected: true },
 ];
 
 function TabButton({ 
@@ -25,7 +34,7 @@ function TabButton({
   isActive, 
   onPress 
 }: { 
-  tab: typeof TABS[0]; 
+  tab: TabConfig; 
   isActive: boolean; 
   onPress: () => void;
 }) {
@@ -43,8 +52,8 @@ function TabButton({
     backgroundColor: isActive 
       ? `${tab.activeColor}15` 
       : 'transparent',
-    borderRadius: 16,
-    padding: 8,
+    borderRadius: 12,
+    padding: 6,
   }));
 
   const handlePressIn = () => {
@@ -68,9 +77,9 @@ function TabButton({
     >
       <Animated.View style={bgStyle} className="items-center">
         <Text 
-          className={`text-2xl mb-0.5`}
+          className="text-xl mb-0.5"
           style={{ 
-            transform: [{ scale: isActive ? 1.15 : 1 }],
+            transform: [{ scale: isActive ? 1.1 : 1 }],
             opacity: isActive ? 1 : 0.5,
           }}
         >
@@ -78,7 +87,7 @@ function TabButton({
         </Text>
         {isActive && (
           <Text 
-            className="text-[10px] font-bold font-sans"
+            className="text-[9px] font-bold font-sans"
             style={{ color: tab.activeColor }}
           >
             {tab.label}
@@ -89,19 +98,26 @@ function TabButton({
   );
 }
 
-export default function TabBar() {
+interface TabBarProps {
+  onProtectedPress?: () => void;
+}
+
+export default function TabBar({ onProtectedPress }: TabBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   
-  // Calculate bottom padding: minimum 12px, or safe area + 8px
   const bottomPadding = Math.max(12, insets.bottom + 8);
 
-  const handlePress = (path: string) => {
+  const handlePress = (tab: TabConfig) => {
     playButtonHaptic();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    if (pathname !== path) {
-      router.replace(path as any);
+    
+    if (tab.protected && onProtectedPress) {
+      // Protected tab - trigger parent gate
+      onProtectedPress();
+    } else if (pathname !== tab.path) {
+      router.replace(tab.path as any);
     }
   };
 
@@ -110,9 +126,8 @@ export default function TabBar() {
       className="absolute left-3 right-3 items-center"
       style={{ bottom: bottomPadding }}
     >
-      {/* Glass + Clay style container */}
       <View 
-        className="flex-row bg-white/95 rounded-2xl px-3 py-1.5 items-center justify-around w-full max-w-sm border-2 border-white"
+        className="flex-row bg-white/95 rounded-2xl px-2 py-1.5 items-center justify-around w-full max-w-md border-2 border-white"
         style={{
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 6 },
@@ -128,7 +143,7 @@ export default function TabBar() {
               key={tab.name}
               tab={tab}
               isActive={isActive}
-              onPress={() => handlePress(tab.path)}
+              onPress={() => handlePress(tab)}
             />
           );
         })}

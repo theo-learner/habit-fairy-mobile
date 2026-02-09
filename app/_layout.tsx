@@ -74,20 +74,16 @@ export default function RootLayout() {
             name="index" 
             options={{ 
               title: '습관요정 별이',
-              headerRight: () => (
-                <Pressable onPress={handleSettingsPress} className="p-2">
-                  <Text className="text-2xl">⚙️</Text>
-                </Pressable>
-              ),
             }} 
           />
+          <Stack.Screen name="character" options={{ title: '내 친구' }} />
           <Stack.Screen name="rewards" options={{ title: '꾸미기' }} />
           <Stack.Screen name="manage" options={{ title: '미션 관리' }} />
-          <Stack.Screen name="dashboard" options={{ title: '대시보드' }} />
+          <Stack.Screen name="dashboard" options={{ title: '기록' }} />
           <Stack.Screen name="mission/[id]" options={{ title: '미션 수행', headerShown: false }} />
         </Stack>
 
-        {showTabBar && <TabBar />}
+        {showTabBar && <TabBar onProtectedPress={handleSettingsPress} />}
 
         <ParentsGate 
           visible={gateVisible} 
