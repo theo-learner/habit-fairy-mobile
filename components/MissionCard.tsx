@@ -22,6 +22,7 @@ interface MissionCardProps {
   mission: Mission;
   isCompleted?: boolean;
   index?: number;
+  compact?: boolean; // 그리드 뷰용 컴팩트 모드
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -152,11 +153,19 @@ export default function MissionCard({
   mission,
   isCompleted = false,
   index = 0,
+  compact = false,
 }: MissionCardProps) {
   const router = useRouter();
   const scale = useSharedValue(1);
   const pressed = useSharedValue(0);
   const theme = CATEGORY_THEMES[mission.category] || CATEGORY_THEMES.morning;
+
+  // 컴팩트 모드용 스타일
+  const cardSize = compact ? 'w-40 h-48' : 'w-64 h-72';
+  const iconSize = compact ? 'w-12 h-12' : 'w-20 h-20';
+  const iconTextSize = compact ? 'text-2xl' : 'text-4xl';
+  const titleSize = compact ? 'text-sm' : 'text-base';
+  const marginTop = compact ? 'mt-4' : 'mt-8';
 
   useEffect(() => {
     if (isCompleted) {
@@ -216,47 +225,51 @@ export default function MissionCard({
           shadowColor: '#000',
         }]}
         className={`
-          w-64 h-72 p-4 rounded-3xl border-2
+          ${cardSize} ${compact ? 'p-3' : 'p-4'} rounded-3xl border-2
           items-center justify-between
           ${theme.bg} ${theme.border}
           ${isCompleted ? 'opacity-95' : ''}
         `}
       >
         {/* Status Badge - Top Right */}
-        <View className="absolute top-3 right-3 z-10">
+        <View className={`absolute ${compact ? 'top-2 right-2' : 'top-3 right-3'} z-10`}>
           {isCompleted ? (
             <View 
-              className="px-3 py-1.5 rounded-full"
+              className={`${compact ? 'px-2 py-1' : 'px-3 py-1.5'} rounded-full`}
               style={{ backgroundColor: '#B5EAD7' }}
             >
-              <Text className="text-white font-bold text-xs">완료 ✓</Text>
+              <Text className={`text-white font-bold ${compact ? 'text-[10px]' : 'text-xs'}`}>
+                {compact ? '✓' : '완료 ✓'}
+              </Text>
             </View>
           ) : (
             <View 
-              className="px-3 py-1.5 rounded-full"
+              className={`${compact ? 'px-2 py-1' : 'px-3 py-1.5'} rounded-full`}
               style={{ backgroundColor: '#FFB7B2' }}
             >
-              <Text className="text-white font-bold text-xs">도전!</Text>
+              <Text className={`text-white font-bold ${compact ? 'text-[10px]' : 'text-xs'}`}>
+                {compact ? '!' : '도전!'}
+              </Text>
             </View>
           )}
         </View>
 
         {/* Icon Area - Unified style */}
-        <View className="mt-8 mb-2">
+        <View className={`${marginTop} ${compact ? 'mb-1' : 'mb-2'}`}>
           {isCompleted ? (
             <View 
-              className="w-20 h-20 rounded-full items-center justify-center"
+              className={`${iconSize} rounded-full items-center justify-center`}
               style={{ backgroundColor: 'rgba(181, 234, 215, 0.3)' }}
             >
-              <Text className="text-4xl">{mission.icon}</Text>
+              <Text className={iconTextSize}>{mission.icon}</Text>
             </View>
           ) : (
             <BouncingIcon>
               <View 
-                className="w-20 h-20 rounded-full items-center justify-center"
+                className={`${iconSize} rounded-full items-center justify-center`}
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
               >
-                <Text className="text-4xl">{mission.icon}</Text>
+                <Text className={iconTextSize}>{mission.icon}</Text>
               </View>
             </BouncingIcon>
           )}
@@ -264,16 +277,18 @@ export default function MissionCard({
 
         {/* Content */}
         <View className="items-center w-full z-10">
-          <Text className="text-base font-bold text-gray-800 text-center mb-1 font-sans">
+          <Text className={`${titleSize} font-bold text-gray-800 text-center mb-1 font-sans`} numberOfLines={compact ? 1 : 2}>
             {mission.name}
           </Text>
-          <Text className="text-xs text-gray-500 text-center mb-2 font-sans px-1" numberOfLines={2}>
-            {mission.description}
-          </Text>
+          {!compact && (
+            <Text className="text-xs text-gray-500 text-center mb-2 font-sans px-1" numberOfLines={2}>
+              {mission.description}
+            </Text>
+          )}
           
-          {/* Info Pills */}
-          <View className="flex-row gap-2">
-            {mission.timerSeconds > 0 && (
+          {/* Info Pills - 컴팩트 모드에서는 별만 표시 */}
+          <View className={`flex-row ${compact ? 'gap-1' : 'gap-2'}`}>
+            {!compact && mission.timerSeconds > 0 && (
               <View 
                 className="px-3 py-1 rounded-full"
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
@@ -282,26 +297,30 @@ export default function MissionCard({
               </View>
             )}
             <View 
-              className="px-3 py-1 rounded-full"
+              className={`${compact ? 'px-2 py-0.5' : 'px-3 py-1'} rounded-full`}
               style={{ backgroundColor: 'rgba(255, 218, 193, 0.5)' }}
             >
-              <Text className="text-xs font-semibold" style={{ color: '#FF9AA2' }}>⭐ {mission.starReward}</Text>
+              <Text className={`${compact ? 'text-[10px]' : 'text-xs'} font-semibold`} style={{ color: '#FF9AA2' }}>
+                ⭐ {mission.starReward}
+              </Text>
             </View>
           </View>
         </View>
 
         {/* Action Button */}
         <View 
-          className="w-full py-3 rounded-2xl mt-2 items-center"
+          className={`w-full ${compact ? 'py-2' : 'py-3'} rounded-2xl mt-2 items-center`}
           style={{ 
             backgroundColor: isCompleted ? 'rgba(181, 234, 215, 0.5)' : '#FFB7B2',
           }}
         >
           <Text 
-            className="font-bold text-sm"
+            className={`font-bold ${compact ? 'text-xs' : 'text-sm'}`}
             style={{ color: isCompleted ? '#666' : '#fff' }}
           >
-            {isCompleted ? '✅ 기록 보기' : '🚀 시작하기'}
+            {isCompleted 
+              ? (compact ? '✅ 보기' : '✅ 기록 보기') 
+              : (compact ? '🚀 시작' : '🚀 시작하기')}
           </Text>
         </View>
 

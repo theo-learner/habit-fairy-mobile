@@ -89,7 +89,15 @@ function HomeScreenContent() {
 
   const [refreshing, setRefreshing] = React.useState(false);
   const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<'carousel' | 'grid'>('carousel');
   const horizontalScrollRef = useRef<ScrollView>(null);
+
+  // 뷰 모드 전환
+  const toggleViewMode = () => {
+    playButtonHaptic();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setViewMode(prev => prev === 'carousel' ? 'grid' : 'carousel');
+  };
 
   // Safe data
   const safeMissions = Array.isArray(missions) ? missions : [];
@@ -244,29 +252,92 @@ function HomeScreenContent() {
           </View>
         </Animated.View>
 
-        {/* Journey Header */}
-        <View className="px-5 mb-2">
+        {/* Journey Header with View Toggle */}
+        <View className="px-5 mb-2 flex-row items-center justify-between">
           <Text className="text-lg font-bold text-gray-700 font-sans">
             🗺️ 오늘의 미션
           </Text>
+          <Pressable
+            onPress={toggleViewMode}
+            className="px-3 py-1.5 rounded-full"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+          >
+            <Text className="text-sm">
+              {viewMode === 'carousel' ? '📋 그리드' : '🎠 카드'}
+            </Text>
+          </Pressable>
         </View>
 
-        {/* Horizontal ScrollView (Journey Map) */}
-        <View>
-          <ScrollView
-            ref={horizontalScrollRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 12 }}
-            className="flex-row"
-            decelerationRate="fast"
-            snapToInterval={CARD_TOTAL_WIDTH}
-            snapToAlignment="start"
-            onScroll={handleHorizontalScroll}
-            scrollEventThrottle={16}
+        {/* Mission View - Carousel or Grid */}
+        {viewMode === 'carousel' ? (
+          /* Horizontal ScrollView (Journey Map) */
+          <View>
+            <ScrollView
+              ref={horizontalScrollRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 12 }}
+              className="flex-row"
+              decelerationRate="fast"
+              snapToInterval={CARD_TOTAL_WIDTH}
+              snapToAlignment="start"
+              onScroll={handleHorizontalScroll}
+              scrollEventThrottle={16}
+            >
+              {safeMissions.length === 0 ? (
+                <View className="w-64 h-56 bg-white rounded-3xl items-center justify-center shadow-clay-md mx-2 border border-magic-lavender/30 p-4">
+                  <Text className="text-5xl mb-3">✨</Text>
+                  <Text className="text-gray-600 text-center mb-2 font-bold text-base">
+                    아직 미션이 없어요!
+                  </Text>
+                  <Text className="text-gray-400 text-center text-xs">
+                    설정에서 미션을 추가해주세요 🎯
+                  </Text>
+                </View>
+              ) : (
+                safeMissions.map((mission, idx) => (
+                  <View key={mission.id} className="mr-4">
+                     {/* Connectors for Journey Map Look (Dashed Line) */}
+                     {idx < safeMissions.length - 1 && (
+                        <View className="absolute top-1/2 -right-8 w-8 h-1 bg-gray-300 z-0" style={{ borderStyle: 'dashed', borderWidth: 1, borderColor: '#D1D5DB' }} />
+                     )}
+                     <MissionCard
+                       mission={mission}
+                       isCompleted={isMissionCompletedToday(mission.id)}
+                       index={idx}
+                     />
+                  </View>
+                ))
+              )}
+              
+              {/* End of Journey Placeholder */}
+               {safeMissions.length > 0 && (
+                <View className="w-16 h-72 items-center justify-center ml-1">
+                  <View className="bg-white/80 rounded-2xl p-3 shadow-clay-sm border border-white">
+                    <Text className="text-2xl">🏁</Text>
+                    <Text className="text-[10px] text-gray-500 mt-1 font-bold text-center">도착!</Text>
+                  </View>
+                </View>
+              )}
+            </ScrollView>
+
+            {/* Pagination Dots */}
+            {safeMissions.length > 1 && (
+              <PaginationDots 
+                total={safeMissions.length} 
+                current={currentMissionIndex}
+                onDotPress={scrollToMission}
+              />
+            )}
+          </View>
+        ) : (
+          /* Grid View */
+          <Animated.View 
+            entering={FadeIn.duration(300)}
+            className="px-4 py-2"
           >
             {safeMissions.length === 0 ? (
-              <View className="w-64 h-56 bg-white rounded-3xl items-center justify-center shadow-clay-md mx-2 border border-magic-lavender/30 p-4">
+              <View className="h-48 bg-white rounded-3xl items-center justify-center mx-2 border border-magic-lavender/30 p-4">
                 <Text className="text-5xl mb-3">✨</Text>
                 <Text className="text-gray-600 text-center mb-2 font-bold text-base">
                   아직 미션이 없어요!
@@ -276,41 +347,20 @@ function HomeScreenContent() {
                 </Text>
               </View>
             ) : (
-              safeMissions.map((mission, idx) => (
-                <View key={mission.id} className="mr-4">
-                   {/* Connectors for Journey Map Look (Dashed Line) */}
-                   {idx < safeMissions.length - 1 && (
-                      <View className="absolute top-1/2 -right-8 w-8 h-1 bg-gray-300 z-0" style={{ borderStyle: 'dashed', borderWidth: 1, borderColor: '#D1D5DB' }} />
-                   )}
-                   <MissionCard
-                     mission={mission}
-                     isCompleted={isMissionCompletedToday(mission.id)}
-                     index={idx}
-                   />
-                </View>
-              ))
-            )}
-            
-            {/* End of Journey Placeholder */}
-             {safeMissions.length > 0 && (
-              <View className="w-16 h-72 items-center justify-center ml-1">
-                <View className="bg-white/80 rounded-2xl p-3 shadow-clay-sm border border-white">
-                  <Text className="text-2xl">🏁</Text>
-                  <Text className="text-[10px] text-gray-500 mt-1 font-bold text-center">도착!</Text>
-                </View>
+              <View className="flex-row flex-wrap justify-center">
+                {safeMissions.map((mission, idx) => (
+                  <MissionCard
+                    key={mission.id}
+                    mission={mission}
+                    isCompleted={isMissionCompletedToday(mission.id)}
+                    index={idx}
+                    compact
+                  />
+                ))}
               </View>
             )}
-          </ScrollView>
-
-          {/* Pagination Dots */}
-          {safeMissions.length > 1 && (
-            <PaginationDots 
-              total={safeMissions.length} 
-              current={currentMissionIndex}
-              onDotPress={scrollToMission}
-            />
-          )}
-        </View>
+          </Animated.View>
+        )}
 
       </ScrollView>
     </View>
