@@ -43,6 +43,10 @@ export default function Root({ children }: PropsWithChildren) {
             display: flex;
             justify-content: center;
           }
+          /* Force font for all components */
+          input, button, select, textarea, div, span, p {
+            font-family: 'Jua', sans-serif !important;
+          }
         `}} />
       </head>
       <body>

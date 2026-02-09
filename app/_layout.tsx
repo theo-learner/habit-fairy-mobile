@@ -57,6 +57,7 @@ export default function RootLayout() {
           // But usually mobile apps are full screen. Let's stick to the prompt's request.
           boxShadow: '0 0 40px rgba(0,0,0,0.2)',
           minHeight: '100vh',
+          fontFamily: 'Jua',
         } : {}}
       >
         <Stack
@@ -64,7 +65,7 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: '#F5F3FF' }, // magic-bg
             headerShadowVisible: false,
             // Use Jua font for headers too, fallback to system
-            headerTitleStyle: { fontFamily: 'Jua', fontWeight: 'bold', color: '#4B5563' },
+            headerTitleStyle: { fontFamily: 'Jua', color: '#4B5563' },
             headerTitleAlign: 'center',
             contentStyle: { backgroundColor: '#F5F3FF' },
           }}

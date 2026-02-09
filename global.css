@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html, body {
+    font-family: 'Jua', sans-serif !important;
+  }
+}
+
+/* Force Jua font on all text-related elements in Web */
+* {
+  font-family: 'Jua', sans-serif !important;
+}

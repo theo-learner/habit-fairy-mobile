@@ -123,11 +123,11 @@ export default function FairyCharacter({
       true
     );
 
-    // Glow Pulse
+    // Glow Pulse (Higher contrast)
     glowOpacity.value = withRepeat(
       withSequence(
-        withTiming(0.8, { duration: 1500 }),
-        withTiming(0.4, { duration: 1500 }),
+        withTiming(1.0, { duration: 1500 }),
+        withTiming(0.6, { duration: 1500 }),
       ),
       -1,
       true
@@ -171,17 +171,17 @@ export default function FairyCharacter({
         <Svg width={cfg.svgSize} height={cfg.svgSize} viewBox="0 0 100 100">
           <Defs>
             <LinearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0%" stopColor="#FFEDD5" />
-              <Stop offset="100%" stopColor="#FFD8A8" />
+              <Stop offset="0%" stopColor="#FED7AA" />
+              <Stop offset="100%" stopColor="#FDBA74" />
             </LinearGradient>
             <LinearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
               <Stop offset="0%" stopColor="#FB923C" />
-              <Stop offset="100%" stopColor="#F97316" />
+              <Stop offset="100%" stopColor="#EA580C" />
             </LinearGradient>
             <LinearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0%" stopColor="#E0F2FE" stopOpacity={1} />
-              <Stop offset="50%" stopColor="#BAE6FD" stopOpacity={0.9} />
-              <Stop offset="100%" stopColor="#7DD3FC" stopOpacity={0.8} />
+              <Stop offset="0%" stopColor="#BAE6FD" stopOpacity={1} />
+              <Stop offset="50%" stopColor="#7DD3FC" stopOpacity={0.9} />
+              <Stop offset="100%" stopColor="#38BDF8" stopOpacity={0.8} />
             </LinearGradient>
              <RadialGradient id="cheek" cx="50%" cy="50%" rx="50%" ry="50%">
                <Stop offset="0%" stopColor="#FDA4AF" stopOpacity={0.6} />
@@ -298,9 +298,10 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '45deg' }],
   },
   bubbleText: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#374151',
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'Jua',
   },
 });
