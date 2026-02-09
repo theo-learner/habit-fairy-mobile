@@ -2,7 +2,7 @@
   "name": "habit-fairy-mobile",
   "version": "1.0.0",
   "main": "expo-router/entry",
-  "homepage": "https://theo-learner.github.io/habit-fairy-mobile",
+  "homepage": "https://theo-learner.github.io/habit-fairy-mobile/",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
