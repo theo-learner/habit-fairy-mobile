@@ -29,6 +29,10 @@ interface AppState {
   childName: string;
   isLoaded: boolean;
 
+  // --- 꾸미기 아이템 ---
+  ownedItems: string[];          // 보유한 아이템 ID 목록
+  equippedItems: Record<string, string | null>; // 장착한 아이템 { category: itemId }
+
   // --- 기존 액션 ---
   loadData: () => Promise<void>;
   completeMission: (missionId: string, starReward: number) => Promise<void>;
@@ -39,6 +43,10 @@ interface AppState {
   deleteCustomMission: (id: string) => Promise<void>;
   getLastNDays: (n: number) => string[];
   getStreakDays: () => number;
+
+  // --- 꾸미기 액션 ---
+  purchaseItem: (itemId: string, cost: number) => Promise<void>;
+  toggleEquipItem: (itemId: string, category: string) => Promise<void>;
 
   // --- 미션 관리 액션 ---
   updateMission: (id: string, updates: Partial<Mission>) => Promise<void>;
@@ -70,16 +78,20 @@ export const useAppStore = create<AppState>((set, get) => ({
   totalStars: 0,
   childName: '',
   isLoaded: false,
+  ownedItems: [],
+  equippedItems: {},
 
   /** 앱 시작 시 AsyncStorage에서 데이터 로드 — 실패해도 기본값으로 동작 */
   loadData: async () => {
     try {
-      const [completedMap, totalStars, childName, missions, allMissions] = await Promise.all([
+      const [completedMap, totalStars, childName, missions, allMissions, ownedItems, equippedItems] = await Promise.all([
         storage.get<CompletedMap>('completedMissions', {}),
         storage.get<number>('totalStars', 0),
         storage.get<string>('childName', ''),
         fetchAllMissions(),
         getAllMissionsIncludingInactive(),
+        storage.get<string[]>('ownedItems', []),
+        storage.get<Record<string, string | null>>('equippedItems', {}),
       ]);
 
       // null/undefined 방어: 각 값이 유효하지 않으면 기본값 사용
@@ -89,6 +101,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         childName: typeof childName === 'string' ? childName : '',
         missions: Array.isArray(missions) && missions.length > 0 ? missions : PRESET_MISSIONS,
         allMissions: Array.isArray(allMissions) && allMissions.length > 0 ? allMissions : PRESET_MISSIONS,
+        ownedItems: Array.isArray(ownedItems) ? ownedItems : [],
+        equippedItems: equippedItems && typeof equippedItems === 'object' ? equippedItems : {},
         isLoaded: true,
       });
     } catch (e) {
@@ -100,6 +114,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         childName: '',
         missions: PRESET_MISSIONS,
         allMissions: PRESET_MISSIONS,
+        ownedItems: [],
+        equippedItems: {},
         isLoaded: true,
       });
     }
@@ -212,6 +228,48 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ missions: activeMissions, allMissions: newAll });
     } catch (e) {
       console.error('[HabitFairy] deleteCustomMission 실패:', e);
+    }
+  },
+
+  /** 아이템 구매 */
+  purchaseItem: async (itemId, cost) => {
+    try {
+      const { totalStars, ownedItems } = get();
+      if (totalStars < cost) return;
+      if (ownedItems.includes(itemId)) return;
+
+      const newStars = totalStars - cost;
+      const newOwned = [...ownedItems, itemId];
+
+      set({ totalStars: newStars, ownedItems: newOwned });
+      await Promise.all([
+        storage.set('totalStars', newStars),
+        storage.set('ownedItems', newOwned),
+      ]);
+    } catch (e) {
+      console.error('[HabitFairy] purchaseItem 실패:', e);
+    }
+  },
+
+  /** 아이템 장착/해제 토글 */
+  toggleEquipItem: async (itemId, category) => {
+    try {
+      const { equippedItems, ownedItems } = get();
+      if (!ownedItems.includes(itemId)) return;
+
+      const newEquipped = { ...equippedItems };
+      if (newEquipped[category] === itemId) {
+        // 이미 장착 중이면 해제
+        newEquipped[category] = null;
+      } else {
+        // 아니면 장착
+        newEquipped[category] = itemId;
+      }
+
+      set({ equippedItems: newEquipped });
+      await storage.set('equippedItems', newEquipped);
+    } catch (e) {
+      console.error('[HabitFairy] toggleEquipItem 실패:', e);
     }
   },
 

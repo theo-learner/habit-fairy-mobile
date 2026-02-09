@@ -22,32 +22,21 @@ import Animated, {
 import FairyCharacter from '@/components/FairyCharacter';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';
-
-/** 꾸미기 아이템 (Phase 1 — 프리뷰) */
-const AVATAR_ITEMS = [
-  { id: 'hat-ribbon', name: '파란 리본', emoji: '🎀', cost: 5, category: '모자' },
-  { id: 'hat-wizard', name: '마법사 모자', emoji: '🎩', cost: 10, category: '모자' },
-  { id: 'hat-crown', name: '왕관', emoji: '👑', cost: 20, category: '모자' },
-  { id: 'hat-flower', name: '꽃 머리띠', emoji: '🌸', cost: 15, category: '모자' },
-  { id: 'wing-butterfly', name: '나비 날개', emoji: '🦋', cost: 30, category: '날개' },
-  { id: 'wing-angel', name: '천사 날개', emoji: '🕊️', cost: 50, category: '날개' },
-  { id: 'bg-rainbow', name: '무지개 배경', emoji: '🌈', cost: 25, category: '배경' },
-  { id: 'bg-stars', name: '별빛 배경', emoji: '🌌', cost: 40, category: '배경' },
-  { id: 'acc-wand', name: '마법 지팡이', emoji: '🪄', cost: 35, category: '소품' },
-  { id: 'acc-heart', name: '하트 목걸이', emoji: '💖', cost: 15, category: '소품' },
-  { id: 'acc-star', name: '별빛 안경', emoji: '🤩', cost: 20, category: '소품' },
-  { id: 'acc-unicorn', name: '유니콘 뿔', emoji: '🦄', cost: 100, category: '소품' },
-];
+import { AVATAR_ITEMS } from '@/lib/items';
 
 /** 아이템 카드 */
 function ItemCard({
   item,
   canAfford,
   isOwned,
+  isEquipped,
+  onPress,
 }: {
   item: (typeof AVATAR_ITEMS)[0];
   canAfford: boolean;
   isOwned: boolean;
+  isEquipped: boolean;
+  onPress: () => void;
 }) {
   const scale = useSharedValue(1);
   const animStyle = useAnimatedStyle(() => ({
@@ -56,10 +45,11 @@ function ItemCard({
 
   const handlePress = () => {
     playButtonHaptic();
-    scale.value = withSpring(0.9, { damping: 15 });
+    scale.value = withSpring(0.8, { damping: 15 });
     setTimeout(() => {
       scale.value = withSpring(1, { damping: 15 });
     }, 150);
+    onPress();
   };
 
   return (
@@ -69,6 +59,7 @@ function ItemCard({
         style={[
           styles.itemCard,
           isOwned && styles.itemCardOwned,
+          isEquipped && styles.itemCardEquipped,
           !canAfford && !isOwned && styles.itemCardLocked,
         ]}
       >
@@ -81,7 +72,9 @@ function ItemCard({
         >
           {item.name}
         </Text>
-        {isOwned ? (
+        {isEquipped ? (
+          <Text style={styles.itemEquippedLabel}>✨ 장착 중</Text>
+        ) : isOwned ? (
           <Text style={styles.itemOwnedLabel}>✅ 보유</Text>
         ) : (
           <Text style={[styles.itemCost, canAfford && styles.itemCostAffordable]}>
@@ -98,6 +91,10 @@ function ItemCard({
 
 export default function RewardsScreen() {
   const totalStars = useAppStore((s) => s.totalStars);
+  const ownedItems = useAppStore((s) => s.ownedItems || []);
+  const equippedItems = useAppStore((s) => s.equippedItems || {});
+  const purchaseItem = useAppStore((s) => s.purchaseItem);
+  const toggleEquipItem = useAppStore((s) => s.toggleEquipItem);
   const childName = useAppStore((s) => s.childName);
 
   // 카테고리 탭
@@ -113,6 +110,17 @@ export default function RewardsScreen() {
   );
 
   const name = childName || '친구';
+
+  const handleItemPress = (item: typeof AVATAR_ITEMS[0]) => {
+    if (ownedItems.includes(item.id)) {
+      // 이미 보유 중이면 장착/해제 토글
+      toggleEquipItem(item.id, item.category);
+    } else if (totalStars >= item.cost) {
+      // 보유 중이지 않고 별이 충분하면 구매
+      purchaseItem(item.id, item.cost);
+      playStarHaptic();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -146,13 +154,13 @@ export default function RewardsScreen() {
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statEmoji}>🎁</Text>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{ownedItems.length}</Text>
             <Text style={styles.statLabel}>보유 아이템</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statEmoji}>🔒</Text>
-            <Text style={styles.statValue}>{AVATAR_ITEMS.length}</Text>
-            <Text style={styles.statLabel}>전체 아이템</Text>
+            <Text style={styles.statValue}>{AVATAR_ITEMS.length - ownedItems.length}</Text>
+            <Text style={styles.statLabel}>남은 아이템</Text>
           </View>
         </Animated.View>
 
@@ -193,7 +201,9 @@ export default function RewardsScreen() {
               <ItemCard
                 item={item}
                 canAfford={totalStars >= item.cost}
-                isOwned={false}
+                isOwned={ownedItems.includes(item.id)}
+                isEquipped={equippedItems[item.category] === item.id}
+                onPress={() => handleItemPress(item)}
               />
             </Animated.View>
           ))}
@@ -342,6 +352,11 @@ const styles = StyleSheet.create({
     borderColor: '#34D399',
     backgroundColor: '#F0FDF4',
   },
+  itemCardEquipped: {
+    borderColor: '#8B5CF6',
+    borderWidth: 2,
+    backgroundColor: '#F5F3FF',
+  },
   itemCardLocked: {
     borderColor: '#E5E7EB',
     backgroundColor: '#F9FAFB',
@@ -376,6 +391,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#34D399',
+  },
+  itemEquippedLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#8B5CF6',
   },
   lockIcon: {
     position: 'absolute',
