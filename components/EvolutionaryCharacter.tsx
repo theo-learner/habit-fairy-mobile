@@ -75,9 +75,12 @@ export default function EvolutionaryCharacter({
     );
   }, []);
 
+  // Check if can evolve (memoized)
+  const canEvolveNow = canEvolve();
+
   // Glow effect when can evolve
   useEffect(() => {
-    if (canEvolve()) {
+    if (canEvolveNow) {
       glowOpacity.value = withRepeat(
         withSequence(
           withTiming(0.8, { duration: 800 }),
@@ -89,7 +92,7 @@ export default function EvolutionaryCharacter({
     } else {
       glowOpacity.value = withTiming(0);
     }
-  }, [canEvolve()]);
+  }, [canEvolveNow]);
 
   // Random dialogue on mount
   useEffect(() => {
@@ -118,7 +121,7 @@ export default function EvolutionaryCharacter({
   }, [gainExp, onTap, showDialogue, pet.type, pet.currentStage]);
 
   const handleEvolve = useCallback(() => {
-    if (canEvolve()) {
+    if (canEvolveNow) {
       scale.value = withSequence(
         withSpring(1.3, { damping: 8 }),
         withSpring(0.8, { damping: 8 }),
@@ -126,7 +129,7 @@ export default function EvolutionaryCharacter({
       );
       evolve();
     }
-  }, [evolve, canEvolve]);
+  }, [evolve, canEvolveNow]);
 
   // Animated styles
   const containerStyle = useAnimatedStyle(() => ({
@@ -148,7 +151,7 @@ export default function EvolutionaryCharacter({
       <Pressable onPress={handlePress}>
         <Animated.View style={[styles.container, { width: cfg.container, height: cfg.container }, containerStyle]}>
           {/* Glow effect */}
-          {canEvolve() && (
+          {canEvolveNow && (
             <Animated.View style={[styles.glowLayer, { 
               width: cfg.size * 1.3, 
               height: cfg.size * 1.3,
@@ -208,7 +211,7 @@ export default function EvolutionaryCharacter({
       )}
 
       {/* Evolve button */}
-      {canEvolve() && (
+      {canEvolveNow && (
         <Pressable style={styles.evolveButton} onPress={handleEvolve}>
           <Text style={styles.evolveButtonText}>✨ 진화하기!</Text>
         </Pressable>
