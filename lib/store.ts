@@ -33,6 +33,9 @@ interface AppState {
   ownedItems: string[];          // 보유한 아이템 ID 목록
   equippedItems: Record<string, string | null>; // 장착한 아이템 { category: itemId }
 
+  // --- 캐릭터 선택 ---
+  selectedCharacter: string;     // 선택된 캐릭터 ID (default: 'fairy')
+
   // --- 기존 액션 ---
   loadData: () => Promise<void>;
   completeMission: (missionId: string, starReward: number) => Promise<void>;
@@ -47,6 +50,9 @@ interface AppState {
   // --- 꾸미기 액션 ---
   purchaseItem: (itemId: string, cost: number) => Promise<void>;
   toggleEquipItem: (itemId: string, category: string) => Promise<void>;
+
+  // --- 캐릭터 선택 액션 ---
+  selectCharacter: (characterId: string) => Promise<void>;
 
   // --- 미션 관리 액션 ---
   updateMission: (id: string, updates: Partial<Mission>) => Promise<void>;
@@ -80,11 +86,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoaded: false,
   ownedItems: [],
   equippedItems: {},
+  selectedCharacter: 'fairy',
 
   /** 앱 시작 시 AsyncStorage에서 데이터 로드 — 실패해도 기본값으로 동작 */
   loadData: async () => {
     try {
-      const [completedMap, totalStars, childName, missions, allMissions, ownedItems, equippedItems] = await Promise.all([
+      const [completedMap, totalStars, childName, missions, allMissions, ownedItems, equippedItems, selectedCharacter] = await Promise.all([
         storage.get<CompletedMap>('completedMissions', {}),
         storage.get<number>('totalStars', 0),
         storage.get<string>('childName', ''),
@@ -92,6 +99,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         getAllMissionsIncludingInactive(),
         storage.get<string[]>('ownedItems', []),
         storage.get<Record<string, string | null>>('equippedItems', {}),
+        storage.get<string>('selectedCharacter', 'fairy'),
       ]);
 
       // null/undefined 방어: 각 값이 유효하지 않으면 기본값 사용
@@ -103,6 +111,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         allMissions: Array.isArray(allMissions) && allMissions.length > 0 ? allMissions : PRESET_MISSIONS,
         ownedItems: Array.isArray(ownedItems) ? ownedItems : [],
         equippedItems: equippedItems && typeof equippedItems === 'object' ? equippedItems : {},
+        selectedCharacter: typeof selectedCharacter === 'string' ? selectedCharacter : 'fairy',
         isLoaded: true,
       });
     } catch (e) {
@@ -116,6 +125,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         allMissions: PRESET_MISSIONS,
         ownedItems: [],
         equippedItems: {},
+        selectedCharacter: 'fairy',
         isLoaded: true,
       });
     }
@@ -277,6 +287,16 @@ export const useAppStore = create<AppState>((set, get) => ({
       await storage.set('equippedItems', newEquipped);
     } catch (e) {
       console.error('[HabitFairy] toggleEquipItem 실패:', e);
+    }
+  },
+
+  /** 캐릭터 선택 */
+  selectCharacter: async (characterId) => {
+    try {
+      set({ selectedCharacter: characterId });
+      await storage.set('selectedCharacter', characterId);
+    } catch (e) {
+      console.error('[HabitFairy] selectCharacter 실패:', e);
     }
   },
 

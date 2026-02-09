@@ -5,8 +5,8 @@ import { playButtonHaptic } from '@/lib/sounds';
 
 const TABS = [
   { name: 'index', label: '홈', icon: '🏠', path: '/' },
+  { name: 'character', label: '친구', icon: '🎭', path: '/character' },
   { name: 'rewards', label: '꾸미기', icon: '👗', path: '/rewards' },
-  { name: 'manage', label: '관리', icon: '⚙️', path: '/manage' },
   { name: 'dashboard', label: '기록', icon: '📊', path: '/dashboard' },
 ];
 

@@ -34,7 +34,7 @@ export default function RootLayout() {
   // Manage is also a main screen but protected. 
   // We'll show tab bar on these pages.
   const segment = segments[0] || 'index';
-  const showTabBar = ['index', 'rewards', 'manage', 'dashboard'].includes(segment);
+  const showTabBar = ['index', 'rewards', 'manage', 'dashboard', 'character'].includes(segment);
 
   const isWeb = Platform.OS === 'web';
 

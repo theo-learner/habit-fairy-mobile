@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useAppStore } from '@/lib/store';
 import { getItemById } from '@/lib/items';
+import { getCharacterById, DEFAULT_CHARACTER_ID } from '@/lib/characters';
 import type { FairyEmotion } from '@/types';
 
 interface FairyCharacterProps {
@@ -34,6 +35,11 @@ export default function FairyCharacter({
 }: FairyCharacterProps) {
   const cfg = SIZE_CONFIG[size];
   const equippedItems = useAppStore((s) => s.equippedItems || {});
+  const selectedCharacter = useAppStore((s) => s.selectedCharacter || DEFAULT_CHARACTER_ID);
+  
+  // Get character asset
+  const character = getCharacterById(selectedCharacter);
+  const characterAsset = character?.asset || require('@/assets/fairy_v2.png');
 
   // Animations
   const floatY = useSharedValue(0);
@@ -89,7 +95,7 @@ export default function FairyCharacter({
         {/* Fairy Image Container - items positioned relative to this */}
         <View style={styles.fairyImageContainer}>
           <Image 
-            source={require('@/assets/fairy_v2.png')} 
+            source={characterAsset} 
             style={{ 
               width: cfg.size, 
               height: cfg.size,
