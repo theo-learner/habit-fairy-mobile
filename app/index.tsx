@@ -11,7 +11,10 @@ import { useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInRight } from 'react-native-reanimated';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FairyCharacter from '@/components/FairyCharacter';
+import EvolutionaryCharacter from '@/components/EvolutionaryCharacter';
 import MissionCard from '@/components/MissionCard';
+import { usePetStore } from '@/store/usePetStore';
+import PetFactory from '@/utils/petFactory';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
 import type { FairyEmotion } from '@/types';
@@ -26,6 +29,12 @@ function HomeScreenContent() {
   const loadData = useAppStore((s) => s.loadData);
   const isMissionCompletedToday = useAppStore((s) => s.isMissionCompletedToday);
   const getTodayCompleted = useAppStore((s) => s.getTodayCompleted);
+
+  // Evolution System
+  const pet = usePetStore((s) => s.pet);
+  const canEvolve = usePetStore((s) => s.canEvolve);
+  const getExpProgress = usePetStore((s) => s.getExpProgress);
+  const stageConfig = PetFactory.getStageConfig(pet.type, pet.currentStage);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -92,19 +101,35 @@ function HomeScreenContent() {
           />
         }
       >
-        {/* Fairy Section */}
-        <Animated.View entering={FadeIn.duration(600)} className="items-center py-8">
-          <FairyCharacter
-            emotion={fairyEmotion}
-            message={greeting}
+        {/* Fairy Section with Evolution System */}
+        <Animated.View entering={FadeIn.duration(600)} className="items-center py-6">
+          {/* Evolution Character */}
+          <EvolutionaryCharacter
             size="lg"
-            showMessage
+            showExpBar={pet.currentStage < 3}
+            showDialogue={true}
           />
-          <View className="mt-4 bg-white/50 px-4 py-2 rounded-full border border-white shadow-sm">
-            <Text className="font-bold text-amber-600">
-              ⭐ 모은 별: {totalStars}개
-            </Text>
+          
+          {/* Stage & Stars Info */}
+          <View className="flex-row items-center gap-3 mt-4">
+            <View className="bg-purple-100 px-3 py-1.5 rounded-full border border-purple-200">
+              <Text className="font-bold text-purple-600 text-sm">
+                {pet.currentStage === 1 ? '🥚 알' : pet.currentStage === 2 ? '🐣 아기' : '⭐ 성장 완료'}
+              </Text>
+            </View>
+            <View className="bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
+              <Text className="font-bold text-amber-600 text-sm">
+                ⭐ {totalStars}개
+              </Text>
+            </View>
           </View>
+
+          {/* Evolution Progress Hint */}
+          {pet.currentStage < 3 && (
+            <Text className="text-gray-400 text-xs mt-2">
+              미션을 완료하면 경험치가 올라요! (별 1개 = 5 EXP)
+            </Text>
+          )}
         </Animated.View>
 
         {/* Journey Map Title */}

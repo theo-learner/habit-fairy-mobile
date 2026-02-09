@@ -16,6 +16,8 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { usePetStore } from '@/store/usePetStore';
+import { useAppStore } from '@/lib/store';
+import { getItemById } from '@/lib/items';
 import PetFactory from '@/utils/petFactory';
 
 interface EvolutionaryCharacterProps {
@@ -49,6 +51,11 @@ export default function EvolutionaryCharacter({
   // Get current stage config
   const stageConfig = PetFactory.getStageConfig(pet.type, pet.currentStage);
   const asset = stageConfig.asset;
+
+  // Decoration items from app store
+  const equippedItems = useAppStore((s) => s.equippedItems || {});
+  const hatItem = equippedItems['모자'] ? getItemById(equippedItems['모자']!) : null;
+  const accItem = equippedItems['소품'] ? getItemById(equippedItems['소품']!) : null;
 
   // Animation values
   const floatY = useSharedValue(0);
@@ -150,11 +157,27 @@ export default function EvolutionaryCharacter({
           )}
           
           {/* Character image */}
-          <Image
-            source={asset}
-            style={{ width: cfg.size, height: cfg.size }}
-            resizeMode="contain"
-          />
+          <View style={styles.characterImageContainer}>
+            <Image
+              source={asset}
+              style={{ width: cfg.size, height: cfg.size }}
+              resizeMode="contain"
+            />
+            
+            {/* Hat decoration */}
+            {hatItem && (
+              <View style={[styles.hatDecor, { top: cfg.size * 0.02 }]}>
+                <Text style={{ fontSize: cfg.size * 0.2 }}>{hatItem.emoji}</Text>
+              </View>
+            )}
+            
+            {/* Accessory decoration */}
+            {accItem && (
+              <View style={[styles.accDecor, { right: 0, bottom: cfg.size * 0.2 }]}>
+                <Text style={{ fontSize: cfg.size * 0.15 }}>{accItem.emoji}</Text>
+              </View>
+            )}
+          </View>
 
           {/* Stage badge */}
           <View style={styles.stageBadge}>
@@ -209,6 +232,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 30,
+  },
+  characterImageContainer: {
+    position: 'relative',
+  },
+  hatDecor: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -15,
+    zIndex: 10,
+  },
+  accDecor: {
+    position: 'absolute',
+    zIndex: 10,
   },
   stageBadge: {
     position: 'absolute',
