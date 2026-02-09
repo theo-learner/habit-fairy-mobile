@@ -1,14 +1,17 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   RefreshControl,
   Pressable,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeIn, FadeInRight } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInRight, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FairyCharacter from '@/components/FairyCharacter';
 import MissionCard from '@/components/MissionCard';
@@ -16,6 +19,56 @@ import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
 import type { FairyEmotion } from '@/types';
 import * as Haptics from 'expo-haptics';
+
+const CARD_WIDTH = 256; // w-64
+const CARD_MARGIN = 16; // mr-4
+const CARD_TOTAL_WIDTH = CARD_WIDTH + CARD_MARGIN;
+
+// Pagination Dots Component
+function PaginationDots({ 
+  total, 
+  current, 
+  onDotPress 
+}: { 
+  total: number; 
+  current: number;
+  onDotPress?: (index: number) => void;
+}) {
+  if (total <= 1) return null;
+  
+  return (
+    <View className="flex-row items-center justify-center py-3 gap-2">
+      {Array.from({ length: total }).map((_, index) => {
+        const isActive = index === current;
+        const isCompleted = index < current;
+        
+        return (
+          <Pressable
+            key={index}
+            onPress={() => onDotPress?.(index)}
+            className={`
+              rounded-full transition-all
+              ${isActive 
+                ? 'w-6 h-2 bg-magic-purple' 
+                : 'w-2 h-2 bg-gray-300'
+              }
+            `}
+            style={{
+              shadowColor: isActive ? '#9333EA' : 'transparent',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: isActive ? 0.4 : 0,
+              shadowRadius: 4,
+            }}
+          />
+        );
+      })}
+      {/* Progress text */}
+      <Text className="text-xs text-gray-400 ml-2 font-bold">
+        {current + 1}/{total}
+      </Text>
+    </View>
+  );
+}
 
 function HomeScreenContent() {
   const router = useRouter();
@@ -28,6 +81,8 @@ function HomeScreenContent() {
   const getTodayCompleted = useAppStore((s) => s.getTodayCompleted);
 
   const [refreshing, setRefreshing] = React.useState(false);
+  const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
+  const horizontalScrollRef = useRef<ScrollView>(null);
 
   // Safe data
   const safeMissions = Array.isArray(missions) ? missions : [];
@@ -37,7 +92,7 @@ function HomeScreenContent() {
   const todayCompletedCount = Array.isArray(todayCompleted) ? todayCompleted.length : 0;
   const allDone = todayCompletedCount >= safeMissions.length && safeMissions.length > 0;
 
-  // Effect for haptic/sound when all done (optional, but good for "Green interaction")
+  // Effect for haptic/sound when all done
   useEffect(() => {
     if (allDone) {
       playSuccessSound();
@@ -68,6 +123,26 @@ function HomeScreenContent() {
     } finally {
       setRefreshing(false);
     }
+  };
+
+  // Handle horizontal scroll to update pagination
+  const handleHorizontalScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / CARD_TOTAL_WIDTH);
+    const clampedIndex = Math.max(0, Math.min(index, safeMissions.length - 1));
+    if (clampedIndex !== currentMissionIndex) {
+      setCurrentMissionIndex(clampedIndex);
+      Haptics.selectionAsync(); // Light haptic on page change
+    }
+  };
+
+  // Scroll to specific mission
+  const scrollToMission = (index: number) => {
+    horizontalScrollRef.current?.scrollTo({
+      x: index * CARD_TOTAL_WIDTH,
+      animated: true,
+    });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   if (!isLoaded) {
@@ -126,12 +201,16 @@ function HomeScreenContent() {
         {/* Horizontal ScrollView (Journey Map) */}
         <View>
           <ScrollView
+            ref={horizontalScrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 16 }}
+            contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 12 }}
             className="flex-row"
             decelerationRate="fast"
-            snapToInterval={272} // card width (256px) + margin (16px)
+            snapToInterval={CARD_TOTAL_WIDTH}
+            snapToAlignment="start"
+            onScroll={handleHorizontalScroll}
+            scrollEventThrottle={16}
           >
             {safeMissions.length === 0 ? (
               <View className="w-64 h-56 bg-white rounded-3xl items-center justify-center shadow-clay-md mx-2 border border-magic-lavender/30 p-4">
@@ -169,6 +248,15 @@ function HomeScreenContent() {
               </View>
             )}
           </ScrollView>
+
+          {/* Pagination Dots */}
+          {safeMissions.length > 1 && (
+            <PaginationDots 
+              total={safeMissions.length} 
+              current={currentMissionIndex}
+              onDotPress={scrollToMission}
+            />
+          )}
         </View>
 
       </ScrollView>
