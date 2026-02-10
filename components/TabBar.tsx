@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, Platform } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
@@ -17,16 +17,16 @@ interface TabConfig {
   label: string;
   icon: string;
   path: string;
-  activeColor: string;
   protected?: boolean;
 }
 
+// 레퍼런스와 동일한 탭 구성
 const TABS: TabConfig[] = [
-  { name: 'index', label: '홈', icon: '🏠', path: '/', activeColor: '#FFB7B2' },
-  { name: 'character', label: '친구', icon: '🧸', path: '/character', activeColor: '#C7CEEA' },
-  { name: 'rewards', label: '꾸미기', icon: '🎀', path: '/rewards', activeColor: '#FFDAC1' },
-  { name: 'dashboard', label: '기록', icon: '📈', path: '/dashboard', activeColor: '#B5EAD7' },
-  { name: 'manage', label: '설정', icon: '🔧', path: '/manage', activeColor: '#C7CEEA', protected: true },
+  { name: 'index', label: '홈', icon: '🏠', path: '/' },
+  { name: 'character', label: '친구', icon: '🧸', path: '/character' },
+  { name: 'rewards', label: '꾸미기', icon: '🎀', path: '/rewards' },
+  { name: 'dashboard', label: '기록', icon: '📈', path: '/dashboard' },
+  { name: 'manage', label: '설정', icon: '🔧', path: '/manage', protected: true },
 ];
 
 function TabButton({ 
@@ -39,32 +39,18 @@ function TabButton({
   onPress: () => void;
 }) {
   const scale = useSharedValue(1);
-  const pressed = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateY: pressed.value * 2 },
-    ],
-  }));
-
-  const bgStyle = useAnimatedStyle(() => ({
-    backgroundColor: isActive 
-      ? `${tab.activeColor}15` 
-      : 'transparent',
-    borderRadius: 12,
-    padding: 6,
+    transform: [{ scale: scale.value }],
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
-    pressed.value = withSpring(1, { damping: 15, stiffness: 300 });
+    scale.value = withSpring(0.9);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-    pressed.value = withSpring(0, { damping: 15, stiffness: 300 });
+    scale.value = withSpring(1);
   };
 
   return (
@@ -72,28 +58,14 @@ function TabButton({
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[animatedStyle]}
-      className="items-center justify-center"
+      style={[styles.tabButton, animatedStyle]}
     >
-      <Animated.View style={bgStyle} className="items-center">
-        <Text 
-          className="text-xl mb-0.5"
-          style={{ 
-            transform: [{ scale: isActive ? 1.1 : 1 }],
-            opacity: isActive ? 1 : 0.5,
-          }}
-        >
-          {tab.icon}
-        </Text>
-        {isActive && (
-          <Text 
-            className="text-[9px] font-bold font-sans"
-            style={{ color: tab.activeColor }}
-          >
-            {tab.label}
-          </Text>
-        )}
-      </Animated.View>
+      <Text style={[styles.tabIcon, { opacity: isActive ? 1 : 0.4 }]}>
+        {tab.icon}
+      </Text>
+      <Text style={[styles.tabLabel, { color: isActive ? '#333' : '#999', fontWeight: isActive ? '700' : '500' }]}>
+        {tab.label}
+      </Text>
     </AnimatedPressable>
   );
 }
@@ -107,14 +79,14 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   
-  const bottomPadding = Math.max(12, insets.bottom + 8);
+  // 하단 여백 확보 (iOS Safe Area)
+  const bottomPadding = Math.max(20, insets.bottom + 10);
 
   const handlePress = (tab: TabConfig) => {
     playButtonHaptic();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
     if (tab.protected && onProtectedPress) {
-      // Protected tab - trigger parent gate
       onProtectedPress();
     } else if (pathname !== tab.path) {
       router.replace(tab.path as any);
@@ -122,24 +94,8 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
   };
 
   return (
-    <View 
-      className="absolute left-3 right-3 items-center"
-      style={{ bottom: bottomPadding }}
-    >
-      <View 
-        className="flex-row rounded-3xl px-2 py-2 items-center justify-around w-full max-w-md"
-        style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.6)',
-          backdropFilter: 'blur(12px)',
-          borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.6)',
-          shadowColor: '#1f2687',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.07,
-          shadowRadius: 32,
-          elevation: 8,
-        }}
-      >
+    <View style={[styles.container, { paddingBottom: bottomPadding }]}>
+      <View style={styles.bar}>
         {TABS.map((tab) => {
           const isActive = pathname === tab.path || (pathname === '/' && tab.name === 'index');
           return (
@@ -155,3 +111,41 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+  },
+  bar: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    justifyContent: 'space-around',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  tabButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 4,
+  },
+  tabIcon: {
+    fontSize: 22,
+    marginBottom: 4,
+  },
+  tabLabel: {
+    fontSize: 10,
+  },
+});

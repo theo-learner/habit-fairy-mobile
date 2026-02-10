@@ -1,30 +1,24 @@
-// ============================================
-// 보상 화면 — 별 모아보기 + 캐릭터 꾸미기
-// Phase 1: 별 통계 + 아이템 미리보기
-// ============================================
-
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Pressable,
+  Dimensions,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
-import FairyCharacter from '@/components/FairyCharacter';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';
 import { AVATAR_ITEMS } from '@/lib/items';
+import { CHARACTERS } from '@/lib/characters';
 
-/** 아이템 카드 */
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const ITEM_WIDTH = (SCREEN_WIDTH - 48) / 3; // 3열 그리드 (여백 16*2 + 간격 8*2)
+
 function ItemCard({
   item,
   canAfford,
@@ -44,45 +38,44 @@ function ItemCard({
   }));
 
   const handlePress = () => {
-    playButtonHaptic();
-    scale.value = withSpring(0.8, { damping: 15 });
-    setTimeout(() => {
-      scale.value = withSpring(1, { damping: 15 });
-    }, 150);
+    scale.value = withSpring(0.95);
+    setTimeout(() => scale.value = withSpring(1), 100);
     onPress();
   };
 
+  // 아이템 배경색 (파스텔톤 랜덤 느낌)
+  const bgColors = ['#E3F2FD', '#F3E5F5', '#E0F2F1', '#FFF3E0', '#FFEBEE'];
+  const bgColor = bgColors[item.id.charCodeAt(0) % bgColors.length];
+
   return (
-    <Animated.View style={animStyle}>
-      <Pressable
-        onPress={handlePress}
-        style={[
-          styles.itemCard,
-          isOwned && styles.itemCardOwned,
-          isEquipped && styles.itemCardEquipped,
-          !canAfford && !isOwned && styles.itemCardLocked,
-        ]}
-      >
-        <Text style={[styles.itemEmoji, !canAfford && !isOwned && styles.itemEmojiLocked]}>
-          {item.emoji}
-        </Text>
-        <Text
-          style={[styles.itemName, !canAfford && !isOwned && styles.itemNameLocked]}
-          numberOfLines={1}
-        >
-          {item.name}
-        </Text>
-        {isEquipped ? (
-          <Text style={styles.itemEquippedLabel}>✨ 장착 중</Text>
-        ) : isOwned ? (
-          <Text style={styles.itemOwnedLabel}>✅ 보유</Text>
-        ) : (
-          <Text style={[styles.itemCost, canAfford && styles.itemCostAffordable]}>
-            ⭐{item.cost}
-          </Text>
+    <Animated.View style={[styles.itemWrapper, animStyle]}>
+      <Pressable onPress={handlePress} style={[styles.itemCard, { backgroundColor: bgColor }]}>
+        {/* 장착 중 뱃지 */}
+        {isEquipped && (
+          <View style={styles.equippedBadge}>
+            <Text style={styles.equippedText}>장착 중</Text>
+          </View>
         )}
-        {!canAfford && !isOwned && (
-          <Text style={styles.lockIcon}>🔒</Text>
+
+        {/* 잠금 오버레이 */}
+        {!isOwned && !canAfford && (
+          <View style={styles.lockedOverlay}>
+            <Text style={{ fontSize: 10, color: '#FFF', fontWeight: 'bold' }}>잠김</Text>
+          </View>
+        )}
+
+        <Text style={styles.itemEmoji}>{item.emoji}</Text>
+        <Text style={styles.itemName}>{item.name}</Text>
+        
+        {!isOwned ? (
+          <>
+            <Text style={styles.itemPrice}>{item.cost} ⭐</Text>
+            <View style={[styles.buyButton, !canAfford && { backgroundColor: '#BDBDBD' }]}>
+              <Text style={styles.buyButtonText}>구매</Text>
+            </View>
+          </>
+        ) : (
+          <View style={{ height: 20 }} /> // 보유 중일 때 공간 확보
         )}
       </Pressable>
     </Animated.View>
@@ -93,327 +86,272 @@ export default function RewardsScreen() {
   const totalStars = useAppStore((s) => s.totalStars);
   const ownedItems = useAppStore((s) => s.ownedItems || []);
   const equippedItems = useAppStore((s) => s.equippedItems || {});
+  const selectedCharacterId = useAppStore((s) => s.selectedCharacter);
   const purchaseItem = useAppStore((s) => s.purchaseItem);
   const toggleEquipItem = useAppStore((s) => s.toggleEquipItem);
-  const childName = useAppStore((s) => s.childName);
-
-  // 카테고리 탭
+  
+  const [selectedCategory, setSelectedCategory] = useState('전체');
   const categories = ['전체', '모자', '날개', '배경', '소품'];
-  const [selectedCategory, setSelectedCategory] = React.useState('전체');
 
   const filteredItems = useMemo(
-    () =>
-      selectedCategory === '전체'
+    () => selectedCategory === '전체'
         ? AVATAR_ITEMS
         : AVATAR_ITEMS.filter((i) => i.category === selectedCategory),
     [selectedCategory],
   );
 
-  const name = childName || '친구';
+  const character = CHARACTERS.find(c => c.id === selectedCharacterId) || CHARACTERS[0];
 
   const handleItemPress = (item: typeof AVATAR_ITEMS[0]) => {
+    playButtonHaptic();
     if (ownedItems.includes(item.id)) {
-      // 이미 보유 중이면 장착/해제 토글
       toggleEquipItem(item.id, item.category);
     } else if (totalStars >= item.cost) {
-      // 보유 중이지 않고 별이 충분하면 구매
       purchaseItem(item.id, item.cost);
       playStarHaptic();
     }
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+    <LinearGradient
+      colors={['#E0F7FA', '#FFF3E0', '#F3E5F5']} // 배경 그라데이션 (하늘 -> 오렌지 -> 보라)
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* 헤더 */}
-        <Animated.View entering={FadeIn.duration(400)} style={styles.header}>
-          <Text style={styles.headerTitle}>👗 꾸미기</Text>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>캐릭터 꾸미기</Text>
           <View style={styles.starBadge}>
-            <Text style={styles.starBadgeText}>⭐ {totalStars}</Text>
+            <Text style={styles.starText}>{totalStars.toLocaleString()} ⭐</Text>
           </View>
-        </Animated.View>
+        </View>
 
-        {/* 캐릭터 미리보기 */}
-        <Animated.View entering={FadeInDown.delay(100).duration(500)} style={styles.previewSection}>
-          <View style={styles.previewBox}>
-            <FairyCharacter emotion="happy" size="lg" showMessage={false} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* 캐릭터 프리뷰 (빛나는 원형) */}
+          <View style={styles.previewContainer}>
+            <View style={styles.previewCircleOuter}>
+              <View style={styles.previewCircleInner}>
+                <Image 
+                  source={character.asset} 
+                  style={styles.characterImage} 
+                  resizeMode="contain" 
+                />
+              </View>
+            </View>
+            <Text style={styles.characterName}>{character.nameKo}</Text>
           </View>
-          <Text style={styles.previewLabel}>{name}의 별이</Text>
-        </Animated.View>
 
-        {/* 별 통계 */}
-        <Animated.View entering={FadeInDown.delay(200).duration(400)} style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statEmoji}>⭐</Text>
-            <Text style={styles.statValue}>{totalStars}</Text>
-            <Text style={styles.statLabel}>모은 별</Text>
+          {/* 카테고리 탭 */}
+          <View style={styles.tabContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScroll}>
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat;
+                return (
+                  <Pressable
+                    key={cat}
+                    onPress={() => {
+                      playButtonHaptic();
+                      setSelectedCategory(cat);
+                    }}
+                    style={[styles.tab, isActive && styles.tabActive]}
+                  >
+                    <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{cat}</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statEmoji}>🎁</Text>
-            <Text style={styles.statValue}>{ownedItems.length}</Text>
-            <Text style={styles.statLabel}>보유 아이템</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statEmoji}>🔒</Text>
-            <Text style={styles.statValue}>{AVATAR_ITEMS.length - ownedItems.length}</Text>
-            <Text style={styles.statLabel}>남은 아이템</Text>
-          </View>
-        </Animated.View>
 
-        {/* 카테고리 탭 */}
-        <Animated.View entering={FadeInDown.delay(300).duration(400)} style={styles.categoryTabs}>
-          {categories.map((cat) => (
-            <Pressable
-              key={cat}
-              onPress={() => {
-                playButtonHaptic();
-                setSelectedCategory(cat);
-              }}
-              style={[
-                styles.categoryTab,
-                selectedCategory === cat && styles.categoryTabActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.categoryTabText,
-                  selectedCategory === cat && styles.categoryTabTextActive,
-                ]}
-              >
-                {cat}
-              </Text>
-            </Pressable>
-          ))}
-        </Animated.View>
-
-        {/* 아이템 그리드 */}
-        <View style={styles.itemGrid}>
-          {filteredItems.map((item, idx) => (
-            <Animated.View
-              key={item.id}
-              entering={FadeInDown.delay(idx * 50).duration(300)}
-              style={styles.itemGridCell}
-            >
+          {/* 아이템 그리드 */}
+          <View style={styles.grid}>
+            {filteredItems.map((item, idx) => (
               <ItemCard
+                key={item.id}
                 item={item}
                 canAfford={totalStars >= item.cost}
                 isOwned={ownedItems.includes(item.id)}
                 isEquipped={equippedItems[item.category] === item.id}
                 onPress={() => handleItemPress(item)}
               />
-            </Animated.View>
-          ))}
-        </View>
-
-        {/* 안내 */}
-        <View style={styles.notice}>
-          <Text style={styles.noticeText}>
-            🧚 미션을 완료해서 별을 모으면{'\n'}
-            별이를 꾸밀 수 있어요!
-          </Text>
-        </View>
-
-        <View style={{ height: 40 }} />
-      </ScrollView>
-    </SafeAreaView>
+            ))}
+          </View>
+          
+          <View style={{ height: 100 }} />
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFBEB',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '800',
-    color: '#1F2937',
+    color: '#333',
   },
   starBadge: {
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
-  starBadgeText: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#B45309',
+  starText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FBC02D',
   },
-  previewSection: {
+  previewContainer: {
     alignItems: 'center',
+    marginTop: 20,
     marginBottom: 20,
   },
-  previewBox: {
-    width: 200,
-    height: 200,
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    borderRadius: 100,
+  previewCircleOuter: {
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(255,255,255,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#FDE68A',
+    borderColor: '#FFFFFF',
+    shadowColor: '#FFF',
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 0 },
   },
-  previewLabel: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#4B5563',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-  },
-  statCard: {
-    flex: 1,
+  previewCircleInner: {
+    width: 190,
+    height: 190,
+    borderRadius: 95,
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 12,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
-  statEmoji: {
-    fontSize: 24,
-    marginBottom: 4,
+  characterImage: {
+    width: 140,
+    height: 140,
   },
-  statValue: {
+  characterName: {
+    marginTop: 10,
     fontSize: 20,
     fontWeight: '800',
-    color: '#1F2937',
+    color: '#333',
   },
-  statLabel: {
-    fontSize: 11,
-    color: '#9CA3AF',
-    marginTop: 2,
+  tabContainer: {
+    marginBottom: 10,
   },
-  categoryTabs: {
-    flexDirection: 'row',
+  tabScroll: {
+    paddingHorizontal: 16,
     gap: 8,
-    marginBottom: 16,
   },
-  categoryTab: {
-    paddingHorizontal: 14,
+  tab: {
+    paddingHorizontal: 20,
     paddingVertical: 8,
-    borderRadius: 16,
-    backgroundColor: '#F3F4F6',
+    borderRadius: 20,
+    backgroundColor: 'transparent',
   },
-  categoryTabActive: {
-    backgroundColor: '#FBBF24',
+  tabActive: {
+    backgroundColor: '#FFD54F', // 노란색 활성 탭
   },
-  categoryTabText: {
-    fontSize: 13,
+  tabText: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#6B7280',
+    color: '#555',
   },
-  categoryTabTextActive: {
-    color: '#FFFFFF',
+  tabTextActive: {
+    color: '#333',
+    fontWeight: '800',
   },
-  itemGrid: {
+  grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    paddingHorizontal: 16,
+    gap: 8,
   },
-  itemGridCell: {
-    width: '31%',
+  itemWrapper: {
+    width: ITEM_WIDTH,
+    marginBottom: 8,
   },
   itemCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 12,
+    padding: 10,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-    minHeight: 120,
-    justifyContent: 'center',
-  },
-  itemCardOwned: {
-    borderColor: '#34D399',
-    backgroundColor: '#F0FDF4',
-  },
-  itemCardEquipped: {
-    borderColor: '#8B5CF6',
-    borderWidth: 2,
-    backgroundColor: '#F5F3FF',
-  },
-  itemCardLocked: {
-    borderColor: '#E5E7EB',
-    backgroundColor: '#F9FAFB',
-    opacity: 0.6,
+    height: 140,
+    justifyContent: 'space-between',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
   itemEmoji: {
     fontSize: 32,
-    marginBottom: 6,
-  },
-  itemEmojiLocked: {
-    opacity: 0.5,
+    marginTop: 8,
   },
   itemName: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#374151',
+    color: '#555',
     textAlign: 'center',
-    marginBottom: 4,
   },
-  itemNameLocked: {
-    color: '#9CA3AF',
+  itemPrice: {
+    fontSize: 11,
+    color: '#F9A825',
+    fontWeight: '700',
   },
-  itemCost: {
+  buyButton: {
+    backgroundColor: '#FFD54F',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    width: '100%',
+    alignItems: 'center',
+  },
+  buyButtonText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#9CA3AF',
+    color: '#333',
   },
-  itemCostAffordable: {
-    color: '#F59E0B',
-  },
-  itemOwnedLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#34D399',
-  },
-  itemEquippedLabel: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#8B5CF6',
-  },
-  lockIcon: {
+  equippedBadge: {
     position: 'absolute',
     top: 6,
     right: 6,
-    fontSize: 12,
+    backgroundColor: '#E0E0E0',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
   },
-  notice: {
-    marginTop: 24,
-    backgroundColor: 'rgba(255,255,255,0.6)',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
+  equippedText: {
+    fontSize: 8,
+    fontWeight: '700',
+    color: '#555',
   },
-  noticeText: {
-    fontSize: 14,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 22,
+  lockedOverlay: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
   },
 });
