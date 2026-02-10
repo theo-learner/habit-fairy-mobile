@@ -173,7 +173,7 @@ function HomeScreenContent() {
         <View style={{ flex: 1 }} />
         <Pressable onPress={() => router.push('/manage')} style={styles.profileButton}>
           <Image 
-            source={require('@/assets/images/icon.png')} // 임시 프로필 이미지
+            source={require('../assets/icon.png')} // 임시 프로필 이미지
             style={{ width: 32, height: 32, borderRadius: 16 }} 
           />
         </Pressable>
