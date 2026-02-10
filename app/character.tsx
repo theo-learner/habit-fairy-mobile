@@ -15,7 +15,7 @@ import { CHARACTERS, type CharacterData } from '@/lib/characters';
 import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2; // 2열 그리드 (좌우 여백 16*2 + 간격 16)
+const CARD_WIDTH = SCREEN_WIDTH - 48; // 1열 리스트 (좌우 여백 24*2)
 
 function CharacterCard({
   character,
@@ -28,19 +28,7 @@ function CharacterCard({
   onSelect: () => void;
   index: number;
 }) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.95);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
+  // ... (생략) ...
 
   return (
     <Animated.View 
@@ -75,81 +63,12 @@ function CharacterCard({
   );
 }
 
-export default function CharacterSelectScreen() {
-  const selectedCharacterId = useAppStore((s) => s.selectedCharacter);
-  const selectCharacter = useAppStore((s) => s.selectCharacter);
-  const [activeTab, setActiveTab] = useState<'all' | 'boy' | 'girl'>('all');
-
-  const filteredCharacters = activeTab === 'all'
-    ? CHARACTERS
-    : CHARACTERS.filter(c => c.category === activeTab || c.category === 'default');
-
-  const handleSelect = async (characterId: string) => {
-    await selectCharacter(characterId);
-    playSuccessSound();
-  };
-
-  return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>캐릭터 선택</Text>
-        <Text style={styles.headerSubtitle}>모험을 함께할 친구를 골라주세요!</Text>
-      </View>
-
-      {/* 탭 필터 */}
-      <View style={styles.tabContainer}>
-        {[
-          { key: 'all', label: '전체' },
-          { key: 'boy', label: '남아용' },
-          { key: 'girl', label: '여아용' },
-        ].map((tab) => {
-          const isActive = activeTab === tab.key;
-          return (
-            <Pressable
-              key={tab.key}
-              onPress={() => {
-                playButtonHaptic();
-                setActiveTab(tab.key as any);
-              }}
-              style={[
-                styles.tab,
-                isActive && styles.tabActive
-              ]}
-            >
-              <Text style={[
-                styles.tabText,
-                isActive && styles.tabTextActive
-              ]}>
-                {tab.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      <ScrollView 
-        contentContainerStyle={styles.grid}
-        showsVerticalScrollIndicator={false}
-      >
-        {filteredCharacters.map((character, idx) => (
-          <CharacterCard
-            key={character.id}
-            character={character}
-            isSelected={selectedCharacterId === character.id}
-            onSelect={() => handleSelect(character.id)}
-            index={idx}
-          />
-        ))}
-        <View style={{ height: 100 }} />
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+// ... (생략) ...
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF9F0', // 아주 연한 베이지 (레퍼런스 배경색 추정)
+    backgroundColor: '#FFF9F0', // 아주 연한 베이지
   },
   header: {
     paddingHorizontal: 24,
@@ -158,14 +77,14 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: '800',
-    color: '#3E2723', // 진한 갈색
+    fontFamily: 'Jua', // 폰트 적용
+    color: '#3E2723',
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
+    fontFamily: 'Jua',
     color: '#5D4037',
-    fontWeight: '500',
   },
   tabContainer: {
     flexDirection: 'row',
@@ -183,35 +102,32 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     backgroundColor: '#FFF',
-    borderColor: '#FFB74D', // 오렌지색 테두리
+    borderColor: '#FFB74D',
     borderWidth: 2,
   },
   tabText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'Jua',
     color: '#8D6E63',
   },
   tabTextActive: {
     color: '#3E2723',
-    fontWeight: '700',
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 16,
-    gap: 16,
+    alignItems: 'center', // 중앙 정렬
+    paddingBottom: 40,
   },
   cardWrapper: {
     width: CARD_WIDTH,
-    marginBottom: 8,
+    marginBottom: 16, // 간격 늘림
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 16,
     alignItems: 'center',
-    height: 180, // 카드 높이
-    justifyContent: 'space-between',
+    height: 240, // 카드 높이 증가 (캐릭터 더 크게)
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
@@ -221,19 +137,18 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   cardSelected: {
-    borderColor: '#FFB74D', // 선택 시 오렌지 테두리 (레퍼런스의 글로우 효과 대체)
+    borderColor: '#FFB74D',
     backgroundColor: '#FFF8E1',
   },
   cardImage: {
-    width: 100,
-    height: 100,
-    marginTop: 10,
+    width: 150, // 이미지 크기 확대
+    height: 150,
+    marginBottom: 16,
   },
   cardName: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 24, // 이름 크기 확대
+    fontFamily: 'Jua',
     color: '#3E2723',
-    marginBottom: 8,
   },
   cardNameSelected: {
     color: '#E65100',

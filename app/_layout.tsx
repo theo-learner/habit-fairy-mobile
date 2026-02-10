@@ -4,6 +4,9 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, Pressable, Text, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import { Jua_400Regular } from '@expo-google-fonts/jua'; // Jua 폰트 사용 (귀여운 스타일)
+
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
 import TabBar from '@/components/TabBar';
@@ -14,6 +17,11 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const [gateVisible, setGateVisible] = useState(false);
+
+  // 폰트 로드
+  const [fontsLoaded] = useFonts({
+    'Jua': Jua_400Regular,
+  });
 
   // Load data on startup
   useEffect(() => {
@@ -30,22 +38,22 @@ export default function RootLayout() {
     router.push('/manage');
   };
 
-  // Determine if we should show the TabBar
-  // Show only on main screens: index, rewards, dashboard
-  // Manage is also a main screen but protected. 
-  // We'll show tab bar on these pages.
+  // 폰트 로딩 중이면 렌더링 지연 (또는 스플래시 유지)
+  if (!fontsLoaded) {
+    return null; 
+  }
+
   const segment = segments[0] || 'index';
   const showTabBar = ['index', 'rewards', 'manage', 'dashboard', 'character'].includes(segment);
 
   const isWeb = Platform.OS === 'web';
 
+  // 전역 폰트 스타일 적용
+  const globalFont = { fontFamily: 'Jua' };
+
   return (
     <ErrorBoundary fallbackMessage="Something went wrong">
       <StatusBar style="dark" />
-      {/* 
-        On Web, we constrain the app to a mobile-like frame.
-        We center it and apply a max-width.
-      */}
       <LinearGradient
         colors={['#FFD1DC', '#E6E6FA', '#D1F2EB']}
         start={{ x: 0, y: 0 }}
@@ -58,14 +66,14 @@ export default function RootLayout() {
           height: '100%',
           boxShadow: '0 0 40px rgba(0,0,0,0.1)',
           minHeight: '100vh',
-          fontFamily: 'Quicksand, sans-serif',
+          fontFamily: 'Jua, sans-serif',
         } : {}}
       >
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: 'transparent' },
             headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: 'Quicksand', fontWeight: '700', color: '#4A4A4A' },
+            headerTitleStyle: { ...globalFont, fontSize: 20, color: '#4A4A4A' },
             headerTitleAlign: 'center',
             contentStyle: { backgroundColor: 'transparent' },
           }}
