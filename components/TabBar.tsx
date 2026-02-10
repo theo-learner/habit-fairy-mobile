@@ -88,7 +88,8 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
     
     if (tab.protected && onProtectedPress) {
       onProtectedPress();
-    } else if (pathname !== tab.path) {
+    } else {
+      // Use absolute paths but rely on Expo Router to handle baseUrl
       router.replace(tab.path as any);
     }
   };
@@ -97,7 +98,11 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
     <View style={[styles.container, { paddingBottom: bottomPadding }]}>
       <View style={styles.bar}>
         {TABS.map((tab) => {
-          const isActive = pathname === tab.path || (pathname === '/' && tab.name === 'index');
+          // Normalize pathname for matching on GitHub Pages
+          // pathname might be "/habit-fairy-mobile/character" or "/character"
+          const normalizedPath = pathname.replace(/^\/habit-fairy-mobile/, '') || '/';
+          const isActive = normalizedPath === tab.path || (normalizedPath === '' && tab.path === '/');
+          
           return (
             <TabButton
               key={tab.name}
@@ -126,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     width: '100%',
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     justifyContent: 'space-around',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -140,6 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 4,
+    minWidth: 60,
   },
   tabIcon: {
     fontSize: 22,

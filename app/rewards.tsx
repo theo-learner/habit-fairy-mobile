@@ -32,9 +32,17 @@ function ItemCard({
   isEquipped: boolean;
   onPress: () => void;
 }) {
-  // ... (생략) ...
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
-  // 아이템 배경색 (파스텔톤 랜덤 느낌)
+  const handlePress = () => {
+    scale.value = withSpring(0.95);
+    setTimeout(() => scale.value = withSpring(1), 100);
+    onPress();
+  };
+
   const bgColors = ['#E3F2FD', '#F3E5F5', '#E0F2F1', '#FFF3E0', '#FFEBEE'];
   const bgColor = bgColors[item.id.charCodeAt(0) % bgColors.length];
 
@@ -49,7 +57,6 @@ function ItemCard({
           </View>
         </View>
         
-        {/* 우측 버튼 영역 */}
         <View style={styles.itemAction}>
           {isEquipped ? (
             <View style={styles.equippedBadge}>
@@ -61,7 +68,6 @@ function ItemCard({
             </View>
           ) : (
             <View style={[styles.buyButton, !canAfford && { backgroundColor: '#BDBDBD' }]}>
-              {/* 잠금 아이콘 또는 구매 텍스트 */}
               {!canAfford ? (
                 <Text style={{ fontSize: 16 }}>🔒</Text>
               ) : (
@@ -75,7 +81,102 @@ function ItemCard({
   );
 }
 
-// ... (생략) ...
+export default function RewardsScreen() {
+  const totalStars = useAppStore((s) => s.totalStars);
+  const ownedItems = useAppStore((s) => s.ownedItems || []);
+  const equippedItems = useAppStore((s) => s.equippedItems || {});
+  const selectedCharacterId = useAppStore((s) => s.selectedCharacter);
+  const purchaseItem = useAppStore((s) => s.purchaseItem);
+  const toggleEquipItem = useAppStore((s) => s.toggleEquipItem);
+  
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const categories = ['전체', '모자', '날개', '배경', '소품'];
+
+  const filteredItems = useMemo(
+    () => selectedCategory === '전체'
+        ? AVATAR_ITEMS
+        : AVATAR_ITEMS.filter((i) => i.category === selectedCategory),
+    [selectedCategory],
+  );
+
+  const character = CHARACTERS.find(c => c.id === selectedCharacterId) || CHARACTERS[0];
+
+  const handleItemPress = (item: typeof AVATAR_ITEMS[0]) => {
+    playButtonHaptic();
+    if (ownedItems.includes(item.id)) {
+      toggleEquipItem(item.id, item.category);
+    } else if (totalStars >= item.cost) {
+      purchaseItem(item.id, item.cost);
+      playStarHaptic();
+    }
+  };
+
+  return (
+    <LinearGradient
+      colors={['#E0F7FA', '#FFF3E0', '#F3E5F5']} 
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>캐릭터 꾸미기</Text>
+          <View style={styles.starBadge}>
+            <Text style={styles.starText}>{totalStars.toLocaleString()} ⭐</Text>
+          </View>
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.previewContainer}>
+            <View style={styles.previewCircleOuter}>
+              <View style={styles.previewCircleInner}>
+                <Image 
+                  source={character.asset} 
+                  style={styles.characterImage} 
+                  resizeMode="contain" 
+                />
+              </View>
+            </View>
+            <Text style={styles.characterName}>{character.nameKo}</Text>
+          </View>
+
+          <View style={styles.tabContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScroll}>
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat;
+                return (
+                  <Pressable
+                    key={cat}
+                    onPress={() => {
+                      playButtonHaptic();
+                      setSelectedCategory(cat);
+                    }}
+                    style={[styles.tab, isActive && styles.tabActive]}
+                  >
+                    <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{cat}</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+
+          <View style={styles.grid}>
+            {filteredItems.map((item, idx) => (
+              <ItemCard
+                key={item.id}
+                item={item}
+                canAfford={totalStars >= item.cost}
+                isOwned={ownedItems.includes(item.id)}
+                isEquipped={equippedItems[item.category] === item.id}
+                onPress={() => handleItemPress(item)}
+              />
+            ))}
+          </View>
+          
+          <View style={{ height: 100 }} />
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -113,22 +214,22 @@ const styles = StyleSheet.create({
     color: '#FBC02D',
   },
   previewContainer: {
-    alignItems: 'center',
-    marginTop: 20,
+    alignItems: 'center', 
+    marginTop: 20, 
     marginBottom: 20,
   },
   previewCircleOuter: {
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(255,255,255,0.4)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    shadowColor: '#FFF',
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
+    width: 220, 
+    height: 220, 
+    borderRadius: 110, 
+    backgroundColor: 'rgba(255,255,255,0.4)', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    borderWidth: 2, 
+    borderColor: '#FFFFFF', 
+    shadowColor: '#FFF', 
+    shadowOpacity: 0.8, 
+    shadowRadius: 20, 
     shadowOffset: { width: 0, height: 0 },
   },
   previewCircleInner: {
@@ -164,7 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   tabActive: {
-    backgroundColor: '#FFD54F', // 노란색 활성 탭
+    backgroundColor: '#FFD54F', 
   },
   tabText: {
     fontSize: 16,
@@ -186,14 +287,14 @@ const styles = StyleSheet.create({
   itemCard: {
     borderRadius: 20,
     padding: 16,
-    flexDirection: 'row', // 가로 배치 (1열 리스트)
+    flexDirection: 'row', 
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 100,
     elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowColor: '#000', 
+    shadowOpacity: 0.05, 
+    shadowRadius: 4, 
     shadowOffset: { width: 0, height: 2 },
   },
   itemContent: {
@@ -257,6 +358,6 @@ const styles = StyleSheet.create({
     color: '#1E88E5',
   },
   lockedOverlay: {
-    display: 'none', // 리스트형에서는 오버레이 대신 버튼 비활성화로 처리
+    display: 'none',
   },
 });

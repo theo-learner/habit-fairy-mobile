@@ -47,7 +47,6 @@ function CircularProgress({
             <Stop offset="1" stopColor="#00F2FE" stopOpacity="1" />
           </LinearGradient>
         </Defs>
-        {/* 배경 원 */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -56,7 +55,6 @@ function CircularProgress({
           strokeWidth={strokeWidth}
           fill="none"
         />
-        {/* 진행 원 */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -70,22 +68,20 @@ function CircularProgress({
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </Svg>
-      {/* 내부 컨텐츠 (캐릭터 등) */}
       <View style={{ 
         width: size - strokeWidth * 2, 
         height: size - strokeWidth * 2, 
         alignItems: 'center', 
         justifyContent: 'center',
         borderRadius: size / 2,
-        backgroundColor: '#FFFFFF', // 흰색 배경 추가
+        backgroundColor: '#FFFFFF', 
         overflow: 'hidden',
-        borderWidth: 1, // 살짝 테두리
+        borderWidth: 1, 
         borderColor: '#F0F0F0'
       }}>
         {children}
       </View>
       
-      {/* 하단 진행률 뱃지 */}
       <View style={styles.progressBadge}>
         <Text style={styles.progressText}>{Math.round(progress)}% 완료</Text>
       </View>
@@ -103,13 +99,12 @@ function GridMissionCard({
   isCompleted: boolean; 
   onPress: () => void 
 }) {
-  // 카드 색상 결정 (파스텔톤)
   const bgColors = {
-    morning: '#FFDEE9', // 핑크
-    daytime: '#B5FFFC', // 블루
-    evening: '#D9AFD9', // 퍼플
-    study: '#C2E9FB',   // 스카이
-    health: '#E0C3FC',  // 라벤더
+    morning: '#FFDEE9', 
+    daytime: '#B5FFFC', 
+    evening: '#D9AFD9', 
+    study: '#C2E9FB',   
+    health: '#E0C3FC',  
   };
   const bgColor = isCompleted ? '#F0F0F0' : (bgColors[mission.category as keyof typeof bgColors] || '#FFF1EB');
 
@@ -117,7 +112,6 @@ function GridMissionCard({
     <Pressable onPress={onPress} style={[styles.missionCard, { backgroundColor: bgColor }]}>
       <Text style={styles.missionTitle}>{mission.name}</Text>
       <View style={styles.missionIconContainer}>
-        {/* 아이콘 이미지가 있으면 이미지 사용, 없으면 이모지 */}
         <Text style={{ fontSize: 40 }}>{mission.icon}</Text>
       </View>
       {isCompleted && (
@@ -140,15 +134,12 @@ function HomeScreenContent() {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  // 데이터 로드
   useEffect(() => {
     loadData();
   }, []);
 
-  // 캐릭터 찾기
   const character = CHARACTERS.find(c => c.id === selectedCharacterId) || CHARACTERS[0];
 
-  // 진행률 계산
   const safeMissions = Array.isArray(missions) ? missions : [];
   const todayCompleted = getTodayCompleted();
   const completedCount = Array.isArray(todayCompleted) ? todayCompleted.length : 0;
@@ -168,12 +159,11 @@ function HomeScreenContent() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* 상단 헤더 */}
       <View style={styles.header}>
         <View style={{ flex: 1 }} />
         <Pressable onPress={() => router.push('/manage')} style={styles.profileButton}>
           <Image 
-            source={require('../assets/icon.png')} // 임시 프로필 이미지
+            source={require('../assets/icon.png')} 
             style={{ width: 32, height: 32, borderRadius: 16 }} 
           />
         </Pressable>
@@ -185,7 +175,6 @@ function HomeScreenContent() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4FACFE" />
         }
       >
-        {/* 메인 섹션: 원형 진행률 + 캐릭터 */}
         <View style={styles.mainSection}>
           <CircularProgress progress={progress}>
             <Animated.Image
@@ -197,13 +186,11 @@ function HomeScreenContent() {
           </CircularProgress>
         </View>
 
-        {/* 인사말 */}
         <Animated.View entering={FadeInDown.delay(200)} style={styles.greetingSection}>
           <Text style={styles.greetingTitle}>안녕, {childName}!</Text>
           <Text style={styles.greetingSubtitle}>오늘의 모험을 시작해볼까?</Text>
         </Animated.View>
 
-        {/* 미션 그리드 */}
         <View style={styles.gridContainer}>
           {safeMissions.map((mission, index) => (
             <Animated.View 
@@ -218,7 +205,6 @@ function HomeScreenContent() {
               />
             </Animated.View>
           ))}
-          {/* 미션 추가 버튼 (빈 슬롯 느낌) */}
           <Pressable 
             onPress={() => router.push('/manage')} 
             style={[styles.missionCard, styles.addCard]}
@@ -244,7 +230,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF5F7', // 아주 연한 핑크 배경
+    backgroundColor: '#FFF5F7', 
   },
   header: {
     flexDirection: 'row',
@@ -295,7 +281,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 16,
-    fontWeight: '800',
+    fontFamily: 'Jua',
     color: '#333',
   },
   greetingSection: {
@@ -304,14 +290,14 @@ const styles = StyleSheet.create({
   },
   greetingTitle: {
     fontSize: 24,
-    fontWeight: '800',
+    fontFamily: 'Jua',
     color: '#111',
     marginBottom: 4,
   },
   greetingSubtitle: {
     fontSize: 16,
+    fontFamily: 'Jua',
     color: '#666',
-    fontWeight: '600',
   },
   gridContainer: {
     flexDirection: 'row',
@@ -320,12 +306,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   gridItemWrapper: {
-    width: '48%', // 2열 그리드 (간격 고려)
+    width: '48%', 
     marginBottom: 16,
   },
   missionCard: {
     width: '100%',
-    aspectRatio: 1, // 정사각형
+    aspectRatio: 1, 
     borderRadius: 24,
     padding: 16,
     justifyContent: 'space-between',
@@ -345,7 +331,7 @@ const styles = StyleSheet.create({
   },
   missionTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: 'Jua',
     color: '#333',
   },
   missionIconContainer: {
@@ -367,7 +353,7 @@ const styles = StyleSheet.create({
   },
   checkText: {
     color: '#FFFFFF',
-    fontWeight: '800',
+    fontFamily: 'Jua',
     fontSize: 14,
   },
 });
