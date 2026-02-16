@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 20,
-    color: C.white,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     marginBottom: 16,
   },
@@ -232,13 +232,13 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.8)',
+    color: '#1A1A2E',
     fontFamily: 'Jua',
   },
   headerTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: C.white,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     flex: 1,
     textAlign: 'center',
@@ -258,20 +258,20 @@ const styles = StyleSheet.create({
   },
   descText: {
     fontSize: 17,
-    color: C.white,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     textAlign: 'center',
     marginBottom: 12,
   },
   rewardPill: {
-    backgroundColor: 'rgba(255,255,255,0.25)',
+    backgroundColor: 'rgba(255,255,255,0.85)',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 9999,
   },
   rewardText: {
     fontSize: 14,
-    color: C.white,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     fontWeight: '600',
   },
@@ -298,13 +298,13 @@ const styles = StyleSheet.create({
   },
   alreadyDoneText: {
     fontSize: 16,
-    color: C.white,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     fontWeight: '600',
   },
   noTimerText: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.8)',
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     textAlign: 'center',
   },
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
     fontFamily: 'Jua',
-    color: C.white,
+    color: '#1A1A2E',
     marginTop: 8,
   },
 });
