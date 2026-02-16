@@ -55,7 +55,7 @@ export default function RootLayout() {
     <ErrorBoundary fallbackMessage="Something went wrong">
       <StatusBar style="dark" />
       <LinearGradient
-        colors={['#FFD1DC', '#E6E6FA', '#D1F2EB']}
+        colors={['#EDE7F6', '#E8DEF8', '#E0F2F1']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         className="flex-1"

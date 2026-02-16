@@ -60,11 +60,11 @@ export default function MissionScreen() {
   const handleBack = () => {
     if (phase === 'running') {
       Alert.alert(
-        '정말 그만할까?',
-        '타이머가 아직 진행 중이에요',
+        '잠깐 쉬어갈까?',
+        '괜찮아! 나중에 다시 도전하면 돼 😊',
         [
-          { text: '계속하기', style: 'cancel' },
-          { text: '그만하기', onPress: () => router.back() },
+          { text: '계속할래!', style: 'cancel' },
+          { text: '내일 다시 해보자!', onPress: () => router.back() },
         ],
       );
     } else {
@@ -102,9 +102,9 @@ export default function MissionScreen() {
     router.back();
   }, [router]);
 
-  /** 요정 메시지 결정 */
+  /** 요정 메시지 결정 — P6: 긍정적 톤 */
   const currentFairyMessage = (() => {
-    if (isAlreadyDone) return `${name}아, 이 미션은 이미 완료했어! 대단해! ⭐`;
+    if (isAlreadyDone) return `${name}아, 이미 해냈잖아! 요정이 자랑스러워! 🌟`;
     if (fairyMessage) return fairyMessage;
     switch (phase) {
       case 'ready':
@@ -234,7 +234,7 @@ export default function MissionScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFBEB',
+    backgroundColor: '#FAFAFE',
   },
   errorContainer: {
     flex: 1,
@@ -312,9 +312,9 @@ const styles = StyleSheet.create({
   ctaButton: {
     paddingHorizontal: 48,
     paddingVertical: 20,
-    backgroundColor: '#FBBF24',
+    backgroundColor: '#B39DDB',
     borderRadius: 30,
-    shadowColor: '#F59E0B',
+    shadowColor: '#B39DDB',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -353,9 +353,9 @@ const styles = StyleSheet.create({
   completeButton: {
     paddingHorizontal: 48,
     paddingVertical: 20,
-    backgroundColor: '#34D399',
+    backgroundColor: '#80CBC4',
     borderRadius: 30,
-    shadowColor: '#059669',
+    shadowColor: '#80CBC4',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -380,6 +380,7 @@ const styles = StyleSheet.create({
   doneText: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#B45309',
+    fontFamily: 'Jua',
+    color: '#B39DDB',
   },
 });
