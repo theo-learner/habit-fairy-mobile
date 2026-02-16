@@ -79,6 +79,16 @@ function OnboardingScreen({ onComplete }: { onComplete: (name: string) => void }
   );
 }
 
+/** 긍정적 진행률 메시지 (죄책감↓, 동기↑) */
+function getProgressMessage(completed: number, total: number): string {
+  if (total === 0) return '미션을 추가해볼까? ✨';
+  const ratio = completed / total;
+  if (ratio === 0) return '첫 모험을 시작해볼까? ✨';
+  if (ratio < 0.5) return `좋은 시작이야! ${total - completed}개 남았어!`;
+  if (ratio < 1) return `거의 다 했어! 조금만 더! 💪`;
+  return '오늘의 영웅! 🌟';
+}
+
 // ─── 원형 진행률 컴포넌트 ───
 function CircularProgress({ 
   progress, 
@@ -139,8 +149,8 @@ function CircularProgress({
         {children}
       </View>
       
-      <View style={styles.progressBadge}>
-        <Text style={styles.progressText}>{Math.round(progress)}% 완료</Text>
+      <View style={styles.progressBadge} accessibilityRole="text" accessibilityLabel={`오늘 미션 진행률 ${Math.round(progress)}퍼센트`}>
+        <Text style={styles.progressText}>{Math.round(progress)}%</Text>
       </View>
     </View>
   );
@@ -198,7 +208,13 @@ function GridMissionCard({
   const bgColor = isCompleted ? '#E8F5E9' : (bgColors[mission.category as keyof typeof bgColors] || '#FFF1EB');
 
   return (
-    <Pressable onPress={onPress} style={[styles.missionCard, { backgroundColor: bgColor }]}>
+    <Pressable 
+      onPress={onPress} 
+      style={[styles.missionCard, { backgroundColor: bgColor }]}
+      accessibilityRole="button"
+      accessibilityLabel={`${mission.name} 미션${isCompleted ? ', 완료됨' : ''}`}
+      accessibilityHint={isCompleted ? '완료된 미션입니다' : '탭하여 미션을 시작하세요'}
+    >
       {/* P4: 오늘 할 일 이름 (상단) */}
       <Text style={styles.missionTitle} numberOfLines={1}>{mission.name}</Text>
       
@@ -316,17 +332,15 @@ function HomeScreenContent() {
     }
   };
 
-  // P6: 긍정 톤 메시지
+  // P6: 긍정 톤 메시지 (감정 UX 개선 — 죄책감↓, 재시작 유도)
   const greetingMessage = useMemo(() => {
     const displayName = childName || '별이';
-    if (completedCount === totalCount && totalCount > 0) {
-      return `${displayName}, 오늘 미션 모두 완료! 🏆`;
-    }
-    if (completedCount > 0) {
-      return `${displayName}, 잘하고 있어! 조금만 더! 💪`;
-    }
     return `안녕, ${displayName}!`;
-  }, [childName, completedCount, totalCount]);
+  }, [childName]);
+
+  const progressMessage = useMemo(() => {
+    return getProgressMessage(completedCount, totalCount);
+  }, [completedCount, totalCount]);
 
   const subtitleMessage = useMemo(() => {
     if (completedCount === totalCount && totalCount > 0) {
@@ -377,7 +391,7 @@ function HomeScreenContent() {
 
         <Animated.View entering={FadeInDown.delay(200)} style={styles.greetingSection}>
           <Text style={styles.greetingTitle}>{greetingMessage}</Text>
-          <Text style={styles.greetingSubtitle}>{subtitleMessage}</Text>
+          <Text style={styles.greetingSubtitle}>{progressMessage}</Text>
         </Animated.View>
 
         {/* P4: 정보구조 재정렬된 그리드 */}

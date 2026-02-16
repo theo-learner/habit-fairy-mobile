@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   },
   bubbleText: {
     fontSize: 15,
-    color: '#4A4A4A',
+    color: '#333333',
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Quicksand',

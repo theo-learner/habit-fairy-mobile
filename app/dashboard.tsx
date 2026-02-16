@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   summarySub: {
     fontSize: 9,
-    color: '#999',
+    color: '#757575',
     textAlign: 'center',
   },
   sectionCard: {

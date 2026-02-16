@@ -59,11 +59,14 @@ function TabButton({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={[styles.tabButton, animatedStyle]}
+      accessibilityRole="tab"
+      accessibilityLabel={`${tab.label} 탭`}
+      accessibilityState={{ selected: isActive }}
     >
-      <Text style={[styles.tabIcon, { opacity: isActive ? 1 : 0.4 }]}>
+      <Text style={[styles.tabIcon, { opacity: isActive ? 1 : 0.5 }]}>
         {tab.icon}
       </Text>
-      <Text style={[styles.tabLabel, { color: isActive ? '#333' : '#999', fontWeight: isActive ? '700' : '500' }]}>
+      <Text style={[styles.tabLabel, { color: isActive ? '#333' : '#666', fontWeight: isActive ? '700' : '500' }]}>
         {tab.label}
       </Text>
     </AnimatedPressable>

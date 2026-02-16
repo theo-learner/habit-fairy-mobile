@@ -84,9 +84,11 @@ function ManageMissionCard({
           <Switch
             value={mission.isActive}
             onValueChange={() => onToggle(mission.id)}
-            trackColor={{ false: '#E0E0E0', true: '#4CD964' }} // iOS 그린
+            trackColor={{ false: '#E0E0E0', true: '#4CD964' }}
             thumbColor={'#FFFFFF'}
             style={{ transform: [{ scale: 0.8 }] }}
+            accessibilityLabel={`${mission.name} 활성화`}
+            accessibilityRole="switch"
           />
           <Pressable 
             onPress={() => onEdit(mission)}
@@ -275,6 +277,9 @@ const styles = StyleSheet.create({
   editButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   editButtonText: {
     fontSize: 12,
