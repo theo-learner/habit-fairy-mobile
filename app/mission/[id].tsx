@@ -1,5 +1,5 @@
 // ============================================
-// 미션 실행 페이지 — 타이머 + 요정 + 별 보상
+// 미션 실행 페이지 — Headspace Kids 스타일
 // ============================================
 
 import React, { useState, useCallback } from 'react';
@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   FadeIn,
   FadeInUp,
@@ -24,6 +25,17 @@ import { getMissionById } from '@/lib/missions';
 import { useAppStore } from '@/lib/store';
 import { playCompleteHaptic, playButtonHaptic, playFanfareHaptic } from '@/lib/sounds';
 import type { FairyEmotion } from '@/types';
+
+const C = {
+  lavender: '#8E97C8',
+  lavenderLight: '#B8C0E8',
+  sage: '#7DB89E',
+  dark: '#4A5568',
+  coral: '#E8744F',
+  white: '#FFFFFF',
+  textDark: '#2D3436',
+  textMid: '#636E72',
+};
 
 type Phase = 'ready' | 'running' | 'done' | 'reward';
 
@@ -41,38 +53,31 @@ export default function MissionScreen() {
   const [fairyEmotion, setFairyEmotion] = useState<FairyEmotion>('excited');
   const [fairyMessage, setFairyMessage] = useState('');
 
-  // 미션 없으면 에러
   if (!mission) {
     return (
-      <SafeAreaView style={styles.errorContainer}>
+      <LinearGradient colors={['#8E97C8', '#B8C0E8']} style={styles.errorContainer}>
         <Text style={styles.errorText}>미션을 찾을 수 없어요 😢</Text>
-        <Pressable onPress={() => router.back()} style={styles.errorButton}>
-          <Text style={styles.errorButtonText}>돌아가기</Text>
+        <Pressable onPress={() => router.back()} style={styles.pillBtn}>
+          <Text style={styles.pillBtnText}>돌아가기</Text>
         </Pressable>
-      </SafeAreaView>
+      </LinearGradient>
     );
   }
 
   const isAlreadyDone = isMissionCompletedToday(mission.id);
   const name = childName || '친구';
 
-  /** 뒤로가기 (타이머 진행 중이면 확인) */
   const handleBack = () => {
     if (phase === 'running') {
-      Alert.alert(
-        '잠깐 쉬어갈까?',
-        '괜찮아! 나중에 다시 도전하면 돼 😊',
-        [
-          { text: '계속할래!', style: 'cancel' },
-          { text: '내일 다시 해보자!', onPress: () => router.back() },
-        ],
-      );
+      Alert.alert('잠깐 쉬어갈까?', '괜찮아! 나중에 다시 도전하면 돼 😊', [
+        { text: '계속할래!', style: 'cancel' },
+        { text: '내일 다시 해보자!', onPress: () => router.back() },
+      ]);
     } else {
       router.back();
     }
   };
 
-  /** 미션 시작 */
   const handleStart = () => {
     playButtonHaptic();
     setPhase('running');
@@ -80,29 +85,22 @@ export default function MissionScreen() {
     setFairyMessage(mission.fairyMessageStart);
   };
 
-  /** 미션 완료 */
   const handleComplete = useCallback(async () => {
     playCompleteHaptic();
     setPhase('done');
     setFairyEmotion('celebrating');
     setFairyMessage(mission.fairyMessageComplete);
-
-    // 데이터 저장
     await completeMission(mission.id, mission.starReward);
-
-    // 보상 애니메이션
     setTimeout(() => {
       playFanfareHaptic();
       setPhase('reward');
     }, 1200);
   }, [mission, completeMission]);
 
-  /** 보상 완료 후 */
   const handleRewardComplete = useCallback(() => {
     router.back();
   }, [router]);
 
-  /** 요정 메시지 결정 — P6: 긍정적 톤 */
   const currentFairyMessage = (() => {
     if (isAlreadyDone) return `${name}아, 이미 해냈잖아! 요정이 자랑스러워! 🌟`;
     if (fairyMessage) return fairyMessage;
@@ -119,145 +117,106 @@ export default function MissionScreen() {
   })();
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* 상단 바 */}
-      <View style={styles.header}>
-        <Pressable
-          onPress={handleBack}
-          style={styles.backButton}
-          hitSlop={16}
-        >
-          <Text style={styles.backText}>← 돌아가기</Text>
-        </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {mission.icon} {mission.name}
-        </Text>
-        <View style={{ width: 80 }} />
-      </View>
+    <LinearGradient colors={['#8E97C8', '#B8C0E8']} style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        {/* 상단 바 */}
+        <View style={styles.header}>
+          <Pressable onPress={handleBack} style={styles.backButton} hitSlop={16}>
+            <Text style={styles.backText}>← 돌아가기</Text>
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {mission.icon} {mission.name}
+          </Text>
+          <View style={{ width: 80 }} />
+        </View>
 
-      {/* 메인 콘텐츠 */}
-      <View style={styles.main}>
-        {/* 요정 캐릭터 */}
-        <Animated.View entering={FadeIn.duration(600)} style={styles.fairySection}>
-          <FairyCharacter
-            emotion={fairyEmotion}
-            message={currentFairyMessage}
-            size="md"
-            showMessage
-          />
-        </Animated.View>
-
-        {/* 미션 설명 (준비 상태) */}
-        {phase === 'ready' && !isAlreadyDone && (
-          <Animated.View entering={FadeInUp.delay(200).duration(400)} style={styles.descSection}>
-            <Text style={styles.descText}>{mission.description}</Text>
-            <Text style={styles.rewardText}>
-              완료하면 ⭐ ×{mission.starReward} 획득!
-            </Text>
+        {/* 메인 */}
+        <View style={styles.main}>
+          <Animated.View entering={FadeIn.duration(600)} style={styles.fairySection}>
+            <FairyCharacter emotion={fairyEmotion} message={currentFairyMessage} size="md" showMessage />
           </Animated.View>
-        )}
 
-        {/* 타이머 또는 버튼 */}
-        {phase === 'ready' && !isAlreadyDone && (
-          <Animated.View entering={FadeInUp.delay(400).duration(300)}>
-            <Pressable
-              onPress={handleStart}
-              style={({ pressed }) => [
-                styles.ctaButton,
-                pressed && styles.ctaButtonPressed,
-              ]}
-            >
-              <Text style={styles.ctaButtonText}>
-                {mission.timerSeconds > 0 ? '⏱️ 타이머 시작!' : '✅ 미션 시작!'}
-              </Text>
-            </Pressable>
-          </Animated.View>
-        )}
+          {phase === 'ready' && !isAlreadyDone && (
+            <Animated.View entering={FadeInUp.delay(200).duration(400)} style={styles.descSection}>
+              <Text style={styles.descText}>{mission.description}</Text>
+              <View style={styles.rewardPill}>
+                <Text style={styles.rewardText}>완료하면 ⭐ ×{mission.starReward} 획득!</Text>
+              </View>
+            </Animated.View>
+          )}
 
-        {/* 이미 완료된 미션 */}
-        {isAlreadyDone && phase === 'ready' && (
-          <Animated.View entering={FadeIn} style={styles.alreadyDone}>
-            <Text style={styles.alreadyDoneEmoji}>✅</Text>
-            <Text style={styles.alreadyDoneText}>오늘 이미 완료한 미션이에요!</Text>
-          </Animated.View>
-        )}
+          {phase === 'ready' && !isAlreadyDone && (
+            <Animated.View entering={FadeInUp.delay(400).duration(300)}>
+              <Pressable
+                onPress={handleStart}
+                style={({ pressed }) => [styles.pillBtn, pressed && { transform: [{ scale: 0.96 }], opacity: 0.9 }]}
+              >
+                <Text style={styles.pillBtnText}>
+                  {mission.timerSeconds > 0 ? '⏱️ 타이머 시작!' : '✅ 미션 시작!'}
+                </Text>
+              </Pressable>
+            </Animated.View>
+          )}
 
-        {/* 타이머 실행 중 (타이머 미션) */}
-        {phase === 'running' && mission.timerSeconds > 0 && (
-          <Animated.View entering={FadeIn.duration(400)}>
-            <CircleTimer
-              totalSeconds={mission.timerSeconds}
-              onComplete={handleComplete}
-              autoStart
-            />
-          </Animated.View>
-        )}
+          {isAlreadyDone && phase === 'ready' && (
+            <Animated.View entering={FadeIn} style={styles.alreadyDone}>
+              <Text style={{ fontSize: 48 }}>✅</Text>
+              <Text style={styles.alreadyDoneText}>오늘 이미 완료한 미션이에요!</Text>
+            </Animated.View>
+          )}
 
-        {/* 타이머 없는 미션 실행 */}
-        {phase === 'running' && mission.timerSeconds === 0 && (
-          <Animated.View entering={FadeInUp.duration(400)} style={styles.noTimerSection}>
-            <Text style={styles.noTimerText}>
-              미션을 완료하면 아래 버튼을 눌러주세요!
-            </Text>
-            <Pressable
-              onPress={handleComplete}
-              style={({ pressed }) => [
-                styles.completeButton,
-                pressed && styles.completeButtonPressed,
-              ]}
-            >
-              <Text style={styles.completeButtonText}>✅ 미션 완료!</Text>
-            </Pressable>
-          </Animated.View>
-        )}
+          {phase === 'running' && mission.timerSeconds > 0 && (
+            <Animated.View entering={FadeIn.duration(400)}>
+              <CircleTimer totalSeconds={mission.timerSeconds} onComplete={handleComplete} autoStart />
+            </Animated.View>
+          )}
 
-        {/* 완료 중간 화면 */}
-        {phase === 'done' && (
-          <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.doneSection}>
-            <Text style={styles.doneEmoji}>🎊</Text>
-            <Text style={styles.doneText}>대단해!</Text>
-          </Animated.View>
-        )}
-      </View>
+          {phase === 'running' && mission.timerSeconds === 0 && (
+            <Animated.View entering={FadeInUp.duration(400)} style={{ alignItems: 'center', gap: 20 }}>
+              <Text style={styles.noTimerText}>미션을 완료하면 아래 버튼을 눌러주세요!</Text>
+              <Pressable
+                onPress={handleComplete}
+                style={({ pressed }) => [styles.completePill, pressed && { transform: [{ scale: 0.96 }], opacity: 0.9 }]}
+              >
+                <Text style={styles.completePillText}>✅ 미션 완료!</Text>
+              </Pressable>
+            </Animated.View>
+          )}
 
-      {/* 별 보상 오버레이 */}
-      <StarReward
-        stars={mission.starReward}
-        isVisible={phase === 'reward'}
-        onComplete={handleRewardComplete}
-        message={mission.fairyMessageComplete}
-      />
-    </SafeAreaView>
+          {phase === 'done' && (
+            <Animated.View entering={ZoomIn.springify().damping(12)} style={{ alignItems: 'center' }}>
+              <Text style={{ fontSize: 64 }}>🎊</Text>
+              <Text style={styles.doneText}>대단해!</Text>
+            </Animated.View>
+          )}
+        </View>
+
+        <StarReward
+          stars={mission.starReward}
+          isVisible={phase === 'reward'}
+          onComplete={handleRewardComplete}
+          message={mission.fairyMessageComplete}
+        />
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAFAFE',
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: '#FFFBEB',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
   errorText: {
     fontSize: 20,
-    color: '#6B7280',
+    color: C.white,
+    fontFamily: 'Jua',
     marginBottom: 16,
-  },
-  errorButton: {
-    backgroundColor: '#FBBF24',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 20,
-  },
-  errorButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 16,
   },
   header: {
     flexDirection: 'row',
@@ -265,9 +224,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    borderBottomWidth: 1,
-    borderBottomColor: '#FDE68A',
   },
   backButton: {
     paddingVertical: 8,
@@ -276,12 +232,14 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 15,
-    color: '#6B7280',
+    color: 'rgba(255,255,255,0.8)',
+    fontFamily: 'Jua',
   },
   headerTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#1F2937',
+    color: C.white,
+    fontFamily: 'Jua',
     flex: 1,
     textAlign: 'center',
   },
@@ -300,87 +258,78 @@ const styles = StyleSheet.create({
   },
   descText: {
     fontSize: 17,
-    color: '#4B5563',
+    color: C.white,
+    fontFamily: 'Jua',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+  },
+  rewardPill: {
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 9999,
   },
   rewardText: {
     fontSize: 14,
-    color: '#F59E0B',
+    color: C.white,
+    fontFamily: 'Jua',
     fontWeight: '600',
   },
-  ctaButton: {
+  pillBtn: {
     paddingHorizontal: 48,
-    paddingVertical: 20,
-    backgroundColor: '#B39DDB',
-    borderRadius: 30,
-    shadowColor: '#B39DDB',
+    paddingVertical: 18,
+    backgroundColor: C.white,
+    borderRadius: 9999,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 6,
   },
-  ctaButtonPressed: {
-    transform: [{ scale: 0.95 }],
-    opacity: 0.9,
-  },
-  ctaButtonText: {
+  pillBtnText: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: C.coral,
+    fontFamily: 'Jua',
   },
   alreadyDone: {
     alignItems: 'center',
     gap: 8,
   },
-  alreadyDoneEmoji: {
-    fontSize: 48,
-  },
   alreadyDoneText: {
     fontSize: 16,
-    color: '#34D399',
+    color: C.white,
+    fontFamily: 'Jua',
     fontWeight: '600',
-  },
-  noTimerSection: {
-    alignItems: 'center',
-    gap: 20,
   },
   noTimerText: {
     fontSize: 15,
-    color: '#6B7280',
+    color: 'rgba(255,255,255,0.8)',
+    fontFamily: 'Jua',
     textAlign: 'center',
   },
-  completeButton: {
+  completePill: {
     paddingHorizontal: 48,
-    paddingVertical: 20,
-    backgroundColor: '#80CBC4',
-    borderRadius: 30,
-    shadowColor: '#80CBC4',
+    paddingVertical: 18,
+    backgroundColor: C.sage,
+    borderRadius: 9999,
+    shadowColor: C.sage,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 6,
   },
-  completeButtonPressed: {
-    transform: [{ scale: 0.95 }],
-    opacity: 0.9,
-  },
-  completeButtonText: {
+  completePillText: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  doneSection: {
-    alignItems: 'center',
-  },
-  doneEmoji: {
-    fontSize: 64,
-    marginBottom: 8,
+    color: C.white,
+    fontFamily: 'Jua',
   },
   doneText: {
     fontSize: 24,
     fontWeight: '800',
     fontFamily: 'Jua',
-    color: '#B39DDB',
+    color: C.white,
+    marginTop: 8,
   },
 });

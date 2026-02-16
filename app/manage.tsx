@@ -19,7 +19,16 @@ import { MISSION_ICONS } from '@/types';
 import { playButtonHaptic } from '@/lib/sounds';
 import type { Mission, MissionCategory } from '@/types';
 
-/** 미션 카드 (관리용) */
+const C = {
+  lavender: '#8E97C8',
+  dark: '#4A5568',
+  coral: '#E8744F',
+  sage: '#7DB89E',
+  white: '#FFFFFF',
+  textDark: '#2D3436',
+  textMid: '#636E72',
+};
+
 function ManageMissionCard({
   mission,
   index,
@@ -38,11 +47,11 @@ function ManageMissionCard({
   const renderRightActions = useCallback(() => {
     if (mission.isPreset) return null;
     return (
-      <Pressable 
+      <Pressable
         onPress={() => {
           swipeableRef.current?.close();
           onDelete(mission);
-        }} 
+        }}
         style={styles.swipeDeleteAction}
       >
         <Text style={styles.swipeDeleteText}>삭제</Text>
@@ -51,17 +60,13 @@ function ManageMissionCard({
   }, [mission, onDelete]);
 
   const content = (
-    <Animated.View
-      entering={FadeInDown.delay(index * 40).duration(300)}
-      style={styles.missionCard}
-    >
+    <Animated.View entering={FadeInDown.delay(index * 40).duration(300)} style={styles.missionCard}>
       <View style={styles.cardContent}>
-        {/* 아이콘 */}
-        <View style={styles.iconContainer}>
+        {/* 원형 아이콘 (Headspace 스타일) */}
+        <View style={styles.iconCircle}>
           <Text style={styles.icon}>{mission.icon ?? '⭐'}</Text>
         </View>
 
-        {/* 정보 */}
         <View style={styles.infoContainer}>
           <Text style={styles.missionName}>{mission.name}</Text>
           <View style={styles.tagsRow}>
@@ -79,21 +84,17 @@ function ManageMissionCard({
           </View>
         </View>
 
-        {/* 액션 (토글 + 수정) */}
         <View style={styles.actionsContainer}>
           <Switch
             value={mission.isActive}
             onValueChange={() => onToggle(mission.id)}
-            trackColor={{ false: '#E0E0E0', true: '#4CD964' }}
-            thumbColor={'#FFFFFF'}
+            trackColor={{ false: '#E0E0E0', true: C.sage }}
+            thumbColor={C.white}
             style={{ transform: [{ scale: 0.8 }] }}
             accessibilityLabel={`${mission.name} 활성화`}
             accessibilityRole="switch"
           />
-          <Pressable 
-            onPress={() => onEdit(mission)}
-            style={styles.editButton}
-          >
+          <Pressable onPress={() => onEdit(mission)} style={styles.editButton}>
             <Text style={styles.editButtonText}>✎ 수정</Text>
           </Pressable>
         </View>
@@ -103,11 +104,7 @@ function ManageMissionCard({
 
   if (!mission.isPreset) {
     return (
-      <Swipeable
-        ref={swipeableRef}
-        renderRightActions={renderRightActions}
-        overshootRight={false}
-      >
+      <Swipeable ref={swipeableRef} renderRightActions={renderRightActions} overshootRight={false}>
         {content}
       </Swipeable>
     );
@@ -137,18 +134,10 @@ export default function ManageScreen() {
     return [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   }, [allMissions]);
 
-  // ... (모달 관련 로직 생략 - 기존과 동일하게 유지하거나 간소화)
-  // ... (MissionEditModal은 기존 코드 재사용 가능하지만 여기선 생략하고 핵심 UI만 구현)
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* 헤더 */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>미션 관리</Text>
-        </View>
-
-        {/* 안내 메시지 */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* 안내 */}
         <View style={styles.noticeBox}>
           <Text style={styles.noticeTitle}>미션을 수정하거나 순서를 바꿔보세요!</Text>
           <Text style={styles.noticeSubtitle}>커스텀 미션은 왼쪽으로 스와이프해서 삭제할 수 있어요.</Text>
@@ -161,14 +150,14 @@ export default function ManageScreen() {
               key={mission.id}
               mission={mission}
               index={idx}
-              onEdit={() => {}} // 실제 구현 시 모달 연결
+              onEdit={() => {}}
               onDelete={(m) => deleteCustomMission(m.id)}
               onToggle={toggleMission}
             />
           ))}
         </View>
-        
-        <View style={{ height: 100 }} />
+
+        <View style={{ height: 120 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -177,73 +166,72 @@ export default function ManageScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF9F0', // 레퍼런스 배경색
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#333',
+    paddingTop: 16,
   },
   noticeBox: {
-    backgroundColor: '#E3F2FD', // 연한 블루
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: C.white,
+    padding: 18,
+    borderRadius: 20,
     marginBottom: 24,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   noticeTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#1565C0',
+    color: C.lavender,
+    fontFamily: 'Jua',
     marginBottom: 4,
   },
   noticeSubtitle: {
     fontSize: 12,
-    color: '#546E7A',
+    color: C.textMid,
+    fontFamily: 'Jua',
   },
   list: {
     gap: 12,
   },
   missionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: C.white,
     borderRadius: 20,
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.06,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
   },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  iconContainer: {
+  iconCircle: {
     width: 48,
     height: 48,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 16,
+    backgroundColor: C.dark,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 14,
   },
   icon: {
-    fontSize: 24,
+    fontSize: 22,
   },
   infoContainer: {
     flex: 1,
   },
   missionName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#333',
+    color: C.textDark,
+    fontFamily: 'Jua',
     marginBottom: 6,
   },
   tagsRow: {
@@ -251,23 +239,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tag: {
-    backgroundColor: '#FFF3E0',
-    paddingHorizontal: 6,
+    backgroundColor: 'rgba(142,151,200,0.12)',
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   tagText: {
     fontSize: 11,
-    color: '#E65100',
+    color: C.lavender,
     fontWeight: '600',
+    fontFamily: 'Jua',
   },
   dot: {
     marginHorizontal: 4,
-    color: '#CCC',
+    color: '#DDD',
   },
   metaText: {
     fontSize: 12,
-    color: '#757575',
+    color: C.textMid,
+    fontFamily: 'Jua',
   },
   actionsContainer: {
     alignItems: 'flex-end',
@@ -283,11 +273,12 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     fontSize: 12,
-    color: '#9E9E9E',
+    color: C.textMid,
     fontWeight: '500',
+    fontFamily: 'Jua',
   },
   swipeDeleteAction: {
-    backgroundColor: '#FF5252',
+    backgroundColor: C.coral,
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
@@ -298,5 +289,6 @@ const styles = StyleSheet.create({
   swipeDeleteText: {
     color: '#FFF',
     fontWeight: '700',
+    fontFamily: 'Jua',
   },
 });

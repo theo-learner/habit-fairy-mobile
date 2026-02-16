@@ -5,7 +5,7 @@ import { View, Pressable, Text, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
-import { Jua_400Regular } from '@expo-google-fonts/jua'; // Jua 폰트 사용 (귀여운 스타일)
+import { Jua_400Regular } from '@expo-google-fonts/jua';
 
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
@@ -18,12 +18,10 @@ export default function RootLayout() {
   const segments = useSegments();
   const [gateVisible, setGateVisible] = useState(false);
 
-  // 폰트 로드
   const [fontsLoaded] = useFonts({
     'Jua': Jua_400Regular,
   });
 
-  // Load data on startup
   useEffect(() => {
     loadData().catch((e) => {
       console.error('[HabitFairy] Data load failed:', e);
@@ -38,9 +36,8 @@ export default function RootLayout() {
     router.push('/manage');
   };
 
-  // 폰트 로딩 중이면 렌더링 지연 (또는 스플래시 유지)
   if (!fontsLoaded) {
-    return null; 
+    return null;
   }
 
   const segment = segments[0] || 'index';
@@ -48,16 +45,15 @@ export default function RootLayout() {
 
   const isWeb = Platform.OS === 'web';
 
-  // 전역 폰트 스타일 적용
   const globalFont = { fontFamily: 'Jua' };
 
   return (
     <ErrorBoundary fallbackMessage="Something went wrong">
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <LinearGradient
-        colors={['#EDE7F6', '#E8DEF8', '#E0F2F1']}
+        colors={['#8E97C8', '#B8C0E8', '#C8CEE8']}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0.3, y: 1 }}
         className="flex-1"
         style={isWeb ? {
           maxWidth: 480,
@@ -73,16 +69,18 @@ export default function RootLayout() {
           screenOptions={{
             headerStyle: { backgroundColor: 'transparent' },
             headerShadowVisible: false,
-            headerTitleStyle: { ...globalFont, fontSize: 20, color: '#4A4A4A' },
+            headerTitleStyle: { ...globalFont, fontSize: 20, color: '#FFFFFF' },
             headerTitleAlign: 'center',
+            headerTintColor: '#FFFFFF',
             contentStyle: { backgroundColor: 'transparent' },
           }}
         >
-          <Stack.Screen 
-            name="index" 
-            options={{ 
+          <Stack.Screen
+            name="index"
+            options={{
               title: '습관요정 별이',
-            }} 
+              headerShown: false,
+            }}
           />
           <Stack.Screen name="character" options={{ title: '내 친구' }} />
           <Stack.Screen name="rewards" options={{ title: '꾸미기' }} />
@@ -93,10 +91,10 @@ export default function RootLayout() {
 
         {showTabBar && <TabBar onProtectedPress={handleSettingsPress} />}
 
-        <ParentsGate 
-          visible={gateVisible} 
-          onClose={() => setGateVisible(false)} 
-          onSuccess={handleGateSuccess} 
+        <ParentsGate
+          visible={gateVisible}
+          onClose={() => setGateVisible(false)}
+          onSuccess={handleGateSuccess}
         />
       </LinearGradient>
     </ErrorBoundary>

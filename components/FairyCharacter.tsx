@@ -36,23 +36,20 @@ export default function FairyCharacter({
   const cfg = SIZE_CONFIG[size];
   const equippedItems = useAppStore((s) => s.equippedItems || {});
   const selectedCharacter = useAppStore((s) => s.selectedCharacter || DEFAULT_CHARACTER_ID);
-  
-  // Get character asset
+
   const character = getCharacterById(selectedCharacter);
   const characterAsset = character?.asset || require('@/assets/fairy_v2.png');
 
-  // Animations
   const floatY = useSharedValue(0);
 
   useEffect(() => {
-    // Floating Animation
     floatY.value = withRepeat(
       withSequence(
         withTiming(-12, { duration: 2500, easing: Easing.inOut(Easing.quad) }),
         withTiming(0, { duration: 2500, easing: Easing.inOut(Easing.quad) }),
       ),
       -1,
-      true
+      true,
     );
   }, []);
 
@@ -60,21 +57,17 @@ export default function FairyCharacter({
     transform: [{ translateY: floatY.value }],
   }));
 
-  // Resolve equipped emojis
   const hatItem = equippedItems['모자'] ? getItemById(equippedItems['모자']!) : null;
   const wingItem = equippedItems['날개'] ? getItemById(equippedItems['날개']!) : null;
   const accItem = equippedItems['소품'] ? getItemById(equippedItems['소품']!) : null;
   const bgItem = equippedItems['배경'] ? getItemById(equippedItems['배경']!) : null;
 
-  // Calculate offsets - position items relative to fairy image center
-  const hatOffset = cfg.size * 0.35; // Distance from center to top of head
   const hatFontSize = cfg.size * 0.25;
   const wingFontSize = cfg.size * 0.5;
   const accFontSize = cfg.size * 0.2;
 
   return (
     <View style={styles.container}>
-      {/* Background Decor */}
       {bgItem && (
         <View style={styles.backgroundDecor}>
           <Text style={{ fontSize: cfg.size * 0.8, opacity: 0.4 }}>{bgItem.emoji}</Text>
@@ -82,56 +75,35 @@ export default function FairyCharacter({
       )}
 
       <Animated.View style={[styles.characterWrap, { width: cfg.container, height: cfg.container }, containerStyle]}>
-        {/* Wings Decor (Behind character - positioned at back) */}
         {wingItem && (
-          <View style={[styles.wingDecor, { 
-            top: cfg.container * 0.25,
-            zIndex: 5,
-          }]}>
+          <View style={[styles.wingDecor, { top: cfg.container * 0.25, zIndex: 5 }]}>
             <Text style={{ fontSize: wingFontSize, opacity: 0.7 }}>{wingItem.emoji}</Text>
           </View>
         )}
 
-        {/* Fairy Image Container - items positioned relative to this */}
         <View style={styles.fairyImageContainer}>
-          <Image 
-            source={characterAsset} 
-            style={{ 
-              width: cfg.size, 
-              height: cfg.size,
-            }}
+          <Image
+            source={characterAsset}
+            style={{ width: cfg.size, height: cfg.size }}
             resizeMode="contain"
           />
-          
-          {/* Hat Decor - positioned on fairy's head */}
+
           {hatItem && (
-            <View style={[styles.hatDecor, { 
-              top: cfg.size * 0.02, // Slightly inside the top of the image
-              left: '50%',
-              marginLeft: -hatFontSize / 2,
-            }]}>
+            <View style={[styles.hatDecor, { top: cfg.size * 0.02, left: '50%', marginLeft: -hatFontSize / 2 }]}>
               <Text style={{ fontSize: hatFontSize }}>{hatItem.emoji}</Text>
             </View>
           )}
 
-          {/* Accessory Decor - positioned to the side of fairy */}
           {accItem && (
-            <View style={[styles.accDecor, { 
-              right: cfg.size * 0.05,
-              bottom: cfg.size * 0.25,
-            }]}>
+            <View style={[styles.accDecor, { right: cfg.size * 0.05, bottom: cfg.size * 0.25 }]}>
               <Text style={{ fontSize: accFontSize }}>{accItem.emoji}</Text>
             </View>
           )}
         </View>
       </Animated.View>
 
-      {/* Message Bubble */}
       {showMessage && message && (
-        <Animated.View 
-          entering={ZoomIn.duration(400).springify()}
-          style={styles.bubble}
-        >
+        <Animated.View entering={ZoomIn.duration(400).springify()} style={styles.bubble}>
           <View style={styles.bubbleTail} />
           <Text style={styles.bubbleText}>{message}</Text>
         </Animated.View>
@@ -173,17 +145,14 @@ const styles = StyleSheet.create({
   },
   bubble: {
     marginTop: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
     paddingVertical: 14,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-    // Soft shadow
-    shadowColor: '#1f2687',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 16,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     elevation: 4,
     maxWidth: 280,
   },
@@ -194,18 +163,15 @@ const styles = StyleSheet.create({
     marginLeft: -8,
     width: 16,
     height: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: '#FFFFFF',
     transform: [{ rotate: '45deg' }],
   },
   bubbleText: {
     fontSize: 15,
-    color: '#333333',
+    color: '#2D3436',
     fontWeight: '600',
     textAlign: 'center',
-    fontFamily: 'Quicksand',
+    fontFamily: 'Jua',
     lineHeight: 22,
   },
 });

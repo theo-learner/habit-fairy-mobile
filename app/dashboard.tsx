@@ -15,65 +15,78 @@ import { useAppStore } from '@/lib/store';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// ─── 차트 컴포넌트 ───
+const C = {
+  lavender: '#8E97C8',
+  lavenderLight: '#B8C0E8',
+  sage: '#7DB89E',
+  dark: '#4A5568',
+  coral: '#E8744F',
+  white: '#FFFFFF',
+  textDark: '#2D3436',
+  textMid: '#636E72',
+};
+
 function AreaChart({ data }: { data: number[] }) {
-  const width = SCREEN_WIDTH - 48; // padding
+  const width = SCREEN_WIDTH - 80;
   const height = 150;
   const max = 100;
-  
-  // 데이터 포인트 좌표 계산
+
   const points = data.map((val, i) => {
     const x = (i / (data.length - 1)) * width;
     const y = height - (val / max) * height;
     return `${x},${y}`;
   });
 
-  // 곡선 경로 생성 (Bezier)
-  const pathData = `M0,${height} ` + points.map((p, i) => {
-    if (i === 0) return `L${p}`;
-    const [prevX, prevY] = points[i - 1].split(',').map(Number);
-    const [currX, currY] = p.split(',').map(Number);
-    const cp1X = prevX + (currX - prevX) / 2;
-    const cp1Y = prevY;
-    const cp2X = prevX + (currX - prevX) / 2;
-    const cp2Y = currY;
-    return `C${cp1X},${cp1Y} ${cp2X},${cp2Y} ${currX},${currY}`;
-  }).join(' ') + ` L${width},${height} Z`;
+  const pathData =
+    `M0,${height} ` +
+    points
+      .map((p, i) => {
+        if (i === 0) return `L${p}`;
+        const [prevX, prevY] = points[i - 1].split(',').map(Number);
+        const [currX, currY] = p.split(',').map(Number);
+        const cp1X = prevX + (currX - prevX) / 2;
+        return `C${cp1X},${prevY} ${cp1X},${currY} ${currX},${currY}`;
+      })
+      .join(' ') +
+    ` L${width},${height} Z`;
 
-  // 라인 경로 (채우기 영역 제외)
-  const linePathData = `M0,${height - (data[0] / max) * height} ` + points.map((p, i) => {
-    if (i === 0) return `L${p}`;
-    const [prevX, prevY] = points[i - 1].split(',').map(Number);
-    const [currX, currY] = p.split(',').map(Number);
-    const cp1X = prevX + (currX - prevX) / 2;
-    const cp1Y = prevY;
-    const cp2X = prevX + (currX - prevX) / 2;
-    const cp2Y = currY;
-    return `C${cp1X},${cp1Y} ${cp2X},${cp2Y} ${currX},${currY}`;
-  }).join(' ');
+  const linePathData =
+    `M0,${height - (data[0] / max) * height} ` +
+    points
+      .map((p, i) => {
+        if (i === 0) return `L${p}`;
+        const [prevX, prevY] = points[i - 1].split(',').map(Number);
+        const [currX, currY] = p.split(',').map(Number);
+        const cp1X = prevX + (currX - prevX) / 2;
+        return `C${cp1X},${prevY} ${cp1X},${currY} ${currX},${currY}`;
+      })
+      .join(' ');
 
   return (
     <Svg width={width} height={height + 20}>
       <Defs>
         <LinearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor="#4FC3F7" stopOpacity="0.5" />
-          <Stop offset="1" stopColor="#4FC3F7" stopOpacity="0" />
+          <Stop offset="0" stopColor={C.lavender} stopOpacity="0.4" />
+          <Stop offset="1" stopColor={C.lavender} stopOpacity="0" />
         </LinearGradient>
       </Defs>
-      {/* 영역 채우기 */}
       <Path d={pathData} fill="url(#gradient)" />
-      {/* 라인 */}
-      <Path d={linePathData} stroke="#29B6F6" strokeWidth="3" fill="none" />
-      
-      {/* 포인트 (수요일 강조 예시) */}
-      <Circle cx={(2 / 6) * width} cy={height - (data[2] / max) * height} r="4" fill="#FFF" stroke="#29B6F6" strokeWidth="2" />
+      <Path d={linePathData} stroke={C.lavender} strokeWidth="3" fill="none" />
+      <Circle
+        cx={(2 / 6) * width}
+        cy={height - (data[2] / max) * height}
+        r="4"
+        fill="#FFF"
+        stroke={C.lavender}
+        strokeWidth="2"
+      />
     </Svg>
   );
 }
 
 function DonutChart({ percent, color }: { percent: number; color: string }) {
-  const size = 100;
-  const strokeWidth = 12;
+  const size = 90;
+  const strokeWidth = 10;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (percent / 100) * circumference;
@@ -81,14 +94,7 @@ function DonutChart({ percent, color }: { percent: number; color: string }) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       <Svg width={size} height={size}>
-        <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="#F0F0F0"
-          strokeWidth={strokeWidth}
-          fill="none"
-        />
+        <Circle cx={size / 2} cy={size / 2} r={radius} stroke="#EDF0F7" strokeWidth={strokeWidth} fill="none" />
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -103,7 +109,7 @@ function DonutChart({ percent, color }: { percent: number; color: string }) {
         />
       </Svg>
       <View style={{ position: 'absolute', alignItems: 'center' }}>
-        <Text style={{ fontSize: 18, fontWeight: '800', color: '#333' }}>{percent}%</Text>
+        <Text style={{ fontSize: 16, fontWeight: '800', color: C.textDark, fontFamily: 'Jua' }}>{percent}%</Text>
       </View>
     </View>
   );
@@ -120,54 +126,31 @@ export default function DashboardScreen() {
   const todayCompleted = (completedMap[today] || []).length;
   const streakDays = getStreakDays();
 
-  // 더미 데이터 (차트용)
-  const weeklyData = [10, 45, 40, 5, 50, 10, 0]; // 월~일
+  const weeklyData = [10, 45, 40, 5, 50, 10, 0];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.iconButton}>
-          <Text style={{ fontSize: 24 }}>{'<'}</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>부모 대시보드</Text>
-        <Pressable onPress={() => {}} style={styles.iconButton}>
-          <Text style={{ fontSize: 20 }}>⚙️</Text>
-        </Pressable>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* 요약 카드 */}
         <View style={styles.summaryRow}>
-          <View style={styles.summaryCard}>
-            <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-              <Text style={{ fontSize: 20 }}>✅</Text>
-            </View>
-            <Text style={styles.summaryLabel}>오늘 달성</Text>
-            <Text style={styles.summaryValue}>{todayCompleted}/{missions.length}</Text>
-            <Text style={styles.summarySub}>아직 시작하지 않았어요</Text>
-          </View>
-          <View style={styles.summaryCard}>
-            <View style={[styles.iconCircle, { backgroundColor: '#FFF8E1' }]}>
-              <Text style={{ fontSize: 20 }}>⭐</Text>
-            </View>
-            <Text style={styles.summaryLabel}>모든 별</Text>
-            <Text style={styles.summaryValue}>{totalStars}</Text>
-            <Text style={styles.summarySub}>누적 별 개수</Text>
-          </View>
-          <View style={styles.summaryCard}>
-            <View style={[styles.iconCircle, { backgroundColor: '#FFEBEE' }]}>
-              <Text style={{ fontSize: 20 }}>🔥</Text>
-            </View>
-            <Text style={styles.summaryLabel}>연속 달성</Text>
-            <Text style={styles.summaryValue}>{streakDays}일</Text>
-            <Text style={styles.summarySub}>현재 연속 기록</Text>
-          </View>
+          {[
+            { icon: '✅', label: '오늘 달성', value: `${todayCompleted}/${missions.length}`, bg: C.sage },
+            { icon: '⭐', label: '모은 별', value: `${totalStars}`, bg: C.coral },
+            { icon: '🔥', label: '연속 달성', value: `${streakDays}일`, bg: C.lavender },
+          ].map((item, idx) => (
+            <Animated.View key={idx} entering={FadeInDown.delay(idx * 80)} style={styles.summaryCard}>
+              <View style={[styles.summaryIconCircle, { backgroundColor: item.bg }]}>
+                <Text style={{ fontSize: 18 }}>{item.icon}</Text>
+              </View>
+              <Text style={styles.summaryValue}>{item.value}</Text>
+              <Text style={styles.summaryLabel}>{item.label}</Text>
+            </Animated.View>
+          ))}
         </View>
 
         {/* 주간 달성률 */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>주간 달성률</Text>
+        <Animated.View entering={FadeInDown.delay(250)} style={styles.chartCard}>
+          <Text style={styles.cardTitle}>주간 달성률</Text>
           <View style={styles.chartContainer}>
             <AreaChart data={weeklyData} />
             <View style={styles.xAxis}>
@@ -176,23 +159,23 @@ export default function DashboardScreen() {
               ))}
             </View>
           </View>
-        </View>
+        </Animated.View>
 
-        {/* 주요 습관 현황 */}
-        <Text style={[styles.sectionTitle, { marginLeft: 4, marginBottom: 12 }]}>주요 습관 현황</Text>
-        <View style={styles.habitGrid}>
-          {missions.slice(0, 2).map((mission, idx) => (
-            <View key={mission.id} style={styles.habitCard}>
-              <Text style={styles.habitTitle}>{mission.name}</Text>
-              <View style={styles.donutContainer}>
-                <DonutChart percent={idx === 0 ? 75 : 50} color={idx === 0 ? '#4FC3F7' : '#81D4FA'} />
+        {/* 주요 습관 */}
+        <Animated.View entering={FadeInDown.delay(350)}>
+          <Text style={[styles.cardTitle, { marginLeft: 4, marginBottom: 12, color: C.white }]}>주요 습관 현황</Text>
+          <View style={styles.habitGrid}>
+            {missions.slice(0, 2).map((mission, idx) => (
+              <View key={mission.id} style={styles.habitCard}>
+                <Text style={styles.habitTitle}>{mission.name}</Text>
+                <DonutChart percent={idx === 0 ? 75 : 50} color={idx === 0 ? C.lavender : C.sage} />
+                <Text style={styles.habitSub}>{idx === 0 ? '3/4회 완료' : '1/2회 완료'}</Text>
               </View>
-              <Text style={styles.habitSub}>{idx === 0 ? '3/4회 완료' : '1/2회 완료'}</Text>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        </Animated.View>
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 120 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -201,23 +184,6 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA', // 연한 회색 배경
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#333',
-  },
-  iconButton: {
-    padding: 8,
   },
   scrollContent: {
     padding: 16,
@@ -229,17 +195,17 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     width: '31%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 12,
+    backgroundColor: C.white,
+    borderRadius: 20,
+    padding: 14,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  iconCircle: {
+  summaryIconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -247,38 +213,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 8,
   },
-  summaryLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#555',
-    marginBottom: 4,
-  },
   summaryValue: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#333',
-    marginBottom: 4,
+    color: C.textDark,
+    fontFamily: 'Jua',
+    marginBottom: 2,
   },
-  summarySub: {
-    fontSize: 9,
-    color: '#757575',
-    textAlign: 'center',
+  summaryLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: C.textMid,
+    fontFamily: 'Jua',
   },
-  sectionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
+  chartCard: {
+    backgroundColor: C.white,
+    borderRadius: 24,
+    padding: 24,
     marginBottom: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  sectionTitle: {
-    fontSize: 16,
+  cardTitle: {
+    fontSize: 17,
     fontWeight: '700',
-    color: '#333',
+    color: C.textDark,
+    fontFamily: 'Jua',
     marginBottom: 16,
   },
   chartContainer: {
@@ -293,7 +256,8 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     fontSize: 12,
-    color: '#999',
+    color: C.textMid,
+    fontFamily: 'Jua',
   },
   habitGrid: {
     flexDirection: 'row',
@@ -301,28 +265,28 @@ const styles = StyleSheet.create({
   },
   habitCard: {
     width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    backgroundColor: C.white,
+    borderRadius: 24,
     padding: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   habitTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#333',
-    marginBottom: 16,
-  },
-  donutContainer: {
-    marginBottom: 12,
+    color: C.textDark,
+    fontFamily: 'Jua',
+    marginBottom: 14,
   },
   habitSub: {
-    fontSize: 13,
-    color: '#666',
+    fontSize: 12,
+    color: C.textMid,
     fontWeight: '600',
+    fontFamily: 'Jua',
+    marginTop: 10,
   },
 });

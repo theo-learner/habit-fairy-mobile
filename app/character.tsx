@@ -15,7 +15,17 @@ import { CHARACTERS, type CharacterData } from '@/lib/characters';
 import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = SCREEN_WIDTH - 48;
+const CARD_WIDTH = (SCREEN_WIDTH - 48 - 12) / 2;
+
+const C = {
+  lavender: '#8E97C8',
+  dark: '#4A5568',
+  coral: '#E8744F',
+  sage: '#7DB89E',
+  white: '#FFFFFF',
+  textDark: '#2D3436',
+  textMid: '#636E72',
+};
 
 function CharacterCard({
   character,
@@ -29,47 +39,36 @@ function CharacterCard({
   index: number;
 }) {
   const scale = useSharedValue(1);
-
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
-  const handlePressIn = () => {
-    scale.value = withSpring(0.95);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
-
   return (
-    <Animated.View 
-      entering={FadeInDown.delay(index * 50).duration(400)}
+    <Animated.View
+      entering={FadeInDown.delay(index * 60).duration(400)}
       style={[styles.cardWrapper, animatedStyle]}
     >
       <Pressable
         onPress={() => {
           playButtonHaptic();
+          scale.value = withSpring(0.95);
+          setTimeout(() => (scale.value = withSpring(1)), 100);
           onSelect();
         }}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={[
-          styles.card,
-          isSelected && styles.cardSelected
-        ]}
+        style={[styles.card, isSelected && styles.cardSelected]}
       >
-        <Image
-          source={character.asset}
-          style={styles.cardImage}
-          resizeMode="contain"
-        />
-        <Text style={[
-          styles.cardName,
-          isSelected && styles.cardNameSelected
-        ]}>
+        {/* 원형 캐릭터 아이콘 */}
+        <View style={[styles.charCircle, isSelected && { borderColor: C.coral, borderWidth: 3 }]}>
+          <Image source={character.asset} style={styles.cardImage} resizeMode="contain" />
+        </View>
+        <Text style={[styles.cardName, isSelected && { color: C.coral }]}>
           {character.nameKo}
         </Text>
+        {isSelected && (
+          <View style={styles.selectedBadge}>
+            <Text style={styles.selectedText}>선택됨</Text>
+          </View>
+        )}
       </Pressable>
     </Animated.View>
   );
@@ -80,9 +79,10 @@ export default function CharacterSelectScreen() {
   const selectCharacter = useAppStore((s) => s.selectCharacter);
   const [activeTab, setActiveTab] = useState<'all' | 'boy' | 'girl'>('all');
 
-  const filteredCharacters = activeTab === 'all'
-    ? CHARACTERS
-    : CHARACTERS.filter(c => c.category === activeTab || c.category === 'default');
+  const filteredCharacters =
+    activeTab === 'all'
+      ? CHARACTERS
+      : CHARACTERS.filter((c) => c.category === activeTab || c.category === 'default');
 
   const handleSelect = async (characterId: string) => {
     await selectCharacter(characterId);
@@ -96,6 +96,7 @@ export default function CharacterSelectScreen() {
         <Text style={styles.headerSubtitle}>모험을 함께할 친구를 골라주세요!</Text>
       </View>
 
+      {/* 탭 (pill 형태) */}
       <View style={styles.tabContainer}>
         {[
           { key: 'all', label: '전체' },
@@ -110,26 +111,15 @@ export default function CharacterSelectScreen() {
                 playButtonHaptic();
                 setActiveTab(tab.key as any);
               }}
-              style={[
-                styles.tab,
-                isActive && styles.tabActive
-              ]}
+              style={[styles.tab, isActive && styles.tabActive]}
             >
-              <Text style={[
-                styles.tabText,
-                isActive && styles.tabTextActive
-              ]}>
-                {tab.label}
-              </Text>
+              <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{tab.label}</Text>
             </Pressable>
           );
         })}
       </View>
 
-      <ScrollView 
-        contentContainerStyle={styles.grid}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.grid} showsVerticalScrollIndicator={false}>
         {filteredCharacters.map((character, idx) => (
           <CharacterCard
             key={character.id}
@@ -139,7 +129,7 @@ export default function CharacterSelectScreen() {
             index={idx}
           />
         ))}
-        <View style={{ height: 100 }} />
+        <View style={{ height: 120, width: '100%' }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -148,89 +138,105 @@ export default function CharacterSelectScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF9F0', 
   },
   header: {
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 12,
+    paddingBottom: 16,
   },
   headerTitle: {
-    fontSize: 28,
-    fontFamily: 'Jua', 
-    color: '#3E2723',
-    marginBottom: 8,
+    fontSize: 26,
+    fontFamily: 'Jua',
+    color: C.white,
+    marginBottom: 6,
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: 'Jua',
-    color: '#5D4037',
+    color: 'rgba(255,255,255,0.8)',
   },
   tabContainer: {
     flexDirection: 'row',
     paddingHorizontal: 24,
     marginBottom: 20,
-    gap: 12,
+    gap: 10,
   },
   tab: {
     paddingVertical: 10,
-    paddingHorizontal: 24,
-    borderRadius: 24,
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#D7CCC8',
+    paddingHorizontal: 22,
+    borderRadius: 9999,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   tabActive: {
-    backgroundColor: '#FFF',
-    borderColor: '#FFB74D',
-    borderWidth: 2,
+    backgroundColor: C.white,
   },
   tabText: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Jua',
-    color: '#8D6E63',
+    color: 'rgba(255,255,255,0.75)',
   },
   tabTextActive: {
-    color: '#3E2723',
+    color: C.coral,
   },
   grid: {
-    alignItems: 'center', 
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 24,
+    justifyContent: 'space-between',
     paddingBottom: 40,
   },
   cardWrapper: {
     width: CARD_WIDTH,
-    marginBottom: 16, 
+    marginBottom: 14,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: C.white,
     borderRadius: 24,
-    padding: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 12,
     alignItems: 'center',
-    height: 240, 
-    justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 3,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   cardSelected: {
-    borderColor: '#FFB74D',
-    backgroundColor: '#FFF8E1',
+    borderColor: C.coral,
+    backgroundColor: '#FFF9F5',
+  },
+  charCircle: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: '#EDF0F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    overflow: 'hidden',
   },
   cardImage: {
-    width: 150, 
-    height: 150,
-    marginBottom: 16,
+    width: 72,
+    height: 72,
   },
   cardName: {
-    fontSize: 24, 
+    fontSize: 16,
     fontFamily: 'Jua',
-    color: '#3E2723',
+    color: C.textDark,
+    marginBottom: 4,
   },
-  cardNameSelected: {
-    color: '#E65100',
+  selectedBadge: {
+    backgroundColor: C.coral,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 9999,
+    marginTop: 4,
+  },
+  selectedText: {
+    fontSize: 11,
+    fontFamily: 'Jua',
+    color: C.white,
   },
 });

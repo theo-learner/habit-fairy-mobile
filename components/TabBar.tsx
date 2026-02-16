@@ -16,26 +16,26 @@ interface TabConfig {
   name: string;
   label: string;
   icon: string;
+  activeIcon: string;
   path: string;
   protected?: boolean;
 }
 
-// 레퍼런스와 동일한 탭 구성
 const TABS: TabConfig[] = [
-  { name: 'index', label: '홈', icon: '🏠', path: '/' },
-  { name: 'character', label: '친구', icon: '🧸', path: '/character' },
-  { name: 'rewards', label: '꾸미기', icon: '🎀', path: '/rewards' },
-  { name: 'dashboard', label: '기록', icon: '📈', path: '/dashboard' },
-  { name: 'manage', label: '설정', icon: '🔧', path: '/manage', protected: true },
+  { name: 'index', label: '홈', icon: '🏠', activeIcon: '🏡', path: '/' },
+  { name: 'character', label: '친구', icon: '🧚', activeIcon: '🧚‍♀️', path: '/character' },
+  { name: 'rewards', label: '꾸미기', icon: '🎨', activeIcon: '🎨', path: '/rewards' },
+  { name: 'dashboard', label: '기록', icon: '📊', activeIcon: '📊', path: '/dashboard' },
+  { name: 'manage', label: '설정', icon: '⚙️', activeIcon: '⚙️', path: '/manage', protected: true },
 ];
 
-function TabButton({ 
-  tab, 
-  isActive, 
-  onPress 
-}: { 
-  tab: TabConfig; 
-  isActive: boolean; 
+function TabButton({
+  tab,
+  isActive,
+  onPress,
+}: {
+  tab: TabConfig;
+  isActive: boolean;
   onPress: () => void;
 }) {
   const scale = useSharedValue(1);
@@ -63,12 +63,21 @@ function TabButton({
       accessibilityLabel={`${tab.label} 탭`}
       accessibilityState={{ selected: isActive }}
     >
-      <Text style={[styles.tabIcon, { opacity: isActive ? 1 : 0.5 }]}>
-        {tab.icon}
+      <Text style={[styles.tabIcon, { opacity: isActive ? 1 : 0.45 }]}>
+        {isActive ? tab.activeIcon : tab.icon}
       </Text>
-      <Text style={[styles.tabLabel, { color: isActive ? '#333' : '#666', fontWeight: isActive ? '700' : '500' }]}>
+      <Text
+        style={[
+          styles.tabLabel,
+          {
+            color: isActive ? '#E8744F' : '#9BA3AF',
+            fontWeight: isActive ? '700' : '500',
+          },
+        ]}
+      >
         {tab.label}
       </Text>
+      {isActive && <View style={styles.activeIndicator} />}
     </AnimatedPressable>
   );
 }
@@ -81,18 +90,16 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  
-  // 하단 여백 확보 (iOS Safe Area)
+
   const bottomPadding = Math.max(20, insets.bottom + 10);
 
   const handlePress = (tab: TabConfig) => {
     playButtonHaptic();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     if (tab.protected && onProtectedPress) {
       onProtectedPress();
     } else {
-      // Use absolute paths but rely on Expo Router to handle baseUrl
       router.replace(tab.path as any);
     }
   };
@@ -101,11 +108,9 @@ export default function TabBar({ onProtectedPress }: TabBarProps) {
     <View style={[styles.container, { paddingBottom: bottomPadding }]}>
       <View style={styles.bar}>
         {TABS.map((tab) => {
-          // Normalize pathname for matching on GitHub Pages
-          // pathname might be "/habit-fairy-mobile/character" or "/character"
           const normalizedPath = pathname.replace(/^\/habit-fairy-mobile/, '') || '/';
           const isActive = normalizedPath === tab.path || (normalizedPath === '' && tab.path === '/');
-          
+
           return (
             <TabButton
               key={tab.name}
@@ -133,28 +138,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     width: '100%',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     justifyContent: 'space-around',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 12,
   },
   tabButton: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 4,
-    minWidth: 60,
+    minWidth: 56,
+    position: 'relative',
   },
   tabIcon: {
     fontSize: 22,
-    marginBottom: 4,
+    marginBottom: 3,
   },
   tabLabel: {
     fontSize: 10,
+    fontFamily: 'Jua',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: -2,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#E8744F',
   },
 });
