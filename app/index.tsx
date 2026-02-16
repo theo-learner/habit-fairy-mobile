@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   Platform,
+  Animated as RNAnimated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -20,15 +21,6 @@ import Animated, {
   FadeInDown,
   FadeInUp,
   ZoomIn,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withSequence,
-  withTiming,
-  withDelay,
-  withRepeat,
-  Easing,
-  runOnJS,
 } from 'react-native-reanimated';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop, Path, Ellipse } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
@@ -256,39 +248,48 @@ function HomeScreenContent() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCompletionAnim, setShowCompletionAnim] = useState(false);
 
-  // Hero 캐릭터 애니메이션
-  const heroBreathScale = useSharedValue(1);
-  const heroSwayRotate = useSharedValue(0);
-  const heroFloatY = useSharedValue(0);
+  // Hero 캐릭터 애니메이션 (RN Animated - 웹 호환)
+  const heroFloatAnim = useRef(new RNAnimated.Value(0)).current;
+  const heroScaleAnim = useRef(new RNAnimated.Value(1)).current;
+  const heroRotateAnim = useRef(new RNAnimated.Value(0)).current;
 
   useEffect(() => {
-    heroBreathScale.value = withRepeat(
-      withSequence(
-        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
-        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
-      ), -1, true,
+    const floatLoop = RNAnimated.loop(
+      RNAnimated.sequence([
+        RNAnimated.timing(heroFloatAnim, { toValue: -8, duration: 2500, useNativeDriver: true }),
+        RNAnimated.timing(heroFloatAnim, { toValue: 0, duration: 2500, useNativeDriver: true }),
+      ])
     );
-    heroSwayRotate.value = withRepeat(
-      withSequence(
-        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
-        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
-      ), -1, true,
+    const scaleLoop = RNAnimated.loop(
+      RNAnimated.sequence([
+        RNAnimated.timing(heroScaleAnim, { toValue: 1.03, duration: 1500, useNativeDriver: true }),
+        RNAnimated.timing(heroScaleAnim, { toValue: 1.0, duration: 1500, useNativeDriver: true }),
+      ])
     );
-    heroFloatY.value = withRepeat(
-      withSequence(
-        withTiming(-8, { duration: 2500, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 2500, easing: Easing.inOut(Easing.quad) }),
-      ), -1, true,
+    const rotateLoop = RNAnimated.loop(
+      RNAnimated.sequence([
+        RNAnimated.timing(heroRotateAnim, { toValue: -2, duration: 2000, useNativeDriver: true }),
+        RNAnimated.timing(heroRotateAnim, { toValue: 2, duration: 2000, useNativeDriver: true }),
+      ])
     );
+    floatLoop.start();
+    scaleLoop.start();
+    rotateLoop.start();
+    return () => { floatLoop.stop(); scaleLoop.stop(); rotateLoop.stop(); };
   }, []);
 
-  const heroAnimStyle = useAnimatedStyle(() => ({
+  const heroRotateInterpolate = heroRotateAnim.interpolate({
+    inputRange: [-2, 2],
+    outputRange: ['-2deg', '2deg'],
+  });
+
+  const heroAnimStyle = {
     transform: [
-      { translateY: heroFloatY.value },
-      { scale: heroBreathScale.value },
-      { rotate: `${heroSwayRotate.value}deg` },
+      { translateY: heroFloatAnim },
+      { scale: heroScaleAnim },
+      { rotate: heroRotateInterpolate },
     ],
-  }));
+  };
 
   useEffect(() => {
     loadData();
@@ -372,14 +373,14 @@ function HomeScreenContent() {
       >
         {/* Hero 영역: 캐릭터 + 풍경 배경 */}
         <HeroLandscape>
-          <Animated.View style={heroAnimStyle}>
+          <RNAnimated.View style={heroAnimStyle}>
             <Animated.Image
               entering={FadeIn.duration(800)}
               source={character.asset}
               style={styles.heroCharImage}
               resizeMode="contain"
             />
-          </Animated.View>
+          </RNAnimated.View>
         </HeroLandscape>
 
         {/* 인사 + 진행률 pill */}
