@@ -336,6 +336,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
+    fontFamily: 'Jua',
     color: '#F59E0B',
     marginBottom: 16,
   },
@@ -349,12 +350,14 @@ const styles = StyleSheet.create({
   },
   counter: {
     fontSize: 16,
+    fontFamily: 'Jua',
     color: '#6B7280',
     marginBottom: 16,
   },
   counterBold: {
     fontSize: 28,
     fontWeight: '900',
+    fontFamily: 'Jua',
     color: '#F59E0B',
   },
   divider: {
@@ -366,12 +369,14 @@ const styles = StyleSheet.create({
   cheerMsg: {
     fontSize: 16,
     fontWeight: '700',
+    fontFamily: 'Jua',
     color: '#374151',
     textAlign: 'center',
     marginBottom: 12,
   },
   hint: {
     fontSize: 11,
+    fontFamily: 'Jua',
     color: '#D1D5DB',
     marginTop: 8,
   },

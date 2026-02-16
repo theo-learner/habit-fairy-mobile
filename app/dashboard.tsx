@@ -33,7 +33,7 @@ function AreaChart({ data }: { data: number[] }) {
   const max = 100;
 
   const points = data.map((val, i) => {
-    const x = (i / (data.length - 1)) * width;
+    const x = data.length <= 1 ? 0 : (i / (data.length - 1)) * width;
     const y = height - (val / max) * height;
     return `${x},${y}`;
   });
@@ -127,7 +127,23 @@ export default function DashboardScreen() {
   const todayCompleted = (completedMap[today] || []).length;
   const streakDays = getStreakDays();
 
-  const weeklyData = [10, 45, 40, 5, 50, 10, 0];
+  // 주간 달성률 계산: 이번 주 월~일 각 요일별 달성률(%)
+  const weeklyData = useMemo(() => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=일, 1=월, ...
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + mondayOffset);
+
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      const completed = (completedMap[dateStr] || []).length;
+      const total = missions.length;
+      return total > 0 ? Math.round((completed / total) * 100) : 0;
+    });
+  }, [completedMap, missions]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -166,13 +182,31 @@ export default function DashboardScreen() {
         <Animated.View entering={FadeInDown.delay(350)}>
           <Text style={[styles.cardTitle, { marginLeft: 4, marginBottom: 12, color: '#1A1A2E' }]}>주요 습관 현황</Text>
           <View style={styles.habitGrid}>
-            {missions.slice(0, 2).map((mission, idx) => (
-              <View key={mission.id} style={styles.habitCard}>
-                <Text style={styles.habitTitle}>{mission.name}</Text>
-                <DonutChart percent={idx === 0 ? 75 : 50} color={idx === 0 ? C.lavender : C.sage} />
-                <Text style={styles.habitSub}>{idx === 0 ? '3/4회 완료' : '1/2회 완료'}</Text>
-              </View>
-            ))}
+            {missions.slice(0, 2).map((mission, idx) => {
+              // 이번 주 해당 미션 완료 횟수 계산
+              const now = new Date();
+              const dayOfWeek = now.getDay();
+              const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+              const monday = new Date(now);
+              monday.setDate(now.getDate() + mondayOffset);
+              let completedCount = 0;
+              for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const dateStr = d.toISOString().split('T')[0];
+                if ((completedMap[dateStr] || []).includes(mission.id)) completedCount++;
+              }
+              const goalCount = 7; // 주 7일 목표
+              const percent = goalCount > 0 ? Math.round((completedCount / goalCount) * 100) : 0;
+              const colors = [C.lavender, C.sage, C.coral];
+              return (
+                <View key={mission.id} style={styles.habitCard}>
+                  <Text style={styles.habitTitle}>{mission.name}</Text>
+                  <DonutChart percent={percent} color={colors[idx % colors.length]} />
+                  <Text style={styles.habitSub}>{completedCount}/{goalCount}회 완료</Text>
+                </View>
+              );
+            })}
           </View>
         </Animated.View>
 

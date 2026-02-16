@@ -278,6 +278,7 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 40,
     fontWeight: '800',
+    fontFamily: 'Jua',
     color: '#1F2937',
     letterSpacing: 2,
   },
@@ -286,6 +287,7 @@ const styles = StyleSheet.create({
   },
   encourageText: {
     fontSize: 13,
+    fontFamily: 'Jua',
     color: '#9CA3AF',
     marginTop: 4,
   },
@@ -308,6 +310,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     fontSize: 20,
     fontWeight: '700',
+    fontFamily: 'Jua',
     color: '#FFFFFF',
   },
 });

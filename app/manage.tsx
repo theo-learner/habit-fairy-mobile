@@ -150,7 +150,11 @@ export default function ManageScreen() {
               key={mission.id}
               mission={mission}
               index={idx}
-              onEdit={() => {}}
+              onEdit={(m) => {
+                setEditingMission(m);
+                setIsNewMission(false);
+                setModalVisible(true);
+              }}
               onDelete={(m) => deleteCustomMission(m.id)}
               onToggle={toggleMission}
             />
@@ -159,6 +163,50 @@ export default function ManageScreen() {
 
         <View style={{ height: 120 }} />
       </ScrollView>
+
+      {/* 미션 편집 모달 */}
+      <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{isNewMission ? '미션 추가' : '미션 수정'}</Text>
+            {editingMission && (
+              <>
+                <Text style={styles.modalLabel}>미션 이름</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  value={editingMission.name}
+                  onChangeText={(text) => setEditingMission({ ...editingMission, name: text })}
+                  placeholder="미션 이름"
+                />
+                <Text style={styles.modalLabel}>별 보상</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  value={String(editingMission.starReward)}
+                  onChangeText={(text) => setEditingMission({ ...editingMission, starReward: Number(text) || 1 })}
+                  keyboardType="numeric"
+                />
+                <View style={styles.modalButtons}>
+                  <Pressable onPress={() => setModalVisible(false)} style={styles.modalCancelBtn}>
+                    <Text style={styles.modalCancelText}>취소</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      if (editingMission) {
+                        updateMission(editingMission.id, { name: editingMission.name, starReward: editingMission.starReward });
+                        reloadAllMissions();
+                      }
+                      setModalVisible(false);
+                    }}
+                    style={styles.modalSaveBtn}
+                  >
+                    <Text style={styles.modalSaveText}>저장</Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -290,5 +338,74 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: '700',
     fontFamily: 'Jua',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCard: {
+    width: '85%',
+    backgroundColor: C.white,
+    borderRadius: 24,
+    padding: 24,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    fontFamily: 'Jua',
+    color: C.textDark,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  modalLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    fontFamily: 'Jua',
+    color: C.textMid,
+    marginBottom: 6,
+  },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 15,
+    fontFamily: 'Jua',
+    marginBottom: 14,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: '#F0F0F0',
+    marginRight: 8,
+    alignItems: 'center',
+  },
+  modalCancelText: {
+    fontSize: 15,
+    fontWeight: '600',
+    fontFamily: 'Jua',
+    color: C.textMid,
+  },
+  modalSaveBtn: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: C.lavender,
+    marginLeft: 8,
+    alignItems: 'center',
+  },
+  modalSaveText: {
+    fontSize: 15,
+    fontWeight: '600',
+    fontFamily: 'Jua',
+    color: C.white,
   },
 });

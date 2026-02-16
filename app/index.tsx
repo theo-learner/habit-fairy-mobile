@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
   missionStreakText: {
     fontSize: 11,
     fontFamily: 'Jua',
-    color: C.coral,
+    color: '#C4522A',
     marginBottom: 6,
   },
   quickCheckBtn: {
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
   onboardingSubtitle: {
     fontSize: 16,
     fontFamily: 'Jua',
-    color: '#FFFFFF',
+    color: '#2D3436',
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 24,
