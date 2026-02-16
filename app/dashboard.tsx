@@ -12,8 +12,9 @@ import Svg, { Path, Defs, LinearGradient, Stop, Circle } from 'react-native-svg'
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '@/lib/store';
+import { getAppWidth } from '@/lib/layout';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SCREEN_WIDTH = getAppWidth();
 
 const C = {
   lavender: '#8E97C8',
@@ -27,7 +28,7 @@ const C = {
 };
 
 function AreaChart({ data }: { data: number[] }) {
-  const width = SCREEN_WIDTH - 80;
+  const width = Math.min(SCREEN_WIDTH, 480) - 80;
   const height = 150;
   const max = 100;
 

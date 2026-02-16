@@ -54,16 +54,18 @@ export default function RootLayout() {
         colors={['#8E97C8', '#B8C0E8', '#C8CEE8']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0.3, y: 1 }}
-        className="flex-1"
-        style={isWeb ? {
-          maxWidth: 480,
-          width: '100%',
-          alignSelf: 'center',
-          height: '100%',
-          boxShadow: '0 0 40px rgba(0,0,0,0.1)',
-          minHeight: '100vh',
-          fontFamily: 'Jua, sans-serif',
-        } : {}}
+        style={[
+          { flex: 1 },
+          isWeb ? {
+            maxWidth: 480,
+            width: '100%',
+            alignSelf: 'center' as any,
+            height: '100vh' as any,
+            boxShadow: '0 0 40px rgba(0,0,0,0.15)',
+            overflow: 'hidden' as any,
+            position: 'relative' as any,
+          } : {},
+        ]}
       >
         <Stack
           screenOptions={{

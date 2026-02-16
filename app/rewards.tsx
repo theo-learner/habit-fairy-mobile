@@ -15,7 +15,9 @@ import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';
 import { AVATAR_ITEMS } from '@/lib/items';
 import { CHARACTERS } from '@/lib/characters';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+import { getAppWidth } from '@/lib/layout';
+
+const SCREEN_WIDTH = getAppWidth();
 const ITEM_WIDTH = SCREEN_WIDTH - 48;
 
 const C = {

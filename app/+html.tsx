@@ -25,25 +25,21 @@ export default function Root({ children }: PropsWithChildren) {
 
         {/* Using raw CSS to set global font and background for the body (outside the app root) */}
         <style dangerouslySetInnerHTML={{ __html: `
-          body { 
-            background-color: #1a1a1a; 
-            background-image: radial-gradient(#333 1px, transparent 1px);
-            background-size: 20px 20px;
-            font-family: 'Jua', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+          html, body {
             margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #2D2D3F;
+            font-family: 'Jua', sans-serif;
           }
-          /* Ensure the root element takes full height but is centered and constrained */
           #root {
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
+            overflow: hidden;
           }
-          /* Force font for all components */
           input, button, select, textarea, div, span, p {
             font-family: 'Jua', sans-serif !important;
           }

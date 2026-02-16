@@ -37,8 +37,9 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playSuccessSound, playCompleteHaptic } from '@/lib/sounds';
 import { CHARACTERS } from '@/lib/characters';
+import { getAppWidth } from '@/lib/layout';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SCREEN_WIDTH = getAppWidth();
 
 // ─── Headspace Kids 스타일 색상 ───
 const C = {
@@ -110,32 +111,33 @@ function getProgressMessage(completed: number, total: number): string {
 
 // ─── Hero 풍경 배경 (Headspace Kids 스타일 언덕+구름) ───
 function HeroLandscape({ children }: { children: React.ReactNode }) {
+  const W = SCREEN_WIDTH;
   return (
     <View style={styles.heroContainer}>
       {/* 배경 구름 */}
-      <Svg width={SCREEN_WIDTH} height={300} style={styles.heroSvg}>
+      <Svg width="100%" height={260} viewBox={`0 0 ${W} 260`} style={styles.heroSvg}>
         {/* 구름 1 */}
         <Ellipse cx={80} cy={60} rx={50} ry={22} fill="rgba(255,255,255,0.35)" />
         <Ellipse cx={110} cy={55} rx={35} ry={18} fill="rgba(255,255,255,0.3)" />
         {/* 구름 2 */}
-        <Ellipse cx={SCREEN_WIDTH - 70} cy={80} rx={45} ry={20} fill="rgba(255,255,255,0.3)" />
-        <Ellipse cx={SCREEN_WIDTH - 40} cy={75} rx={30} ry={15} fill="rgba(255,255,255,0.25)" />
+        <Ellipse cx={W - 70} cy={80} rx={45} ry={20} fill="rgba(255,255,255,0.3)" />
+        <Ellipse cx={W - 40} cy={75} rx={30} ry={15} fill="rgba(255,255,255,0.25)" />
         {/* 구름 3 작은 */}
-        <Ellipse cx={SCREEN_WIDTH / 2 + 30} cy={40} rx={25} ry={12} fill="rgba(255,255,255,0.2)" />
-        {/* 언덕 (연한 세이지 그린) */}
+        <Ellipse cx={W / 2 + 30} cy={40} rx={25} ry={12} fill="rgba(255,255,255,0.2)" />
+        {/* 언덕 */}
         <Path
-          d={`M0 260 Q${SCREEN_WIDTH * 0.25} 200 ${SCREEN_WIDTH * 0.5} 230 Q${SCREEN_WIDTH * 0.75} 260 ${SCREEN_WIDTH} 220 L${SCREEN_WIDTH} 300 L0 300 Z`}
+          d={`M0 220 Q${W * 0.25} 170 ${W * 0.5} 195 Q${W * 0.75} 220 ${W} 185 L${W} 260 L0 260 Z`}
           fill="rgba(125,184,158,0.25)"
         />
         <Path
-          d={`M0 270 Q${SCREEN_WIDTH * 0.3} 240 ${SCREEN_WIDTH * 0.6} 255 Q${SCREEN_WIDTH * 0.85} 270 ${SCREEN_WIDTH} 250 L${SCREEN_WIDTH} 300 L0 300 Z`}
+          d={`M0 230 Q${W * 0.3} 205 ${W * 0.6} 218 Q${W * 0.85} 230 ${W} 215 L${W} 260 L0 260 Z`}
           fill="rgba(125,184,158,0.15)"
         />
-        {/* 나무 (심플 원형) */}
-        <Circle cx={60} cy={235} r={18} fill="rgba(125,184,158,0.35)" />
-        <Circle cx={55} cy={228} r={14} fill="rgba(125,184,158,0.3)" />
-        <Circle cx={SCREEN_WIDTH - 50} cy={210} r={15} fill="rgba(125,184,158,0.3)" />
-        <Circle cx={SCREEN_WIDTH - 45} cy={203} r={11} fill="rgba(125,184,158,0.25)" />
+        {/* 나무 */}
+        <Circle cx={60} cy={200} r={18} fill="rgba(125,184,158,0.35)" />
+        <Circle cx={55} cy={193} r={14} fill="rgba(125,184,158,0.3)" />
+        <Circle cx={W - 50} cy={180} r={15} fill="rgba(125,184,158,0.3)" />
+        <Circle cx={W - 45} cy={173} r={11} fill="rgba(125,184,158,0.25)" />
       </Svg>
       {/* 캐릭터 영역 */}
       <View style={styles.heroCharacterArea}>
@@ -402,7 +404,7 @@ function HomeScreenContent() {
           </View>
         </View>
 
-        <View style={{ height: 160 }} />
+        <View style={{ height: 120 }} />
       </ScrollView>
 
       {/* CTA pill 버튼 */}
@@ -448,9 +450,10 @@ const styles = StyleSheet.create({
 
   // ── Hero 풍경 ──
   heroContainer: {
-    height: 300,
+    height: 260,
     position: 'relative',
     overflow: 'hidden',
+    maxWidth: '100%',
   },
   heroSvg: {
     position: 'absolute',
@@ -467,8 +470,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heroCharImage: {
-    width: 200,
-    height: 220,
+    width: 160,
+    height: 180,
   },
 
   // ── 인사 섹션 ──

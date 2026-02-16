@@ -14,7 +14,9 @@ import { useAppStore } from '@/lib/store';
 import { CHARACTERS, type CharacterData } from '@/lib/characters';
 import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+import { getAppWidth } from '@/lib/layout';
+
+const SCREEN_WIDTH = getAppWidth();
 const CARD_WIDTH = (SCREEN_WIDTH - 48 - 12) / 2;
 
 const C = {

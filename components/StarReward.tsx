@@ -19,6 +19,7 @@ import Animated, {
   cancelAnimation,
 } from 'react-native-reanimated';
 import { playStarHaptic, playFanfareHaptic } from '@/lib/sounds';
+import { getAppWidth } from '@/lib/layout';
 
 interface StarRewardProps {
   stars: number;
@@ -27,7 +28,7 @@ interface StarRewardProps {
   message?: string;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SCREEN_WIDTH = getAppWidth();
 
 /** 축하 메시지 랜덤 */
 const CHEER_MESSAGES = [
