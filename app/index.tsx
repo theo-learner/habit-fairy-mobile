@@ -256,6 +256,40 @@ function HomeScreenContent() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCompletionAnim, setShowCompletionAnim] = useState(false);
 
+  // Hero 캐릭터 애니메이션
+  const heroBreathScale = useSharedValue(1);
+  const heroSwayRotate = useSharedValue(0);
+  const heroFloatY = useSharedValue(0);
+
+  useEffect(() => {
+    heroBreathScale.value = withRepeat(
+      withSequence(
+        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
+        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
+      ), -1, true,
+    );
+    heroSwayRotate.value = withRepeat(
+      withSequence(
+        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
+        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
+      ), -1, true,
+    );
+    heroFloatY.value = withRepeat(
+      withSequence(
+        withTiming(-8, { duration: 2500, easing: Easing.inOut(Easing.quad) }),
+        withTiming(0, { duration: 2500, easing: Easing.inOut(Easing.quad) }),
+      ), -1, true,
+    );
+  }, []);
+
+  const heroAnimStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: heroFloatY.value },
+      { scale: heroBreathScale.value },
+      { rotate: `${heroSwayRotate.value}deg` },
+    ],
+  }));
+
   useEffect(() => {
     loadData();
   }, []);
@@ -338,12 +372,14 @@ function HomeScreenContent() {
       >
         {/* Hero 영역: 캐릭터 + 풍경 배경 */}
         <HeroLandscape>
-          <Animated.Image
-            entering={FadeIn.duration(800)}
-            source={character.asset}
-            style={styles.heroCharImage}
-            resizeMode="contain"
-          />
+          <Animated.View style={heroAnimStyle}>
+            <Animated.Image
+              entering={FadeIn.duration(800)}
+              source={character.asset}
+              style={styles.heroCharImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
         </HeroLandscape>
 
         {/* 인사 + 진행률 pill */}

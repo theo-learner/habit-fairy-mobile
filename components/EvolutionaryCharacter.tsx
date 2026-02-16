@@ -59,15 +59,35 @@ export default function EvolutionaryCharacter({
   // Animation values
   const floatY = useSharedValue(0);
   const scale = useSharedValue(1);
+  const breathScale = useSharedValue(1);
+  const swayRotate = useSharedValue(0);
   const glowOpacity = useSharedValue(0);
   const [dialogue, setDialogue] = React.useState('');
 
-  // Floating animation
+  // Floating + breathing + sway animation
   useEffect(() => {
     floatY.value = withRepeat(
       withSequence(
         withTiming(-10, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
         withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
+      ),
+      -1,
+      true
+    );
+    // 숨쉬기 (scale 1.0 ↔ 1.03, 3초)
+    breathScale.value = withRepeat(
+      withSequence(
+        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
+        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
+      ),
+      -1,
+      true
+    );
+    // 살랑거림 (rotate -2deg ↔ 2deg, 4초)
+    swayRotate.value = withRepeat(
+      withSequence(
+        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
+        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
       ),
       -1,
       true
@@ -134,7 +154,8 @@ export default function EvolutionaryCharacter({
   const containerStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: floatY.value },
-      { scale: scale.value },
+      { scale: scale.value * breathScale.value },
+      { rotate: `${swayRotate.value}deg` },
     ],
   }));
 
