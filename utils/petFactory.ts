@@ -12,7 +12,7 @@ import type { PetType, PetStage, PetConfig, StageConfig } from '@/types/pet';
 const PET_REGISTRY: Record<PetType, PetConfig> = {
   fairy: {
     id: 'fairy',
-    displayName: '별이',
+    displayName: '요정',
     maxStage: 3,
     stages: {
       1: {
@@ -28,10 +28,10 @@ const PET_REGISTRY: Record<PetType, PetConfig> = {
       },
       2: {
         name: 'baby',
-        displayName: '아기 별이',
+        displayName: '아기 요정',
         asset: require('@/assets/fairy_v2.png'),  // TODO: 아기 에셋으로 교체
         dialogues: [
-          '안녕! 나는 별이야!',
+          '안녕! 나는 요정이야!',
           '오늘도 화이팅!',
           '미션 완료하면 기뻐요!',
           '같이 놀자!',
@@ -40,7 +40,7 @@ const PET_REGISTRY: Record<PetType, PetConfig> = {
       },
       3: {
         name: 'adult',
-        displayName: '요정 별이',
+        displayName: '요정',
         asset: require('@/assets/fairy_v2.png'),
         dialogues: [
           '오늘도 멋진 하루야!',

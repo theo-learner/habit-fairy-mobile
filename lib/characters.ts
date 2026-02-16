@@ -21,22 +21,6 @@ export interface CharacterData {
 }
 
 export const CHARACTERS: CharacterData[] = [
-  // 기본 캐릭터
-  {
-    id: 'fairy',
-    name: 'Fairy',
-    nameKo: '별이',
-    category: 'default',
-    emoji: '🧚',
-    asset: require('@/assets/fairy_v2.png'),
-    description: '반짝반짝 빛나는 요정 별이',
-    theme: {
-      primary: '#A78BFA',
-      secondary: '#FDE68A',
-      gradient: ['#DDD6FE', '#FEF3C7'],
-      effectEmoji: '✨',
-    },
-  },
   // 남아용 캐릭터
   {
     id: 'dino',
@@ -199,4 +183,4 @@ export const getCharactersByCategory = (category: 'default' | 'boy' | 'girl'): C
   return CHARACTERS.filter(c => c.category === category);
 };
 
-export const DEFAULT_CHARACTER_ID = 'fairy';
+export const DEFAULT_CHARACTER_ID = 'dino';

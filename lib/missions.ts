@@ -144,7 +144,7 @@ export const PRESET_MISSIONS: Mission[] = [
     timerSeconds: 0,
     starReward: 2,
     fairyMessageStart: '오늘 하루 수고했어! 잘 준비해볼까?',
-    fairyMessageComplete: '내일도 별이가 기다리고 있을게. 잘 자!',
+    fairyMessageComplete: '내일도 습관요정이 기다리고 있을게. 잘 자!',
     isPreset: true,
     isActive: true,
     sortOrder: 9,

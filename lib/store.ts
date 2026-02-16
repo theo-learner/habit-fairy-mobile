@@ -86,7 +86,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoaded: false,
   ownedItems: [],
   equippedItems: {},
-  selectedCharacter: 'fairy',
+  selectedCharacter: 'dino',
 
   /** 앱 시작 시 AsyncStorage에서 데이터 로드 — 실패해도 기본값으로 동작 */
   loadData: async () => {
@@ -99,7 +99,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         getAllMissionsIncludingInactive(),
         storage.get<string[]>('ownedItems', []),
         storage.get<Record<string, string | null>>('equippedItems', {}),
-        storage.get<string>('selectedCharacter', 'fairy'),
+        storage.get<string>('selectedCharacter', 'dino'),
       ]);
 
       // null/undefined 방어: 각 값이 유효하지 않으면 기본값 사용
@@ -111,7 +111,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         allMissions: Array.isArray(allMissions) && allMissions.length > 0 ? allMissions : PRESET_MISSIONS,
         ownedItems: Array.isArray(ownedItems) ? ownedItems : [],
         equippedItems: equippedItems && typeof equippedItems === 'object' ? equippedItems : {},
-        selectedCharacter: typeof selectedCharacter === 'string' ? selectedCharacter : 'fairy',
+        selectedCharacter: typeof selectedCharacter === 'string' ? selectedCharacter : 'dino',
         isLoaded: true,
       });
     } catch (e) {
@@ -125,7 +125,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         allMissions: PRESET_MISSIONS,
         ownedItems: [],
         equippedItems: {},
-        selectedCharacter: 'fairy',
+        selectedCharacter: 'dino',
         isLoaded: true,
       });
     }

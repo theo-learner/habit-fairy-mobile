@@ -34,7 +34,7 @@ const SCREEN_WIDTH = getAppWidth();
 const CHEER_MESSAGES = [
   '정말 잘했어! 최고야! 🌈',
   '와, 대단해! 멋지다! ✨',
-  '별이가 감동했어! 💫',
+  '요정이 감동했어! 💫',
   '역시 네가 최고야! 🎉',
   '오늘도 빛나는 하루! ⭐',
 ];
