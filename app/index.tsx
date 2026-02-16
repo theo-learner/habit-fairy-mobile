@@ -291,9 +291,7 @@ function HomeScreenContent() {
     ],
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // loadData는 _layout.tsx에서 호출 — 중복 제거됨
 
   useEffect(() => {
     if (isLoaded && !childName) {
@@ -414,7 +412,7 @@ function HomeScreenContent() {
           {sortedMissions.map((mission, index) => (
             <Animated.View
               key={mission.id}
-              entering={FadeInDown.delay(300 + index * 80)}
+              entering={FadeInDown.delay(Math.min(300 + index * 80, 500))}
               style={styles.missionGridItem}
             >
               <MissionCircleCard

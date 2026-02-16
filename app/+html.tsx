@@ -29,7 +29,7 @@ export default function Root({ children }: PropsWithChildren) {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
+            overflow-y: auto;
             background-color: #2D2D3F;
             font-family: 'Jua', sans-serif;
           }

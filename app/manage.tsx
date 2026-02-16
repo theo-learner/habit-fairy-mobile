@@ -32,12 +32,14 @@ const C = {
 function ManageMissionCard({
   mission,
   index,
+  skipAnimation,
   onEdit,
   onDelete,
   onToggle,
 }: {
   mission: Mission;
   index: number;
+  skipAnimation?: boolean;
   onEdit: (mission: Mission) => void;
   onDelete: (mission: Mission) => void;
   onToggle: (id: string) => void;
@@ -60,7 +62,7 @@ function ManageMissionCard({
   }, [mission, onDelete]);
 
   const content = (
-    <Animated.View entering={FadeInDown.delay(index * 40).duration(300)} style={styles.missionCard}>
+    <Animated.View entering={skipAnimation ? undefined : FadeInDown.delay(Math.min(index * 40, 500)).duration(300)} style={styles.missionCard}>
       <View style={styles.cardContent}>
         {/* 원형 아이콘 (Headspace 스타일) */}
         <View style={styles.iconCircle}>
@@ -124,9 +126,12 @@ export default function ManageScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingMission, setEditingMission] = useState<Mission | null>(null);
   const [isNewMission, setIsNewMission] = useState(false);
+  const hasAnimated = React.useRef(false);
 
   useEffect(() => {
     reloadAllMissions();
+    // 첫 방문 후 애니메이션 스킵 플래그
+    return () => { hasAnimated.current = true; };
   }, []);
 
   const safeMissions = useMemo(() => {
@@ -150,6 +155,7 @@ export default function ManageScreen() {
               key={mission.id}
               mission={mission}
               index={idx}
+              skipAnimation={hasAnimated.current}
               onEdit={(m) => {
                 setEditingMission(m);
                 setIsNewMission(false);

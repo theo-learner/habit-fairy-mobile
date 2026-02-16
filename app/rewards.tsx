@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { Redirect } from 'expo-router';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';
 import { AVATAR_ITEMS } from '@/lib/items';
@@ -93,6 +94,12 @@ function ItemCard({
 }
 
 export default function RewardsScreen() {
+  // 꾸미기 기능 숨김 상태 — URL 직접 접근 시 홈으로 리다이렉트
+  return <Redirect href="/" />;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function RewardsScreenContent() {
   const totalStars = useAppStore((s) => s.totalStars);
   const ownedItems = useAppStore((s) => s.ownedItems || []);
   const equippedItems = useAppStore((s) => s.equippedItems || {});
