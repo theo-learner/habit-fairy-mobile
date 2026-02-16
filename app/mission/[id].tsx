@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   pillBtnText: {
     fontSize: 20,
     fontWeight: '700',
-    color: C.coral,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
   },
   alreadyDone: {
