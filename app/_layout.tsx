@@ -41,7 +41,7 @@ export default function RootLayout() {
   }
 
   const segment = segments[0] || 'index';
-  const showTabBar = ['index', 'manage', 'dashboard', 'character'].includes(segment); // rewards 개발 중 - 숨김
+  const showTabBar = ['index', 'manage', 'dashboard'].includes(segment); // character, rewards - 숨김
 
   const isWeb = Platform.OS === 'web';
 
@@ -80,11 +80,11 @@ export default function RootLayout() {
           <Stack.Screen
             name="index"
             options={{
-              title: '습관요정 별이',
+              title: '습관요정',
               headerShown: false,
             }}
           />
-          <Stack.Screen name="character" options={{ title: '내 친구' }} />
+          <Stack.Screen name="character" options={{ title: '내 친구', href: null }} />
           <Stack.Screen name="rewards" options={{ title: '꾸미기', href: null }} /> {/* 개발 중 - 접근 숨김 */}
           <Stack.Screen name="manage" options={{ title: '미션 관리' }} />
           <Stack.Screen name="dashboard" options={{ title: '기록' }} />

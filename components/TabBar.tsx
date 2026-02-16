@@ -23,7 +23,7 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   { name: 'index', label: '홈', icon: '🏠', activeIcon: '🏡', path: '/' },
-  { name: 'character', label: '친구', icon: '🧚', activeIcon: '🧚‍♀️', path: '/character' },
+  // { name: 'character', label: '친구', icon: '🧚', activeIcon: '🧚‍♀️', path: '/character' }, // CEO 지시 - UI에서 숨김
   // { name: 'rewards', label: '꾸미기', icon: '🎨', activeIcon: '🎨', path: '/rewards' }, // 개발 중 - UI에서 숨김
   { name: 'dashboard', label: '기록', icon: '📊', activeIcon: '📊', path: '/dashboard' },
   { name: 'manage', label: '설정', icon: '⚙️', activeIcon: '⚙️', path: '/manage', protected: true },

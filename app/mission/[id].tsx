@@ -18,13 +18,13 @@ import Animated, {
   FadeInUp,
   ZoomIn,
 } from 'react-native-reanimated';
-import FairyCharacter from '@/components/FairyCharacter';
+// import FairyCharacter from '@/components/FairyCharacter'; // 캐릭터 제거
 import CircleTimer from '@/components/CircleTimer';
 import StarReward from '@/components/StarReward';
 import { getMissionById } from '@/lib/missions';
 import { useAppStore } from '@/lib/store';
 import { playCompleteHaptic, playButtonHaptic, playFanfareHaptic } from '@/lib/sounds';
-import type { FairyEmotion } from '@/types';
+// import type { FairyEmotion } from '@/types';
 
 const C = {
   lavender: '#8E97C8',
@@ -50,7 +50,6 @@ export default function MissionScreen() {
   const isMissionCompletedToday = useAppStore((s) => s.isMissionCompletedToday);
 
   const [phase, setPhase] = useState<Phase>('ready');
-  const [fairyEmotion, setFairyEmotion] = useState<FairyEmotion>('excited');
   const [fairyMessage, setFairyMessage] = useState('');
 
   if (!mission) {
@@ -81,14 +80,12 @@ export default function MissionScreen() {
   const handleStart = () => {
     playButtonHaptic();
     setPhase('running');
-    setFairyEmotion('cheering');
     setFairyMessage(mission.fairyMessageStart);
   };
 
   const handleComplete = useCallback(async () => {
     playCompleteHaptic();
     setPhase('done');
-    setFairyEmotion('celebrating');
     setFairyMessage(mission.fairyMessageComplete);
     await completeMission(mission.id, mission.starReward);
     setTimeout(() => {
@@ -132,9 +129,11 @@ export default function MissionScreen() {
 
         {/* 메인 */}
         <View style={styles.main}>
-          <Animated.View entering={FadeIn.duration(600)} style={styles.fairySection}>
-            <FairyCharacter emotion={fairyEmotion} message={currentFairyMessage} size="md" showMessage />
-          </Animated.View>
+          {currentFairyMessage ? (
+            <Animated.View entering={FadeIn.duration(600)} style={styles.messageBubble}>
+              <Text style={styles.messageBubbleText}>{currentFairyMessage}</Text>
+            </Animated.View>
+          ) : null}
 
           {phase === 'ready' && !isAlreadyDone && (
             <Animated.View entering={FadeInUp.delay(200).duration(400)} style={styles.descSection}>
@@ -250,8 +249,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     gap: 24,
   },
-  fairySection: {
+  messageBubble: {
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     marginBottom: 8,
+    maxWidth: '90%',
+  },
+  messageBubbleText: {
+    fontSize: 16,
+    fontFamily: 'Jua',
+    color: '#1A1A2E',
+    textAlign: 'center',
   },
   descSection: {
     alignItems: 'center',

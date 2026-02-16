@@ -1,17 +1,15 @@
-import React, { useMemo, useEffect, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
   ScrollView,
   RefreshControl,
-  Image,
   Dimensions,
   StyleSheet,
   Pressable,
   Modal,
   TextInput,
   Platform,
-  Animated as RNAnimated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -28,7 +26,6 @@ import * as Haptics from 'expo-haptics';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playSuccessSound, playCompleteHaptic } from '@/lib/sounds';
-import { CHARACTERS } from '@/lib/characters';
 import { getAppWidth } from '@/lib/layout';
 
 const SCREEN_WIDTH = getAppWidth();
@@ -107,7 +104,7 @@ function HeroLandscape({ children }: { children: React.ReactNode }) {
   return (
     <View style={styles.heroContainer}>
       {/* 배경 구름 */}
-      <Svg width="100%" height={260} viewBox={`0 0 ${W} 260`} style={styles.heroSvg}>
+      <Svg width="100%" height={160} viewBox={`0 0 ${W} 160`} style={styles.heroSvg}>
         {/* 구름 1 */}
         <Ellipse cx={80} cy={60} rx={50} ry={22} fill="rgba(255,255,255,0.35)" />
         <Ellipse cx={110} cy={55} rx={35} ry={18} fill="rgba(255,255,255,0.3)" />
@@ -118,18 +115,18 @@ function HeroLandscape({ children }: { children: React.ReactNode }) {
         <Ellipse cx={W / 2 + 30} cy={40} rx={25} ry={12} fill="rgba(255,255,255,0.2)" />
         {/* 언덕 */}
         <Path
-          d={`M0 220 Q${W * 0.25} 170 ${W * 0.5} 195 Q${W * 0.75} 220 ${W} 185 L${W} 260 L0 260 Z`}
+          d={`M0 120 Q${W * 0.25} 90 ${W * 0.5} 105 Q${W * 0.75} 120 ${W} 100 L${W} 160 L0 160 Z`}
           fill="rgba(125,184,158,0.25)"
         />
         <Path
-          d={`M0 230 Q${W * 0.3} 205 ${W * 0.6} 218 Q${W * 0.85} 230 ${W} 215 L${W} 260 L0 260 Z`}
+          d={`M0 130 Q${W * 0.3} 110 ${W * 0.6} 120 Q${W * 0.85} 130 ${W} 118 L${W} 160 L0 160 Z`}
           fill="rgba(125,184,158,0.15)"
         />
         {/* 나무 */}
-        <Circle cx={60} cy={200} r={18} fill="rgba(125,184,158,0.35)" />
-        <Circle cx={55} cy={193} r={14} fill="rgba(125,184,158,0.3)" />
-        <Circle cx={W - 50} cy={180} r={15} fill="rgba(125,184,158,0.3)" />
-        <Circle cx={W - 45} cy={173} r={11} fill="rgba(125,184,158,0.25)" />
+        <Circle cx={60} cy={105} r={18} fill="rgba(125,184,158,0.35)" />
+        <Circle cx={55} cy={98} r={14} fill="rgba(125,184,158,0.3)" />
+        <Circle cx={W - 50} cy={95} r={15} fill="rgba(125,184,158,0.3)" />
+        <Circle cx={W - 45} cy={88} r={11} fill="rgba(125,184,158,0.25)" />
       </Svg>
       {/* 캐릭터 영역 */}
       <View style={styles.heroCharacterArea}>
@@ -235,7 +232,6 @@ function HomeScreenContent() {
   const router = useRouter();
   const missions = useAppStore((s) => s.missions);
   const childName = useAppStore((s) => s.childName) || '';
-  const selectedCharacterId = useAppStore((s) => s.selectedCharacter);
   const loadData = useAppStore((s) => s.loadData);
   const setChildName = useAppStore((s) => s.setChildName);
   const isMissionCompletedToday = useAppStore((s) => s.isMissionCompletedToday);
@@ -247,49 +243,6 @@ function HomeScreenContent() {
   const [refreshing, setRefreshing] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCompletionAnim, setShowCompletionAnim] = useState(false);
-
-  // Hero 캐릭터 애니메이션 (RN Animated - 웹 호환)
-  const heroFloatAnim = useRef(new RNAnimated.Value(0)).current;
-  const heroScaleAnim = useRef(new RNAnimated.Value(1)).current;
-  const heroRotateAnim = useRef(new RNAnimated.Value(0)).current;
-
-  useEffect(() => {
-    const floatLoop = RNAnimated.loop(
-      RNAnimated.sequence([
-        RNAnimated.timing(heroFloatAnim, { toValue: -8, duration: 2500, useNativeDriver: true }),
-        RNAnimated.timing(heroFloatAnim, { toValue: 0, duration: 2500, useNativeDriver: true }),
-      ])
-    );
-    const scaleLoop = RNAnimated.loop(
-      RNAnimated.sequence([
-        RNAnimated.timing(heroScaleAnim, { toValue: 1.03, duration: 1500, useNativeDriver: true }),
-        RNAnimated.timing(heroScaleAnim, { toValue: 1.0, duration: 1500, useNativeDriver: true }),
-      ])
-    );
-    const rotateLoop = RNAnimated.loop(
-      RNAnimated.sequence([
-        RNAnimated.timing(heroRotateAnim, { toValue: -2, duration: 2000, useNativeDriver: true }),
-        RNAnimated.timing(heroRotateAnim, { toValue: 2, duration: 2000, useNativeDriver: true }),
-      ])
-    );
-    floatLoop.start();
-    scaleLoop.start();
-    rotateLoop.start();
-    return () => { floatLoop.stop(); scaleLoop.stop(); rotateLoop.stop(); };
-  }, []);
-
-  const heroRotateInterpolate = heroRotateAnim.interpolate({
-    inputRange: [-2, 2],
-    outputRange: ['-2deg', '2deg'],
-  });
-
-  const heroAnimStyle = {
-    transform: [
-      { translateY: heroFloatAnim },
-      { scale: heroScaleAnim },
-      { rotate: heroRotateInterpolate },
-    ],
-  };
 
   useEffect(() => {
     loadData();
@@ -305,8 +258,6 @@ function HomeScreenContent() {
     await setChildName(name);
     setShowOnboarding(false);
   };
-
-  const character = CHARACTERS.find((c) => c.id === selectedCharacterId) || CHARACTERS[0];
 
   const safeMissions = Array.isArray(missions) ? missions : [];
   const todayCompleted = getTodayCompleted();
@@ -371,16 +322,9 @@ function HomeScreenContent() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero 영역: 캐릭터 + 풍경 배경 */}
+        {/* Hero 영역: 풍경 배경 */}
         <HeroLandscape>
-          <RNAnimated.View style={heroAnimStyle}>
-            <Animated.Image
-              entering={FadeIn.duration(800)}
-              source={character.asset}
-              style={styles.heroCharImage}
-              resizeMode="contain"
-            />
-          </RNAnimated.View>
+          <View />
         </HeroLandscape>
 
         {/* 인사 + 진행률 pill */}
@@ -487,7 +431,7 @@ const styles = StyleSheet.create({
 
   // ── Hero 풍경 ──
   heroContainer: {
-    height: 260,
+    height: 160,
     position: 'relative',
     overflow: 'hidden',
     maxWidth: '100%',
@@ -506,11 +450,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroCharImage: {
-    width: 160,
-    height: 180,
-  },
-
   // ── 인사 섹션 ──
   greetingSection: {
     paddingHorizontal: 24,

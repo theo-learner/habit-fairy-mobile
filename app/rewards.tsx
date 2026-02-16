@@ -6,14 +6,13 @@ import {
   ScrollView,
   Pressable,
   Dimensions,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';
 import { AVATAR_ITEMS } from '@/lib/items';
-import { CHARACTERS } from '@/lib/characters';
+// import { CHARACTERS } from '@/lib/characters'; // 캐릭터 제거
 
 import { getAppWidth } from '@/lib/layout';
 
@@ -96,7 +95,6 @@ export default function RewardsScreen() {
   const totalStars = useAppStore((s) => s.totalStars);
   const ownedItems = useAppStore((s) => s.ownedItems || []);
   const equippedItems = useAppStore((s) => s.equippedItems || {});
-  const selectedCharacterId = useAppStore((s) => s.selectedCharacter);
   const purchaseItem = useAppStore((s) => s.purchaseItem);
   const toggleEquipItem = useAppStore((s) => s.toggleEquipItem);
 
@@ -111,8 +109,6 @@ export default function RewardsScreen() {
     [selectedCategory],
   );
 
-  const character = CHARACTERS.find((c) => c.id === selectedCharacterId) || CHARACTERS[0];
-
   const handleItemPress = (item: (typeof AVATAR_ITEMS)[0]) => {
     playButtonHaptic();
     if (ownedItems.includes(item.id)) {
@@ -126,12 +122,8 @@ export default function RewardsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* 캐릭터 미리보기 */}
+        {/* 보유 별 */}
         <View style={styles.previewContainer}>
-          <View style={styles.previewCircle}>
-            <Image source={character.asset} style={styles.characterImage} resizeMode="contain" />
-          </View>
-          <Text style={styles.characterName}>{character.nameKo}</Text>
           <View style={styles.starBadge}>
             <Text style={styles.starText}>{totalStars.toLocaleString()} ⭐</Text>
           </View>
