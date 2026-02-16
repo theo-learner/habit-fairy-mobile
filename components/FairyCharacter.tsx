@@ -34,7 +34,8 @@ export default function FairyCharacter({
   showMessage = true,
 }: FairyCharacterProps) {
   const cfg = SIZE_CONFIG[size];
-  const equippedItems = useAppStore((s) => s.equippedItems || {});
+  // 꾸미기 기능 비활성화 - 기본 캐릭터만 표시
+  const equippedItems: Record<string, string> = {};
   const selectedCharacter = useAppStore((s) => s.selectedCharacter || DEFAULT_CHARACTER_ID);
 
   const character = getCharacterById(selectedCharacter);

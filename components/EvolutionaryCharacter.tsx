@@ -52,10 +52,9 @@ export default function EvolutionaryCharacter({
   const stageConfig = PetFactory.getStageConfig(pet.type, pet.currentStage);
   const asset = stageConfig.asset;
 
-  // Decoration items from app store
-  const equippedItems = useAppStore((s) => s.equippedItems || {});
-  const hatItem = equippedItems['모자'] ? getItemById(equippedItems['모자']!) : null;
-  const accItem = equippedItems['소품'] ? getItemById(equippedItems['소품']!) : null;
+  // 꾸미기 기능 비활성화 - 기본 캐릭터만 표시
+  const hatItem = null;
+  const accItem = null;
 
   // Animation values
   const floatY = useSharedValue(0);
