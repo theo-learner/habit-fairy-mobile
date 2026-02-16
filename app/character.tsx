@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 26,
     fontFamily: 'Jua',
-    color: C.white,
+    color: '#1A1A2E',
     marginBottom: 6,
   },
   headerSubtitle: {
     fontSize: 15,
     fontFamily: 'Jua',
-    color: 'rgba(255,255,255,0.8)',
+    color: '#2D2D3F',
   },
   tabContainer: {
     flexDirection: 'row',
@@ -175,10 +175,11 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontFamily: 'Jua',
-    color: 'rgba(255,255,255,0.75)',
+    color: '#1A1A2E',
   },
   tabTextActive: {
-    color: C.coral,
+    color: '#1A1A2E',
+    fontWeight: '700',
   },
   grid: {
     flexDirection: 'row',

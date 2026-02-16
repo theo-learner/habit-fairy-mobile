@@ -238,7 +238,7 @@ export default function MissionCard({
               className={`${compact ? 'px-2 py-1' : 'px-3 py-1.5'} rounded-full`}
               style={{ backgroundColor: '#B5EAD7' }}
             >
-              <Text className={`text-white font-bold ${compact ? 'text-[10px]' : 'text-xs'}`}>
+              <Text className={`font-bold ${compact ? 'text-[10px]' : 'text-xs'}`} style={{ color: '#1A5E3A' }}>
                 {compact ? '✓' : '완료 ✓'}
               </Text>
             </View>
@@ -247,7 +247,7 @@ export default function MissionCard({
               className={`${compact ? 'px-2 py-1' : 'px-3 py-1.5'} rounded-full`}
               style={{ backgroundColor: '#FFB7B2' }}
             >
-              <Text className={`text-white font-bold ${compact ? 'text-[10px]' : 'text-xs'}`}>
+              <Text className={`font-bold ${compact ? 'text-[10px]' : 'text-xs'}`} style={{ color: '#7B2D26' }}>
                 {compact ? '!' : '도전!'}
               </Text>
             </View>
@@ -300,7 +300,7 @@ export default function MissionCard({
               className={`${compact ? 'px-2 py-0.5' : 'px-3 py-1'} rounded-full`}
               style={{ backgroundColor: 'rgba(255, 218, 193, 0.5)' }}
             >
-              <Text className={`${compact ? 'text-[10px]' : 'text-xs'} font-semibold`} style={{ color: '#FF9AA2' }}>
+              <Text className={`${compact ? 'text-[10px]' : 'text-xs'} font-semibold`} style={{ color: '#8B4513' }}>
                 ⭐ {mission.starReward}
               </Text>
             </View>

@@ -70,7 +70,7 @@ function TabButton({
         style={[
           styles.tabLabel,
           {
-            color: isActive ? '#E8744F' : '#9BA3AF',
+            color: isActive ? '#C0392B' : '#636E72',
             fontWeight: isActive ? '700' : '500',
           },
         ]}

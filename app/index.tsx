@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontFamily: 'Jua',
-    color: C.white,
+    color: '#1A1A2E',
     fontWeight: '600',
   },
 
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
     backgroundColor: C.white,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: C.coral,
+    borderColor: '#C0392B',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 14,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   quickCheckText: {
-    color: C.coral,
+    color: '#C0392B',
     fontFamily: 'Jua',
     fontSize: 13,
     fontWeight: '600',
@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   ctaPillText: {
-    color: C.coral,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     fontSize: 17,
     fontWeight: '700',
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
   onboardingSubtitle: {
     fontSize: 16,
     fontFamily: 'Jua',
-    color: 'rgba(255,255,255,0.85)',
+    color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 24,
@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   pillButtonText: {
-    color: C.coral,
+    color: '#1A1A2E',
     fontFamily: 'Jua',
     fontSize: 20,
     fontWeight: '700',

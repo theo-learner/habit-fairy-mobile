@@ -164,7 +164,7 @@ export default function DashboardScreen() {
 
         {/* 주요 습관 */}
         <Animated.View entering={FadeInDown.delay(350)}>
-          <Text style={[styles.cardTitle, { marginLeft: 4, marginBottom: 12, color: C.white }]}>주요 습관 현황</Text>
+          <Text style={[styles.cardTitle, { marginLeft: 4, marginBottom: 12, color: '#1A1A2E' }]}>주요 습관 현황</Text>
           <View style={styles.habitGrid}>
             {missions.slice(0, 2).map((mission, idx) => (
               <View key={mission.id} style={styles.habitCard}>
