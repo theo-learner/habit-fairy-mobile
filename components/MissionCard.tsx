@@ -10,7 +10,6 @@ import Animated, {
   withTiming,
   withDelay,
   Easing,
-  ZoomIn,
   interpolate,
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -87,7 +86,8 @@ function formatTimer(seconds: number): string {
   return sec > 0 ? `${min}분 ${sec}초` : `${min}분`;
 }
 
-// Floating confetti with 3D effect
+// Floating confetti with 3D effect (reserved for future use)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Confetti({ delay = 0, color = '#FFD700', size = 10 }: { delay?: number, color?: string, size?: number }) {
   const progress = useSharedValue(0);
   const rotation = useSharedValue(0);

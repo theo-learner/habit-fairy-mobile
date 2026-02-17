@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Modal, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
-
 interface ParentsGateProps {
   visible: boolean;
   onClose: () => void;

@@ -7,7 +7,6 @@ import {
   Pressable,
   TextInput,
   Modal,
-  Alert,
   Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,9 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useAppStore } from '@/lib/store';
 import { CATEGORY_LABELS } from '@/lib/missions';
-import { MISSION_ICONS } from '@/types';
-import { playButtonHaptic } from '@/lib/sounds';
-import type { Mission, MissionCategory } from '@/types';
+import type { Mission } from '@/types';
 
 const C = {
   lavender: '#8E97C8',
@@ -117,7 +114,6 @@ function ManageMissionCard({
 
 export default function ManageScreen() {
   const allMissions = useAppStore((s) => s.allMissions);
-  const addCustomMission = useAppStore((s) => s.addCustomMission);
   const deleteCustomMission = useAppStore((s) => s.deleteCustomMission);
   const updateMission = useAppStore((s) => s.updateMission);
   const toggleMission = useAppStore((s) => s.toggleMission);

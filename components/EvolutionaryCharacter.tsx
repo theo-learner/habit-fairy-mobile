@@ -13,11 +13,8 @@ import Animated, {
   withSequence,
   withSpring,
   Easing,
-  runOnJS,
 } from 'react-native-reanimated';
 import { usePetStore } from '@/store/usePetStore';
-import { useAppStore } from '@/lib/store';
-import { getItemById } from '@/lib/items';
 import PetFactory from '@/utils/petFactory';
 
 interface EvolutionaryCharacterProps {
@@ -53,8 +50,8 @@ export default function EvolutionaryCharacter({
   const asset = stageConfig.asset;
 
   // 꾸미기 기능 비활성화 - 기본 캐릭터만 표시
-  const hatItem = null;
-  const accItem = null;
+  const hatItem = null as { emoji: string } | null;
+  const accItem = null as { emoji: string } | null;
 
   // Animation values
   const floatY = useSharedValue(0);
@@ -77,8 +74,8 @@ export default function EvolutionaryCharacter({
     // 숨쉬기 (scale 1.0 ↔ 1.03, 3초)
     breathScale.value = withRepeat(
       withSequence(
-        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
-        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
+        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sin) }),
+        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
       true
@@ -86,8 +83,8 @@ export default function EvolutionaryCharacter({
     // 살랑거림 (rotate -2deg ↔ 2deg, 4초)
     swayRotate.value = withRepeat(
       withSequence(
-        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
-        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
+        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
       true

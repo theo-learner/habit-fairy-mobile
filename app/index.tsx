@@ -1,16 +1,12 @@
-import React, { useMemo, useEffect, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
   ScrollView,
   RefreshControl,
-  Image,
-  Dimensions,
   StyleSheet,
   Pressable,
-  Modal,
   TextInput,
-  Platform,
   Animated as RNAnimated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,12 +18,10 @@ import Animated, {
   FadeInUp,
   ZoomIn,
 } from 'react-native-reanimated';
-import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop, Path, Ellipse } from 'react-native-svg';
-import * as Haptics from 'expo-haptics';
-
+import Svg, { Circle, Path, Ellipse } from 'react-native-svg';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
-import { playButtonHaptic, playSuccessSound, playCompleteHaptic } from '@/lib/sounds';
+import { playButtonHaptic, playCompleteHaptic } from '@/lib/sounds';
 import { CHARACTERS } from '@/lib/characters';
 import { getAppWidth } from '@/lib/layout';
 

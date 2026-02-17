@@ -5,11 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   Pressable,
-  Dimensions,
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { Redirect } from 'expo-router';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';

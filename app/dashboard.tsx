@@ -4,13 +4,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Pressable,
-  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path, Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useRouter } from 'expo-router';
 import { useAppStore } from '@/lib/store';
 import { getAppWidth } from '@/lib/layout';
 
@@ -117,7 +114,6 @@ function DonutChart({ percent, color }: { percent: number; color: string }) {
 }
 
 export default function DashboardScreen() {
-  const router = useRouter();
   const missions = useAppStore((s) => s.missions);
   const completedMap = useAppStore((s) => s.completedMap);
   const totalStars = useAppStore((s) => s.totalStars);

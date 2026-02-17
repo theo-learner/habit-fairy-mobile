@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "tsc": "tsc --noEmit",
-    "lint": "echo \"Linting skipped\""
+    "lint": "eslint app/ components/ hooks/ utils/ 2>/dev/null || eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@expo-google-fonts/jua": "^0.4.1",
@@ -44,9 +44,12 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "@typescript-eslint/parser": "^8.56.0",
     "eas-cli": "^13.4.2",
+    "eslint": "^10.0.0",
     "gh-pages": "^6.3.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.56.0"
   },
   "private": true
 }

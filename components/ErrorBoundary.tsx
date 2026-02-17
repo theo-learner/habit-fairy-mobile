@@ -29,7 +29,9 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     // 에러 로깅 — 프로덕션에서는 Sentry 등으로 전송 가능
+    // eslint-disable-next-line no-console
     console.error('[HabitFairy] ErrorBoundary 에러 포착:', error);
+    // eslint-disable-next-line no-console
     console.error('[HabitFairy] 컴포넌트 스택:', errorInfo?.componentStack);
   }
 

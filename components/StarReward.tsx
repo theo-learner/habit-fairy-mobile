@@ -5,7 +5,7 @@
 // ============================================
 
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -91,7 +91,6 @@ function Particle({ delay, emoji, x }: { delay: number; emoji: string; x: number
 
 /** 개별 별 아이템 — hooks 규칙 준수를 위해 컴포넌트로 분리 */
 function StarItem({
-  index,
   displayed,
   scale,
 }: {

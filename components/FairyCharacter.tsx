@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -28,7 +28,7 @@ const SIZE_CONFIG = {
 };
 
 export default function FairyCharacter({
-  emotion = 'happy',
+  emotion: _emotion = 'happy',
   message,
   size = 'md',
   showMessage = true,
@@ -58,8 +58,8 @@ export default function FairyCharacter({
     // 숨쉬기 (scale 1.0 ↔ 1.03, 3초)
     breathScale.value = withRepeat(
       withSequence(
-        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
-        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sine) }),
+        withTiming(1.03, { duration: 1500, easing: Easing.inOut(Easing.sin) }),
+        withTiming(1.0, { duration: 1500, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
       true,
@@ -67,8 +67,8 @@ export default function FairyCharacter({
     // 살랑거림 (rotate -2deg ↔ 2deg, 4초)
     swayRotate.value = withRepeat(
       withSequence(
-        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
-        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sine) }),
+        withTiming(-2, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
       true,

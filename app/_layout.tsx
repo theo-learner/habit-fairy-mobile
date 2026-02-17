@@ -1,7 +1,7 @@
 import '../global.css';
 import React, { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { View, Pressable, Text, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
@@ -24,6 +24,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     loadData().catch((e) => {
+      // eslint-disable-next-line no-console
       console.error('[HabitFairy] Data load failed:', e);
     });
   }, []);
@@ -85,7 +86,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen name="character" options={{ title: '내 친구' }} />
-          <Stack.Screen name="rewards" options={{ title: '꾸미기', href: null }} /> {/* 개발 중 - 접근 숨김 */}
+          <Stack.Screen name="rewards" options={{ title: '꾸미기' }} /> {/* 개발 중 - 접근 숨김 */}
           <Stack.Screen name="manage" options={{ title: '미션 관리' }} />
           <Stack.Screen name="dashboard" options={{ title: '기록' }} />
           <Stack.Screen name="mission/[id]" options={{ title: '미션 수행', headerShown: false }} />
