@@ -297,8 +297,12 @@ function HomeScreenContent() {
   }, [isLoaded, childName]);
 
   const handleOnboardingComplete = async (name: string) => {
-    await setChildName(name);
-    setShowOnboarding(false);
+    try {
+      await setChildName(name);
+      setShowOnboarding(false);
+    } catch {
+      // Store handles logging; UI stays on onboarding
+    }
   };
 
   const character = CHARACTERS.find((c) => c.id === selectedCharacterId) || CHARACTERS[0];
@@ -322,8 +326,13 @@ function HomeScreenContent() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData();
-    setRefreshing(false);
+    try {
+      await loadData();
+    } catch {
+      // Store handles logging
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleMissionPress = (id: string) => {
@@ -332,9 +341,13 @@ function HomeScreenContent() {
   };
 
   const handleQuickCheck = async (mission: any) => {
-    playCompleteHaptic();
-    await completeMission(mission.id, mission.starReward);
-    setShowCompletionAnim(true);
+    try {
+      playCompleteHaptic();
+      await completeMission(mission.id, mission.starReward);
+      setShowCompletionAnim(true);
+    } catch {
+      // Store handles logging
+    }
   };
 
   const handleCtaPress = () => {

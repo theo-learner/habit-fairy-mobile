@@ -87,15 +87,19 @@ export default function MissionScreen() {
   };
 
   const handleComplete = useCallback(async () => {
-    playCompleteHaptic();
-    setPhase('done');
-    setFairyEmotion('celebrating');
-    setFairyMessage(mission.fairyMessageComplete);
-    await completeMission(mission.id, mission.starReward);
-    setTimeout(() => {
-      playFanfareHaptic();
-      setPhase('reward');
-    }, 1200);
+    try {
+      playCompleteHaptic();
+      setPhase('done');
+      setFairyEmotion('celebrating');
+      setFairyMessage(mission.fairyMessageComplete);
+      await completeMission(mission.id, mission.starReward);
+      setTimeout(() => {
+        playFanfareHaptic();
+        setPhase('reward');
+      }, 1200);
+    } catch {
+      // Store handles logging; UI shows done state regardless
+    }
   }, [mission, completeMission]);
 
   const handleRewardComplete = useCallback(() => {

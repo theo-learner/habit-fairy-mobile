@@ -87,8 +87,12 @@ export default function CharacterSelectScreen() {
       : CHARACTERS.filter((c) => c.category === activeTab || c.category === 'default');
 
   const handleSelect = async (characterId: string) => {
-    await selectCharacter(characterId);
-    playSuccessSound();
+    try {
+      await selectCharacter(characterId);
+      playSuccessSound();
+    } catch {
+      // Store handles logging
+    }
   };
 
   return (
