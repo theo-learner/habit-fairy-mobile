@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { playButtonHaptic } from '@/lib/sounds';
 import * as Haptics from 'expo-haptics';
+import strings from '@/lib/i18n';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -22,11 +23,11 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  { name: 'index', label: '홈', icon: '🏠', activeIcon: '🏡', path: '/' },
-  { name: 'character', label: '친구', icon: '🧚', activeIcon: '🧚‍♀️', path: '/character' },
-  // { name: 'rewards', label: '꾸미기', icon: '🎨', activeIcon: '🎨', path: '/rewards' }, // 개발 중 - UI에서 숨김
-  { name: 'dashboard', label: '기록', icon: '📊', activeIcon: '📊', path: '/dashboard' },
-  { name: 'manage', label: '설정', icon: '⚙️', activeIcon: '⚙️', path: '/manage', protected: true },
+  { name: 'index', label: strings.tabs.home, icon: '🏠', activeIcon: '🏡', path: '/' },
+  { name: 'character', label: strings.tabs.character, icon: '🧚', activeIcon: '🧚‍♀️', path: '/character' },
+  // { name: 'rewards', label: strings.tabs.customize, icon: '🎨', activeIcon: '🎨', path: '/rewards' }, // 개발 중 - UI에서 숨김
+  { name: 'dashboard', label: strings.tabs.dashboard, icon: '📊', activeIcon: '📊', path: '/dashboard' },
+  { name: 'manage', label: strings.tabs.settings, icon: '⚙️', activeIcon: '⚙️', path: '/manage', protected: true },
 ];
 
 function TabButton({

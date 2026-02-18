@@ -10,6 +10,7 @@ import Svg, { Path, Defs, LinearGradient, Stop, Circle } from 'react-native-svg'
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useAppStore } from '@/lib/store';
 import { getAppWidth } from '@/lib/layout';
+import strings from '@/lib/i18n';
 
 const SCREEN_WIDTH = getAppWidth();
 
@@ -147,9 +148,9 @@ export default function DashboardScreen() {
         {/* 요약 카드 */}
         <View style={styles.summaryRow}>
           {[
-            { icon: '✅', label: '오늘 달성', value: `${todayCompleted}/${missions.length}`, bg: C.sage },
-            { icon: '⭐', label: '모은 별', value: `${totalStars}`, bg: C.coral },
-            { icon: '🔥', label: '연속 달성', value: `${streakDays}일`, bg: C.lavender },
+            { icon: '✅', label: strings.home.todayComplete, value: `${todayCompleted}/${missions.length}`, bg: C.sage },
+            { icon: '⭐', label: strings.home.starsCollected, value: `${totalStars}`, bg: C.coral },
+            { icon: '🔥', label: strings.home.streak, value: `${streakDays}일`, bg: C.lavender },
           ].map((item, idx) => (
             <Animated.View key={idx} entering={FadeInDown.delay(idx * 80)} style={styles.summaryCard}>
               <View style={[styles.summaryIconCircle, { backgroundColor: item.bg }]}>
@@ -167,7 +168,7 @@ export default function DashboardScreen() {
           <View style={styles.chartContainer}>
             <AreaChart data={weeklyData} />
             <View style={styles.xAxis}>
-              {['월', '화', '수', '목', '금', '토', '일'].map((day) => (
+              {strings.dashboard.weekDays.map((day) => (
                 <Text key={day} style={styles.dayLabel}>{day}</Text>
               ))}
             </View>

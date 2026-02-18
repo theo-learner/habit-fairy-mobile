@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import strings from '@/lib/i18n';
 import Animated, {
   FadeIn,
   FadeInUp,
@@ -56,7 +57,7 @@ export default function MissionScreen() {
   if (!mission) {
     return (
       <LinearGradient colors={['#8E97C8', '#B8C0E8']} style={styles.errorContainer}>
-        <Text style={styles.errorText}>미션을 찾을 수 없어요 😢</Text>
+        <Text style={styles.errorText}>{strings.error.missionNotFound}</Text>
         <Pressable onPress={() => router.back()} style={styles.pillBtn}>
           <Text style={styles.pillBtnText}>돌아가기</Text>
         </Pressable>

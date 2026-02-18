@@ -24,6 +24,7 @@ import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playCompleteHaptic } from '@/lib/sounds';
 import { CHARACTERS } from '@/lib/characters';
 import { getAppWidth } from '@/lib/layout';
+import strings from '@/lib/i18n';
 
 const SCREEN_WIDTH = getAppWidth();
 
@@ -46,7 +47,7 @@ function OnboardingScreen({ onComplete }: { onComplete: (name: string) => void }
   const [name, setName] = useState('');
 
   const handleStart = () => {
-    const trimmed = name.trim() || '친구';
+    const trimmed = name.trim() || strings.tabs.character;
     playButtonHaptic();
     onComplete(trimmed);
   };
@@ -87,12 +88,12 @@ function OnboardingScreen({ onComplete }: { onComplete: (name: string) => void }
 
 /** 긍정적 진행률 메시지 */
 function getProgressMessage(completed: number, total: number): string {
-  if (total === 0) return '미션을 추가해볼까? ✨';
+  if (total === 0) return strings.home.addMissionPrompt;
   const ratio = completed / total;
-  if (ratio === 0) return '첫 모험을 시작해볼까? ✨';
+  if (ratio === 0) return strings.home.startAdventure;
   if (ratio < 0.5) return `좋은 시작이야! ${total - completed}개 남았어!`;
   if (ratio < 1) return `거의 다 했어! 조금만 더! 💪`;
-  return '오늘의 영웅! 🌟';
+  return strings.home.todayHero;
 }
 
 // ─── Hero 풍경 배경 (Headspace Kids 스타일 언덕+구름) ───
@@ -342,7 +343,7 @@ function HomeScreenContent() {
   };
 
   const greetingMessage = useMemo(() => {
-    const displayName = childName || '친구';
+    const displayName = childName || strings.tabs.character;
     return `안녕, ${displayName}!`;
   }, [childName]);
 
