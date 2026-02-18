@@ -129,6 +129,6 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#1A1A2E',
   },
 });

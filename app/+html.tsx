@@ -10,6 +10,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>습관요정 - 어린이 습관 만들기</title>
+        <meta name="description" content="아이와 함께하는 재미있는 습관 만들기 앱. 요정 친구와 매일 좋은 습관을 완성해요!" />
+        <meta name="theme-color" content="#8E97C8" />
 
         {/* Load Jua font from Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
