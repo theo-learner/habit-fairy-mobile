@@ -70,12 +70,16 @@ export default function ParentsGate({ visible, onClose, onSuccess }: ParentsGate
             <Pressable 
               onPress={onClose}
               className="flex-1 py-3 bg-gray-200 rounded-xl items-center"
+              accessibilityRole="button"
+              accessibilityLabel={strings.common.cancel}
             >
               <Text className="font-bold text-gray-600">{strings.common.cancel}</Text>
             </Pressable>
             <Pressable 
               onPress={handleSubmit}
               className="flex-1 py-3 bg-magic-purple rounded-xl items-center shadow-clay-sm"
+              accessibilityRole="button"
+              accessibilityLabel={strings.common.confirm}
             >
               <Text className="font-bold text-white">{strings.common.confirm}</Text>
             </Pressable>

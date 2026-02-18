@@ -78,6 +78,8 @@ function OnboardingScreen({ onComplete }: { onComplete: (name: string) => void }
             styles.pillButton,
             pressed && { transform: [{ scale: 0.96 }], opacity: 0.9 },
           ]}
+          accessibilityRole="button"
+          accessibilityLabel={strings.onboarding.startButton}
         >
           <Text style={styles.pillButtonText}>{strings.onboarding.startButton}</Text>
         </Pressable>

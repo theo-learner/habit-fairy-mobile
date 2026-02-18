@@ -58,7 +58,7 @@ export default function MissionScreen() {
     return (
       <LinearGradient colors={['#8E97C8', '#B8C0E8']} style={styles.errorContainer}>
         <Text style={styles.errorText}>{strings.error.missionNotFound}</Text>
-        <Pressable onPress={() => router.back()} style={styles.pillBtn}>
+        <Pressable onPress={() => router.back()} style={styles.pillBtn} accessibilityRole="button" accessibilityLabel={strings.mission.goBack}>
           <Text style={styles.pillBtnText}>{strings.mission.goBack}</Text>
         </Pressable>
       </LinearGradient>
@@ -122,8 +122,8 @@ export default function MissionScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* 상단 바 */}
         <View style={styles.header}>
-          <Pressable onPress={handleBack} style={styles.backButton} hitSlop={16}>
-            <Text style={styles.backText}>← 돌아가기</Text>
+          <Pressable onPress={handleBack} style={styles.backButton} hitSlop={16} accessibilityRole="button" accessibilityLabel={strings.mission.goBack}>
+            <Text style={styles.backText}>← {strings.mission.goBack}</Text>
           </Pressable>
           <Text style={styles.headerTitle} numberOfLines={1}>
             {mission.icon} {mission.name}

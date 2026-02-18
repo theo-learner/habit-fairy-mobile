@@ -252,6 +252,8 @@ export default function CircleTimer({
               styles.startButton,
               pressed && styles.startButtonPressed,
             ]}
+            accessibilityRole="button"
+            accessibilityLabel={strings.timer.start}
           >
             <Text style={styles.startButtonText}>{strings.timer.start}</Text>
           </Pressable>
