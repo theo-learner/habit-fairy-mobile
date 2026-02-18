@@ -66,13 +66,13 @@ export default function MissionScreen() {
   }
 
   const isAlreadyDone = isMissionCompletedToday(mission.id);
-  const name = childName || '친구';
+  const name = childName || strings.tabs.character;
 
   const handleBack = () => {
     if (phase === 'running') {
-      Alert.alert('잠깐 쉬어갈까?', '괜찮아! 나중에 다시 도전하면 돼 😊', [
-        { text: '계속할래!', style: 'cancel' },
-        { text: '내일 다시 해보자!', onPress: () => router.back() },
+      Alert.alert(strings.mission.quitTitle, strings.mission.quitMessage, [
+        { text: strings.mission.quitContinue, style: 'cancel' },
+        { text: strings.mission.quitStop, onPress: () => router.back() },
       ]);
     } else {
       router.back();

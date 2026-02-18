@@ -18,6 +18,7 @@ import Animated, {
   cancelAnimation,
 } from 'react-native-reanimated';
 import { playTickHaptic, playButtonHaptic } from '@/lib/sounds';
+import strings from '@/lib/i18n';
 
 interface CircleTimerProps {
   totalSeconds: number;
@@ -233,7 +234,7 @@ export default function CircleTimer({
               {minutes}:{seconds.toString().padStart(2, '0')}
             </Text>
             {isRunning && (
-              <Text style={styles.encourageText}>화이팅! 💪</Text>
+              <Text style={styles.encourageText}>{strings.timer.fighting}</Text>
             )}
           </View>
         </View>
@@ -252,7 +253,7 @@ export default function CircleTimer({
               pressed && styles.startButtonPressed,
             ]}
           >
-            <Text style={styles.startButtonText}>시작! 🌟</Text>
+            <Text style={styles.startButtonText}>{strings.timer.start}</Text>
           </Pressable>
         </Animated.View>
       )}

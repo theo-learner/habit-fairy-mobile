@@ -68,7 +68,7 @@ function CharacterCard({
         </Text>
         {isSelected && (
           <View style={styles.selectedBadge}>
-            <Text style={styles.selectedText}>선택됨</Text>
+            <Text style={styles.selectedText}>{strings.characterSelect.selected}</Text>
           </View>
         )}
       </Pressable>
@@ -94,8 +94,8 @@ export default function CharacterSelectScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>캐릭터 선택</Text>
-        <Text style={styles.headerSubtitle}>모험을 함께할 친구를 골라주세요!</Text>
+        <Text style={styles.headerTitle}>{strings.characterSelect.title}</Text>
+        <Text style={styles.headerSubtitle}>{strings.characterSelect.subtitle}</Text>
       </View>
 
       {/* 탭 (pill 형태) */}

@@ -103,6 +103,48 @@ const ko = {
     alreadyDone: '오늘 이미 완료한 미션이에요!',
     completePrompt: '미션을 완료하면 아래 버튼을 눌러주세요!',
     great: '대단해!',
+    quitTitle: '잠깐 쉬어갈까?',
+    quitMessage: '괜찮아! 나중에 다시 도전하면 돼 😊',
+    quitContinue: '계속할래!',
+    quitStop: '내일 다시 해보자!',
+    complete: '미션 완료!',
+    autoClose: '잠시 후 자동으로 닫힙니다',
+    done: '완료 ✓',
+    freeTime: '자유 시간',
+  },
+
+  // === 미션 카드 ===
+  missionCard: {
+    freeTime: '자유 시간',
+    done: '완료 ✓',
+    challenge: '도전!',
+  },
+
+  // === 타이머 ===
+  timer: {
+    fighting: '화이팅! 💪',
+    start: '시작! 🌟',
+  },
+
+  // === 별 보상 ===
+  starReward: {
+    missionComplete: '미션 완료!',
+    autoClose: '잠시 후 자동으로 닫힙니다',
+    praises: [
+      '정말 잘했어! 최고야! 🌈',
+      '와, 대단해! 멋지다! ✨',
+      '요정이 감동했어! 💫',
+      '역시 네가 최고야! 🎉',
+      '오늘도 빛나는 하루! ⭐',
+    ],
+  },
+
+  // === 캐릭터 선택 ===
+  characterSelect: {
+    title: '캐릭터 선택',
+    subtitle: '모험을 함께할 친구를 골라주세요!',
+    selected: '선택됨',
+    starRewardLabel: '별 보상',
   },
 
   // === 꾸미기 상점 ===

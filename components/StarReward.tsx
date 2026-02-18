@@ -28,16 +28,12 @@ interface StarRewardProps {
   message?: string;
 }
 
+import strings from '@/lib/i18n';
+
 const SCREEN_WIDTH = getAppWidth();
 
 /** 축하 메시지 랜덤 */
-const CHEER_MESSAGES = [
-  '정말 잘했어! 최고야! 🌈',
-  '와, 대단해! 멋지다! ✨',
-  '요정이 감동했어! 💫',
-  '역시 네가 최고야! 🎉',
-  '오늘도 빛나는 하루! ⭐',
-];
+const CHEER_MESSAGES = strings.starReward.praises;
 
 /** 파티클 하나 */
 function Particle({ delay, emoji, x }: { delay: number; emoji: string; x: number }) {
@@ -254,7 +250,7 @@ export default function StarReward({
       >
         {/* 축하 이모지 */}
         <Text style={styles.celebrationEmoji}>🎉</Text>
-        <Text style={styles.title}>미션 완료!</Text>
+        <Text style={styles.title}>{strings.starReward.missionComplete}</Text>
 
         {/* 별 표시 */}
         <View style={styles.starsRow}>
@@ -285,7 +281,7 @@ export default function StarReward({
         )}
 
         {/* 닫기 힌트 */}
-        <Text style={styles.hint}>잠시 후 자동으로 닫힙니다</Text>
+        <Text style={styles.hint}>{strings.starReward.autoClose}</Text>
       </Animated.View>
     </Animated.View>
   );

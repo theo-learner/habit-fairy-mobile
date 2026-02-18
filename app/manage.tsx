@@ -181,7 +181,7 @@ export default function ManageScreen() {
                   onChangeText={(text) => setEditingMission({ ...editingMission, name: text })}
                   placeholder={strings.manage.missionName}
                 />
-                <Text style={styles.modalLabel}>별 보상</Text>
+                <Text style={styles.modalLabel}>{strings.characterSelect.starRewardLabel}</Text>
                 <TextInput
                   style={styles.modalInput}
                   value={String(editingMission.starReward)}
@@ -190,7 +190,7 @@ export default function ManageScreen() {
                 />
                 <View style={styles.modalButtons}>
                   <Pressable onPress={() => setModalVisible(false)} style={styles.modalCancelBtn}>
-                    <Text style={styles.modalCancelText}>취소</Text>
+                    <Text style={styles.modalCancelText}>{strings.common.cancel}</Text>
                   </Pressable>
                   <Pressable
                     onPress={() => {
@@ -202,7 +202,7 @@ export default function ManageScreen() {
                     }}
                     style={styles.modalSaveBtn}
                   >
-                    <Text style={styles.modalSaveText}>저장</Text>
+                    <Text style={styles.modalSaveText}>{strings.common.save}</Text>
                   </Pressable>
                 </View>
               </>

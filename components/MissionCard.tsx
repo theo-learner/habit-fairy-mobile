@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { playButtonHaptic } from '@/lib/sounds';
+import strings from '@/lib/i18n';
 import * as Haptics from 'expo-haptics';
 import type { Mission, MissionCategory } from '@/types';
 
@@ -79,7 +80,7 @@ const CATEGORY_THEMES: Record<MissionCategory, {
 
 // Helper to format timer
 function formatTimer(seconds: number): string {
-  if (seconds === 0) return '자유 시간';
+  if (seconds === 0) return strings.missionCard.freeTime;
   if (seconds < 60) return `${seconds}초`;
   const min = Math.floor(seconds / 60);
   const sec = seconds % 60;
@@ -239,7 +240,7 @@ export default function MissionCard({
               style={{ backgroundColor: '#B5EAD7' }}
             >
               <Text className={`font-bold ${compact ? 'text-[10px]' : 'text-xs'}`} style={{ color: '#1A5E3A' }}>
-                {compact ? '✓' : '완료 ✓'}
+                {compact ? '✓' : strings.missionCard.done}
               </Text>
             </View>
           ) : (
@@ -248,7 +249,7 @@ export default function MissionCard({
               style={{ backgroundColor: '#FFB7B2' }}
             >
               <Text className={`font-bold ${compact ? 'text-[10px]' : 'text-xs'}`} style={{ color: '#7B2D26' }}>
-                {compact ? '!' : '도전!'}
+                {compact ? '!' : strings.missionCard.challenge}
               </Text>
             </View>
           )}
