@@ -1,7 +1,7 @@
 import '../global.css';
 import React, { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
@@ -38,7 +38,12 @@ export default function RootLayout() {
   };
 
   if (!fontsLoaded) {
-    return null;
+    return (
+      <View style={loadingStyles.container}>
+        <ActivityIndicator size="large" color="#8E97C8" />
+        <Text style={loadingStyles.text}>습관요정 준비 중...</Text>
+      </View>
+    );
   }
 
   const segment = segments[0] || 'index';
@@ -103,3 +108,17 @@ export default function RootLayout() {
     </ErrorBoundary>
   );
 }
+
+const loadingStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#C8CEE8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  text: {
+    fontSize: 16,
+    color: '#4A4A6A',
+  },
+});
