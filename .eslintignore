@@ -1,0 +1,5 @@
+dist/
+node_modules/
+.expo/
+metro.config.js
+tailwind.config.js
