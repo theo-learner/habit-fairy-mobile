@@ -5,6 +5,7 @@
 
 import React, { Component, type ReactNode } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import strings from '@/lib/i18n';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -45,9 +46,9 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
       return (
         <View style={styles.container}>
           <Text style={styles.emoji}>😢</Text>
-          <Text style={styles.title}>문제가 발생했어요</Text>
+          <Text style={styles.title}>{strings.error.somethingWrong}</Text>
           <Text style={styles.message}>
-            {this.props.fallbackMessage || '잠시 후 다시 시도해주세요'}
+            {this.props.fallbackMessage || strings.error.tryAgainLater}
           </Text>
           {__DEV__ && this.state.error && (
             <View style={styles.debugBox}>
@@ -63,7 +64,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
               pressed && styles.retryButtonPressed,
             ]}
           >
-            <Text style={styles.retryButtonText}>🔄 다시 시도하기</Text>
+            <Text style={styles.retryButtonText}>{strings.common.retry}</Text>
           </Pressable>
         </View>
       );

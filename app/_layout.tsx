@@ -11,6 +11,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAppStore } from '@/lib/store';
 import TabBar from '@/components/TabBar';
 import ParentsGate from '@/components/ParentsGate';
+import strings from '@/lib/i18n';
 
 export default function RootLayout() {
   const loadData = useAppStore((s) => s.loadData);
@@ -41,7 +42,7 @@ export default function RootLayout() {
     return (
       <View style={loadingStyles.container}>
         <ActivityIndicator size="large" color="#8E97C8" />
-        <Text style={loadingStyles.text}>습관요정 준비 중...</Text>
+        <Text style={loadingStyles.text}>{strings.common.loading}</Text>
       </View>
     );
   }
@@ -86,15 +87,15 @@ export default function RootLayout() {
           <Stack.Screen
             name="index"
             options={{
-              title: '습관요정',
+              title: strings.common.appName,
               headerShown: false,
             }}
           />
-          <Stack.Screen name="character" options={{ title: '내 친구' }} />
-          <Stack.Screen name="rewards" options={{ title: '꾸미기' }} /> {/* 개발 중 - 접근 숨김 */}
-          <Stack.Screen name="manage" options={{ title: '미션 관리' }} />
-          <Stack.Screen name="dashboard" options={{ title: '기록' }} />
-          <Stack.Screen name="mission/[id]" options={{ title: '미션 수행', headerShown: false }} />
+          <Stack.Screen name="character" options={{ title: strings.nav.myFriend }} />
+          <Stack.Screen name="rewards" options={{ title: strings.tabs.customize }} /> {/* 개발 중 - 접근 숨김 */}
+          <Stack.Screen name="manage" options={{ title: strings.nav.missionManage }} />
+          <Stack.Screen name="dashboard" options={{ title: strings.tabs.dashboard }} />
+          <Stack.Screen name="mission/[id]" options={{ title: strings.nav.missionPerform, headerShown: false }} />
         </Stack>
 
         {showTabBar && <TabBar onProtectedPress={handleSettingsPress} />}
