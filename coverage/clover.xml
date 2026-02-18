@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1771404037407" clover="3.2.0">
+  <project timestamp="1771404037407" name="All files">
+    <metrics statements="77" coveredstatements="25" conditionals="52" coveredconditionals="19" methods="28" coveredmethods="9" elements="157" coveredelements="53" complexity="0" loc="77" ncloc="77" packages="2" files="3" classes="3"/>
+    <package name="components">
+      <metrics statements="12" coveredstatements="11" conditionals="9" coveredconditionals="8" methods="6" coveredmethods="5"/>
+      <file name="ErrorBoundary.tsx" path="/home/theo/habit-fairy-mobile/components/ErrorBoundary.tsx">
+        <metrics statements="12" coveredstatements="11" conditionals="9" coveredconditionals="8" methods="6" coveredmethods="5"/>
+        <line num="22" count="6" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="39" count="5" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="44" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="61" count="4" type="stmt"/>
+        <line num="72" count="5" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib">
+      <metrics statements="65" coveredstatements="14" conditionals="43" coveredconditionals="11" methods="22" coveredmethods="4"/>
+      <file name="missions.ts" path="/home/theo/habit-fairy-mobile/lib/missions.ts">
+        <metrics statements="50" coveredstatements="12" conditionals="39" coveredconditionals="11" methods="19" coveredmethods="4"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="164" count="1" type="stmt"/>
+        <line num="168" count="0" type="stmt"/>
+        <line num="170" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="175" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="176" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="182" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="187" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="188" count="0" type="stmt"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="204" count="0" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="210" count="0" type="stmt"/>
+        <line num="211" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="212" count="0" type="stmt"/>
+        <line num="213" count="0" type="stmt"/>
+        <line num="218" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="224" count="0" type="stmt"/>
+        <line num="225" count="0" type="stmt"/>
+        <line num="226" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="228" count="0" type="stmt"/>
+        <line num="230" count="0" type="stmt"/>
+        <line num="231" count="0" type="stmt"/>
+        <line num="232" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="234" count="0" type="stmt"/>
+        <line num="235" count="0" type="stmt"/>
+        <line num="241" count="0" type="stmt"/>
+        <line num="242" count="0" type="stmt"/>
+        <line num="247" count="0" type="stmt"/>
+        <line num="248" count="0" type="stmt"/>
+        <line num="249" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="251" count="0" type="stmt"/>
+        <line num="252" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="254" count="0" type="stmt"/>
+        <line num="255" count="0" type="stmt"/>
+        <line num="261" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="262" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="264" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="271" count="3" type="stmt"/>
+        <line num="278" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="279" count="3" type="stmt"/>
+        <line num="280" count="10" type="cond" truecount="3" falsecount="1"/>
+        <line num="281" count="10" type="stmt"/>
+        <line num="284" count="3" type="stmt"/>
+      </file>
+      <file name="storage.ts" path="/home/theo/habit-fairy-mobile/lib/storage.ts">
+        <metrics statements="15" coveredstatements="2" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
