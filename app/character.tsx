@@ -12,6 +12,7 @@ import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } fr
 import { useAppStore } from '@/lib/store';
 import { CHARACTERS, type CharacterData } from '@/lib/characters';
 import { playButtonHaptic, playSuccessSound } from '@/lib/sounds';
+import strings from '@/lib/i18n';
 
 import { getAppWidth } from '@/lib/layout';
 
@@ -100,9 +101,9 @@ export default function CharacterSelectScreen() {
       {/* 탭 (pill 형태) */}
       <View style={styles.tabContainer}>
         {[
-          { key: 'all', label: '전체' },
-          { key: 'boy', label: '남아용' },
-          { key: 'girl', label: '여아용' },
+          { key: 'all', label: strings.dashboard.all },
+          { key: 'boy', label: strings.customize.boyStyle },
+          { key: 'girl', label: strings.customize.girlStyle },
         ].map((tab) => {
           const isActive = activeTab === tab.key;
           return (

@@ -164,7 +164,7 @@ export default function DashboardScreen() {
 
         {/* 주간 달성률 */}
         <Animated.View entering={FadeInDown.delay(250)} style={styles.chartCard}>
-          <Text style={styles.cardTitle}>주간 달성률</Text>
+          <Text style={styles.cardTitle}>{strings.dashboardDetail.weeklyRate}</Text>
           <View style={styles.chartContainer}>
             <AreaChart data={weeklyData} />
             <View style={styles.xAxis}>
@@ -177,7 +177,7 @@ export default function DashboardScreen() {
 
         {/* 주요 습관 */}
         <Animated.View entering={FadeInDown.delay(350)}>
-          <Text style={[styles.cardTitle, { marginLeft: 4, marginBottom: 12, color: '#1A1A2E' }]}>주요 습관 현황</Text>
+          <Text style={[styles.cardTitle, { marginLeft: 4, marginBottom: 12, color: '#1A1A2E' }]}>{strings.dashboardDetail.habitStatus}</Text>
           <View style={styles.habitGrid}>
             {missions.slice(0, 2).map((mission, idx) => {
               // 이번 주 해당 미션 완료 횟수 계산

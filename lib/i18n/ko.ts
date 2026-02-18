@@ -55,6 +55,22 @@ const ko = {
     addMissionPrompt: '미션을 추가해볼까? ✨',
     startAdventure: '첫 모험을 시작해볼까? ✨',
     weeklyRate: '주간 달성률',
+    todayMission: '오늘의 미션',
+    add: '추가',
+    check: '체크 ✓',
+    wellDone: '잘했어! 🎉',
+    errorTitle: '홈 화면 오류',
+  },
+
+  // === 온보딩 ===
+  onboarding: {
+    greeting: '안녕! 나는 습관요정이야!',
+    subtitle: '매일 함께 좋은 습관을 만들어 볼까?\n이름을 알려줘!',
+    namePlaceholder: '이름을 입력해줘',
+    startButton: '모험 시작하기! 🚀',
+    greetingTemplate: (name: string) => `안녕, ${name}!`,
+    goodStart: (remaining: number) => `좋은 시작이야! ${remaining}개 남았어!`,
+    almostDone: '거의 다 했어! 조금만 더! 💪',
   },
 
   // === 대시보드 ===
@@ -64,10 +80,36 @@ const ko = {
     all: '전체',
   },
 
+  // === 대시보드 상세 ===
+  dashboardDetail: {
+    weeklyRate: '주간 달성률',
+    habitStatus: '주요 습관 현황',
+  },
+
   // === 미션 관리 ===
   manage: {
     addMission: '미션 추가',
     editMission: '미션 수정',
+    deleteAction: '삭제',
+    instruction: '미션을 수정하거나 순서를 바꿔보세요!',
+    deleteHint: '커스텀 미션은 왼쪽으로 스와이프해서 삭제할 수 있어요.',
+    missionName: '미션 이름',
+  },
+
+  // === 미션 수행 ===
+  mission: {
+    goBack: '돌아가기',
+    starReward: (stars: number) => `완료하면 ⭐ ×${stars} 획득!`,
+    alreadyDone: '오늘 이미 완료한 미션이에요!',
+    completePrompt: '미션을 완료하면 아래 버튼을 눌러주세요!',
+    great: '대단해!',
+  },
+
+  // === 꾸미기 상점 ===
+  shop: {
+    equipped: '장착 중',
+    owned: '보유',
+    buy: '구매',
   },
 
   // === 보호자 게이트 ===

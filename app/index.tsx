@@ -59,13 +59,13 @@ function OnboardingScreen({ onComplete }: { onComplete: (name: string) => void }
         <View style={styles.onboardingCharArea}>
           <Text style={styles.onboardingEmoji}>🧚‍♀️</Text>
         </View>
-        <Text style={styles.onboardingTitle}>안녕! 나는 습관요정이야!</Text>
+        <Text style={styles.onboardingTitle}>{strings.onboarding.greeting}</Text>
         <Text style={styles.onboardingSubtitle}>
-          매일 함께 좋은 습관을 만들어 볼까?{'\n'}이름을 알려줘!
+          {strings.onboarding.subtitle}
         </Text>
         <TextInput
           style={styles.onboardingInput}
-          placeholder="이름을 입력해줘"
+          placeholder={strings.onboarding.namePlaceholder}
           placeholderTextColor="#B2BEC3"
           value={name}
           onChangeText={setName}
@@ -79,7 +79,7 @@ function OnboardingScreen({ onComplete }: { onComplete: (name: string) => void }
             pressed && { transform: [{ scale: 0.96 }], opacity: 0.9 },
           ]}
         >
-          <Text style={styles.pillButtonText}>모험 시작하기! 🚀</Text>
+          <Text style={styles.pillButtonText}>{strings.onboarding.startButton}</Text>
         </Pressable>
       </Animated.View>
     </LinearGradient>
@@ -91,8 +91,8 @@ function getProgressMessage(completed: number, total: number): string {
   if (total === 0) return strings.home.addMissionPrompt;
   const ratio = completed / total;
   if (ratio === 0) return strings.home.startAdventure;
-  if (ratio < 0.5) return `좋은 시작이야! ${total - completed}개 남았어!`;
-  if (ratio < 1) return `거의 다 했어! 조금만 더! 💪`;
+  if (ratio < 0.5) return strings.onboarding.goodStart(total - completed);
+  if (ratio < 1) return strings.onboarding.almostDone;
   return strings.home.todayHero;
 }
 
@@ -157,7 +157,7 @@ function CompletionAnimation({
       style={styles.completionOverlay}
     >
       <Text style={styles.completionEmoji}>✅</Text>
-      <Text style={styles.completionText}>잘했어! 🎉</Text>
+      <Text style={styles.completionText}>{strings.home.wellDone}</Text>
     </Animated.View>
   );
 }
@@ -219,7 +219,7 @@ function MissionCircleCard({
             pressed && { opacity: 0.8, transform: [{ scale: 0.95 }] },
           ]}
         >
-          <Text style={styles.quickCheckText}>체크 ✓</Text>
+          <Text style={styles.quickCheckText}>{strings.home.check}</Text>
         </Pressable>
       )}
     </Pressable>
@@ -344,7 +344,7 @@ function HomeScreenContent() {
 
   const greetingMessage = useMemo(() => {
     const displayName = childName || strings.tabs.character;
-    return `안녕, ${displayName}!`;
+    return strings.onboarding.greetingTemplate(displayName);
   }, [childName]);
 
   const progressMessage = useMemo(() => {
@@ -400,7 +400,7 @@ function HomeScreenContent() {
 
         {/* 미션 그리드 (Headspace 카테고리 스타일: 2열 원형 아이콘) */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>오늘의 미션</Text>
+          <Text style={styles.sectionTitle}>{strings.home.todayMission}</Text>
         </View>
 
         <View style={styles.missionGrid}>
@@ -429,7 +429,7 @@ function HomeScreenContent() {
               <View style={styles.addMissionIcon}>
                 <Text style={{ fontSize: 28, color: C.textLight }}>+</Text>
               </View>
-              <Text style={[styles.missionCircleName, { color: C.textLight }]}>추가</Text>
+              <Text style={[styles.missionCircleName, { color: C.textLight }]}>{strings.home.add}</Text>
             </Pressable>
           </View>
         </View>
@@ -464,7 +464,7 @@ function HomeScreenContent() {
 
 export default function HomeScreen() {
   return (
-    <ErrorBoundary fallbackMessage="홈 화면 오류">
+    <ErrorBoundary fallbackMessage={strings.home.errorTitle}>
       <HomeScreenContent />
     </ErrorBoundary>
   );

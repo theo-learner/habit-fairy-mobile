@@ -13,6 +13,7 @@ import { Redirect } from 'expo-router';
 import { useAppStore } from '@/lib/store';
 import { playButtonHaptic, playStarHaptic } from '@/lib/sounds';
 import { AVATAR_ITEMS } from '@/lib/items';
+import strings from '@/lib/i18n';
 import { CHARACTERS } from '@/lib/characters';
 
 import { getAppWidth } from '@/lib/layout';
@@ -71,18 +72,18 @@ function ItemCard({
         <View style={styles.itemAction}>
           {isEquipped ? (
             <View style={styles.equippedBadge}>
-              <Text style={styles.equippedText}>장착 중</Text>
+              <Text style={styles.equippedText}>{strings.shop.equipped}</Text>
             </View>
           ) : isOwned ? (
             <View style={styles.ownedBadge}>
-              <Text style={styles.ownedText}>보유</Text>
+              <Text style={styles.ownedText}>{strings.shop.owned}</Text>
             </View>
           ) : (
             <View style={[styles.buyButton, !canAfford && { backgroundColor: '#DDD' }]}>
               {!canAfford ? (
                 <Text style={{ fontSize: 16 }}>🔒</Text>
               ) : (
-                <Text style={styles.buyButtonText}>구매</Text>
+                <Text style={styles.buyButtonText}>{strings.shop.buy}</Text>
               )}
             </View>
           )}
@@ -106,12 +107,12 @@ function RewardsScreenContent() {
   const purchaseItem = useAppStore((s) => s.purchaseItem);
   const toggleEquipItem = useAppStore((s) => s.toggleEquipItem);
 
-  const [selectedCategory, setSelectedCategory] = useState('전체');
-  const categories = ['전체', '모자', '날개', '배경', '소품'];
+  const [selectedCategory, setSelectedCategory] = useState<string>(strings.dashboard.all);
+  const categories = [strings.dashboard.all, strings.customize.hat, strings.customize.wings, strings.customize.background, strings.customize.accessory];
 
   const filteredItems = useMemo(
     () =>
-      selectedCategory === '전체'
+      selectedCategory === strings.dashboard.all
         ? AVATAR_ITEMS
         : AVATAR_ITEMS.filter((i) => i.category === selectedCategory),
     [selectedCategory],

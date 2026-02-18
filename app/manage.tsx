@@ -15,6 +15,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useAppStore } from '@/lib/store';
 import { CATEGORY_LABELS } from '@/lib/missions';
 import type { Mission } from '@/types';
+import strings from '@/lib/i18n';
 
 const C = {
   lavender: '#8E97C8',
@@ -53,7 +54,7 @@ function ManageMissionCard({
         }}
         style={styles.swipeDeleteAction}
       >
-        <Text style={styles.swipeDeleteText}>삭제</Text>
+        <Text style={styles.swipeDeleteText}>{strings.manage.deleteAction}</Text>
       </Pressable>
     );
   }, [mission, onDelete]);
@@ -140,8 +141,8 @@ export default function ManageScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* 안내 */}
         <View style={styles.noticeBox}>
-          <Text style={styles.noticeTitle}>미션을 수정하거나 순서를 바꿔보세요!</Text>
-          <Text style={styles.noticeSubtitle}>커스텀 미션은 왼쪽으로 스와이프해서 삭제할 수 있어요.</Text>
+          <Text style={styles.noticeTitle}>{strings.manage.instruction}</Text>
+          <Text style={styles.noticeSubtitle}>{strings.manage.deleteHint}</Text>
         </View>
 
         {/* 미션 리스트 */}
@@ -170,15 +171,15 @@ export default function ManageScreen() {
       <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>{isNewMission ? '미션 추가' : '미션 수정'}</Text>
+            <Text style={styles.modalTitle}>{isNewMission ? strings.manage.addMission : strings.manage.editMission}</Text>
             {editingMission && (
               <>
-                <Text style={styles.modalLabel}>미션 이름</Text>
+                <Text style={styles.modalLabel}>{strings.manage.missionName}</Text>
                 <TextInput
                   style={styles.modalInput}
                   value={editingMission.name}
                   onChangeText={(text) => setEditingMission({ ...editingMission, name: text })}
-                  placeholder="미션 이름"
+                  placeholder={strings.manage.missionName}
                 />
                 <Text style={styles.modalLabel}>별 보상</Text>
                 <TextInput

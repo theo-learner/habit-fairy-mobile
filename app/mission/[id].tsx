@@ -59,7 +59,7 @@ export default function MissionScreen() {
       <LinearGradient colors={['#8E97C8', '#B8C0E8']} style={styles.errorContainer}>
         <Text style={styles.errorText}>{strings.error.missionNotFound}</Text>
         <Pressable onPress={() => router.back()} style={styles.pillBtn}>
-          <Text style={styles.pillBtnText}>돌아가기</Text>
+          <Text style={styles.pillBtnText}>{strings.mission.goBack}</Text>
         </Pressable>
       </LinearGradient>
     );
@@ -141,7 +141,7 @@ export default function MissionScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(400)} style={styles.descSection}>
               <Text style={styles.descText}>{mission.description}</Text>
               <View style={styles.rewardPill}>
-                <Text style={styles.rewardText}>완료하면 ⭐ ×{mission.starReward} 획득!</Text>
+                <Text style={styles.rewardText}>{strings.mission.starReward(mission.starReward)}</Text>
               </View>
             </Animated.View>
           )}
@@ -162,7 +162,7 @@ export default function MissionScreen() {
           {isAlreadyDone && phase === 'ready' && (
             <Animated.View entering={FadeIn} style={styles.alreadyDone}>
               <Text style={{ fontSize: 48 }}>✅</Text>
-              <Text style={styles.alreadyDoneText}>오늘 이미 완료한 미션이에요!</Text>
+              <Text style={styles.alreadyDoneText}>{strings.mission.alreadyDone}</Text>
             </Animated.View>
           )}
 
@@ -174,7 +174,7 @@ export default function MissionScreen() {
 
           {phase === 'running' && mission.timerSeconds === 0 && (
             <Animated.View entering={FadeInUp.duration(400)} style={{ alignItems: 'center', gap: 20 }}>
-              <Text style={styles.noTimerText}>미션을 완료하면 아래 버튼을 눌러주세요!</Text>
+              <Text style={styles.noTimerText}>{strings.mission.completePrompt}</Text>
               <Pressable
                 onPress={handleComplete}
                 style={({ pressed }) => [styles.completePill, pressed && { transform: [{ scale: 0.96 }], opacity: 0.9 }]}
@@ -187,7 +187,7 @@ export default function MissionScreen() {
           {phase === 'done' && (
             <Animated.View entering={ZoomIn.springify().damping(12)} style={{ alignItems: 'center' }}>
               <Text style={{ fontSize: 64 }}>🎊</Text>
-              <Text style={styles.doneText}>대단해!</Text>
+              <Text style={styles.doneText}>{strings.mission.great}</Text>
             </Animated.View>
           )}
         </View>
