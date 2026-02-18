@@ -1,0 +1,22 @@
+[0218/234038.718:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:202] LockFileEx: 잘못된 기능입니다. (0x1)
+[0218/234038.722:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:202] LockFileEx: 잘못된 기능입니다. (0x1)
+[0218/234038.723:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:202] LockFileEx: 잘못된 기능입니다. (0x1)
+[0218/234038.727:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:202] LockFileEx: 잘못된 기능입니다. (0x1)
+[16980:4236:0218/234039.395:ERROR:components\segmentation_platform\internal\database\ukm_database_backend.cc:148] Failed to open UKM database: 0 database is locked
+[16980:1808:0218/234039.450:ERROR:content\browser\network_sandbox.cc:384] Failed to grant sandbox access to cache directory \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Cache\Cache_Data: 잘못된 기능입니다. (0x1)
+
+DevTools listening on ws://127.0.0.1:35099/devtools/browser/fd5a6cca-e2e7-48aa-8bbe-93fbb5aa0e8f
+[16980:7784:0218/234039.465:ERROR:components\password_manager\core\browser\password_store\login_database.cc:1141] Unable to open the password store database.
+[16980:7784:0218/234039.466:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:79] Could not create/open login database.
+[16980:15484:0218/234039.466:ERROR:components\password_manager\core\browser\password_store\login_database.cc:1141] Unable to open the password store database.
+[16980:15484:0218/234039.467:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:79] Could not create/open login database.
+[16980:1808:0218/234039.473:ERROR:content\browser\network_sandbox.cc:317] Failed to grant sandbox access to NoVarySearch directory \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Cache\No_Vary_Search: 잘못된 기능입니다. (0x1)
+[16980:1808:0218/234039.497:ERROR:content\browser\network_sandbox.cc:317] Failed to grant sandbox access to SharedDictionary directory \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Shared Dictionary: 잘못된 기능입니다. (0x1)
+[16980:15484:0218/234039.499:ERROR:content\browser\network_sandbox.cc:489] Failed to grant sandbox access to network context data directory \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Safe Browsing Network: 잘못된 기능입니다. (0x1)
+[16980:1808:0218/234039.512:ERROR:content\browser\network_sandbox.cc:489] Failed to grant sandbox access to network context data directory \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Network: 잘못된 기능입니다. (0x1)
+[16980:14488:0218/234039.590:ERROR:content\browser\network_service_instance_impl.cc:243] Encountered error while migrating network context data or granting sandbox access for \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Safe Browsing Network. Result: 6: 작업을 완료했습니다. (0x0)
+[16980:14488:0218/234039.606:ERROR:content\browser\network_service_instance_impl.cc:243] Encountered error while migrating network context data or granting sandbox access for \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\Network. Result: 6: 작업을 완료했습니다. (0x0)
+[16980:4060:0218/234039.608:ERROR:components\history\core\browser\top_sites_backend.cc:78] Failed to initialize database.
+[16980:14304:0218/234048.935:ERROR:google_apis\gcm\engine\gcm_store_impl.cc:321] Failed to open database \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\GCM Store: IO error: \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\GCM Store/LOCK: No further details. (ChromeMethodBFE: 15::LockFile::1)
+[16980:14304:0218/234049.965:ERROR:google_apis\gcm\engine\gcm_store_impl.cc:418] Destroy failed: IO error: \\wsl.localhost\Ubuntu-24.04\home\theo\habit-fairy-mobile\undefined\Users\undefined\AppData\Local\lighthouse.90106048\Default\GCM Store/LOCK: No further details. (ChromeMethodBFE: 15::LockFile::1)
+[16980:11828:0218/234049.965:ERROR:components\gcm_driver\gcm_client_impl.cc:759] Failed to reset GCM store
